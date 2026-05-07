@@ -1,0 +1,24 @@
+# Built APK at the repo root — produced by `flutter build apk` and copied
+# here so it can be installed on a test device. Do not commit (60 MB+).
+mindvault-latest.apk
+
+# Local-only environment files
+*.env
+*.env.local
+
+# Release signing — never commit these
+mindvault/android/key.properties
+mindvault/android/app/*.jks
+mindvault/android/app/*.keystore
+
+# Build-time secrets — copy dart-define.json.example → dart-define.json and fill in values
+mindvault/dart-define.json
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor / IDE noise (per-developer)
+.idea/
+*.iml
+.vscode/

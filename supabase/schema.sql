@@ -1,0 +1,247 @@
+-- ============================================================
+-- MindVault — Supabase schema
+-- Run this script once in your Supabase project's SQL editor to
+-- bootstrap the database. Idempotent: safe to re-run.
+-- ============================================================
+
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+-- ── profiles ────────────────────────────────────────────────
+-- One row per auth user. `tier` drives quota enforcement
+-- (mirrors TierLimits in lib/domain/entities/tier_limits.dart
+-- and the TIER_LIMITS map in supabase/functions/ai-search/index.ts).
+CREATE TABLE IF NOT EXISTS profiles (
+  id          UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  tier        TEXT NOT NULL DEFAULT 'free' CHECK (tier IN ('free', 'pro')),
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users read own profile" ON profiles;
+CREATE POLICY "Users read own profile" ON profiles
+  FOR SELECT USING (auth.uid() = id);
+
+DROP POLICY IF EXISTS "Users insert own profile" ON profiles;
+CREATE POLICY "Users insert own profile" ON profiles
+  FOR INSERT WITH CHECK (auth.uid() = id);
+
+-- ── categories ──────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS categories (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id      UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  name         TEXT NOT NULL,
+  sort_order   INTEGER NOT NULL DEFAULT 0,
+  color        TEXT,
+  last_used_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (user_id, name)
+);
+
+ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users manage own categories" ON categories;
+CREATE POLICY "Users manage own categories" ON categories
+  FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- ── notes ───────────────────────────────────────────────────
+-- title and body are AES-256-GCM ciphertext (Base64). The server
+-- stores only ciphertext; the AES key never leaves the device.
+CREATE TABLE IF NOT EXISTS notes (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id      UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  category_id  UUID NOT NULL REFERENCES categories(id) ON DELETE CASCADE,
+  title        TEXT NOT NULL,
+  body         TEXT NOT NULL DEFAULT '',
+  is_private   BOOLEAN NOT NULL DEFAULT FALSE,
+  last_used_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+  is_pinned    BOOLEAN NOT NULL DEFAULT FALSE,
+  pinned_at    TIMESTAMPTZ,
+  pin_order    INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS idx_notes_user_updated
+  ON notes (user_id, updated_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_notes_user_pin
+  ON notes (user_id, is_pinned DESC, pin_order ASC NULLS LAST, updated_at DESC);
+
+ALTER TABLE notes ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users manage own notes" ON notes;
+CREATE POLICY "Users manage own notes" ON notes
+  FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- ── user_keys ───────────────────────────────────────────────
+-- Stores the wrapped AES note-encryption key per user, so users
+-- can recover encrypted notes after reinstall by entering their PIN.
+-- The PIN itself never leaves the device.
+CREATE TABLE IF NOT EXISTS user_keys (
+  user_id     UUID PRIMARY KEY REFERENCES profiles(id) ON DELETE CASCADE,
+  wrapped_key TEXT NOT NULL,
+  salt        TEXT NOT NULL,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE user_keys ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users manage own keys" ON user_keys;
+CREATE POLICY "Users manage own keys" ON user_keys
+  FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- ── ai_usage ────────────────────────────────────────────────
+-- One row per user per day. Written exclusively by the ai-search edge
+-- function via upsert on (user_id, usage_date). The composite primary
+-- key acts as the unique constraint for the upsert's ON CONFLICT clause.
+--
+-- Migration guard: if the old schema (tokens_used / queried_at columns)
+-- exists from a previous run, drop it so the correct schema can be created.
+DO $$ BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'ai_usage' AND column_name = 'tokens_used'
+  ) THEN
+    DROP TABLE IF EXISTS ai_usage;
+  END IF;
+END $$;
+
+CREATE TABLE IF NOT EXISTS ai_usage (
+  user_id     UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  usage_date  DATE NOT NULL DEFAULT CURRENT_DATE,
+  query_count INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (user_id, usage_date)
+);
+
+ALTER TABLE ai_usage ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users manage own ai_usage" ON ai_usage;
+CREATE POLICY "Users manage own ai_usage" ON ai_usage
+  FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- ── error_logs ──────────────────────────────────────────────
+-- Best-effort client-side error reporting. The app fires writes
+-- here from a fire-and-forget logger when something throws (most
+-- importantly the AI search backend call). Failures to write are
+-- swallowed by the client — there is no point logging the logger.
+-- Stored fields are intentionally minimal so nothing user-private
+-- (note titles, bodies, queries) leaks into observability.
+CREATE TABLE IF NOT EXISTS error_logs (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id      UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  occurred_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  source       TEXT,
+  message      TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_error_logs_user_time
+  ON error_logs (user_id, occurred_at DESC);
+
+ALTER TABLE error_logs ENABLE ROW LEVEL SECURITY;
+
+-- Users may only insert rows for themselves; reads are admin-only
+-- (no SELECT policy, so RLS denies them by default).
+DROP POLICY IF EXISTS "Users insert own error logs" ON error_logs;
+CREATE POLICY "Users insert own error logs" ON error_logs
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- ── analytics_events ────────────────────────────────────────
+-- Fire-and-forget behavioural event log written by the Flutter app.
+-- Tracks structural events only (session_started, note_created, etc.) —
+-- never note content (which is E2EE client-side anyway).
+-- RLS: authenticated users may INSERT their own events; no SELECT policy
+-- so regular users cannot read any rows. Service role (Supabase Studio)
+-- reads all rows for aggregation queries.
+CREATE TABLE IF NOT EXISTS analytics_events (
+  id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id     UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  event_type  TEXT        NOT NULL,
+  metadata    JSONB,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_analytics_events_type_time
+  ON analytics_events (event_type, created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_analytics_events_user_time
+  ON analytics_events (user_id, created_at DESC);
+
+ALTER TABLE analytics_events ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users insert own analytics events" ON analytics_events;
+CREATE POLICY "Users insert own analytics events" ON analytics_events
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- ── Analytics views (query from Supabase Studio with service role) ──
+-- Run: SELECT * FROM v_analytics_summary;
+
+CREATE OR REPLACE VIEW v_analytics_summary AS
+SELECT
+  (SELECT COUNT(*) FROM profiles)                                                                         AS total_users,
+  (SELECT COUNT(*) FROM profiles WHERE tier = 'pro')                                                     AS pro_users,
+  (SELECT COUNT(*) FROM profiles WHERE created_at::date = CURRENT_DATE)                                  AS signups_today,
+  (SELECT COUNT(*) FROM profiles WHERE created_at >= NOW() - INTERVAL '7 days')                          AS signups_7d,
+  (SELECT COUNT(*) FROM profiles WHERE created_at >= NOW() - INTERVAL '30 days')                         AS signups_30d,
+  (SELECT COUNT(*) FROM ai_usage WHERE queried_at::date = CURRENT_DATE)                                  AS ai_queries_today,
+  (SELECT COUNT(*) FROM ai_usage WHERE queried_at >= NOW() - INTERVAL '7 days')                          AS ai_queries_7d,
+  (SELECT COUNT(DISTINCT user_id) FROM analytics_events WHERE created_at::date = CURRENT_DATE)           AS dau_today,
+  (SELECT COUNT(*) FROM analytics_events WHERE event_type = 'note_created' AND created_at::date = CURRENT_DATE) AS notes_created_today,
+  (SELECT COUNT(*) FROM analytics_events WHERE event_type = 'note_created' AND created_at >= NOW() - INTERVAL '7 days') AS notes_created_7d,
+  (SELECT COUNT(*) FROM error_logs WHERE occurred_at::date = CURRENT_DATE)                               AS errors_today;
+
+-- Signups per day (last 30 days), broken down by tier
+CREATE OR REPLACE VIEW v_analytics_signups_daily AS
+  SELECT created_at::date AS date, tier, COUNT(*) AS new_users
+  FROM profiles
+  WHERE created_at >= NOW() - INTERVAL '30 days'
+  GROUP BY date, tier
+  ORDER BY date DESC;
+
+-- AI query volume per day (last 30 days)
+CREATE OR REPLACE VIEW v_analytics_ai_daily AS
+  SELECT queried_at::date AS usage_date, COUNT(*) AS total_queries, COUNT(DISTINCT user_id) AS active_ai_users
+  FROM ai_usage
+  WHERE queried_at >= NOW() - INTERVAL '30 days'
+  GROUP BY queried_at::date
+  ORDER BY usage_date DESC;
+
+-- Daily active users (last 30 days)
+CREATE OR REPLACE VIEW v_analytics_dau AS
+  SELECT created_at::date AS date, COUNT(DISTINCT user_id) AS dau
+  FROM analytics_events
+  WHERE created_at >= NOW() - INTERVAL '30 days'
+  GROUP BY date
+  ORDER BY date DESC;
+
+-- Event breakdown per day (last 30 days)
+CREATE OR REPLACE VIEW v_analytics_events_daily AS
+  SELECT created_at::date AS date, event_type, COUNT(*) AS count
+  FROM analytics_events
+  WHERE created_at >= NOW() - INTERVAL '30 days'
+  GROUP BY date, event_type
+  ORDER BY date DESC, event_type;
+
+-- ── Auto-provision profile + default category on signup ─────
+CREATE OR REPLACE FUNCTION handle_new_user()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  INSERT INTO profiles (id) VALUES (NEW.id)
+    ON CONFLICT (id) DO NOTHING;
+  INSERT INTO categories (user_id, name, sort_order)
+    VALUES (NEW.id, 'General', 0)
+    ON CONFLICT DO NOTHING;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE PROCEDURE handle_new_user();
+
+-- ── Realtime ────────────────────────────────────────────────
+-- The Flutter app subscribes to notes + categories changes to
+-- keep multiple devices in sync.
+ALTER PUBLICATION supabase_realtime ADD TABLE notes;
+ALTER PUBLICATION supabase_realtime ADD TABLE categories;

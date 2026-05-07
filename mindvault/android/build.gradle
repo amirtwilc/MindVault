@@ -1,0 +1,16 @@
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+// Redirect build output to the project root build/ dir where Flutter CLI expects it
+rootProject.layout.buildDirectory.set(file("../build"))
+subprojects {
+    layout.buildDirectory.set(rootProject.layout.buildDirectory.dir(project.name))
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.layout.buildDirectory
+}
