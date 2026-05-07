@@ -138,7 +138,7 @@
   "aiSearchLoading": "Searching your notes…",
   "aiSearchIdleTitle": "Ask anything about your notes",
   "aiSearchIdleBody": "AI searches your notes and synthesises an answer",
-  "aiSearchSuggestion1": "Summarize my notes on Flutter",
+  "aiSearchSuggestion1": "Summarize my workout notes",
   "aiSearchSuggestion2": "What did I write about work?",
   "aiSearchSuggestion3": "Find notes about my goals",
   "aiSearchSuggestion4": "What are my travel plans?",
@@ -186,6 +186,9 @@
   "settingsLanguageEnglish": "English",
   "settingsLanguageHebrew": "עברית",
   "settingsLanguageGerman": "Deutsch",
+  "settingsLanguageHindi": "हिन्दी",
+  "settingsLanguageSpanish": "Español",
+  "settingsLanguageFrench": "Français",
 
   "widgetComposeTitle": "New Note",
   "widgetComposeDiscardTitle": "Discard note?",

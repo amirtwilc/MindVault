@@ -40,6 +40,18 @@ CREATE TABLE IF NOT EXISTS profiles (
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Idempotent upgrade: add FK on existing installs that predate this constraint.
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE constraint_name = 'profiles_tier_fkey'
+      AND table_name = 'profiles'
+  ) THEN
+    ALTER TABLE profiles ADD CONSTRAINT profiles_tier_fkey
+      FOREIGN KEY (tier) REFERENCES tier_limits(tier);
+  END IF;
+END $$;
+
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Users read own profile" ON profiles;

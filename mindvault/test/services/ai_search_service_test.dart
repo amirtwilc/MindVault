@@ -391,6 +391,23 @@ void main() {
       await Future<void>.delayed(Duration.zero);
       expect(logger.entries, isEmpty);
     });
+
+    test('AiBackendException propagates http_status into error log context',
+        () async {
+      final logger = _RecordingErrorLogger();
+      final svc = AiSearchService(
+        db: db,
+        rateLimiter: rateLimiter,
+        backend: _AiBackendExceptionBackend(status: 502),
+        errorLogger: logger,
+      );
+      await svc
+          .search(query: 'test', notes: [_note(body: 'test content')])
+          .drain<void>();
+      await Future<void>.delayed(Duration.zero);
+      expect(logger.entries, hasLength(1));
+      expect(logger.entries.first.context, containsPair('http_status', 502));
+    });
   });
 }
 
@@ -401,6 +418,19 @@ class _ThrowingBackend implements AiBackend {
     required List<({String title, String body})> notes,
   }) async {
     throw Exception('simulated network error');
+  }
+}
+
+class _AiBackendExceptionBackend implements AiBackend {
+  final int status;
+  const _AiBackendExceptionBackend({required this.status});
+
+  @override
+  Future<String> call({
+    required String query,
+    required List<({String title, String body})> notes,
+  }) async {
+    throw AiBackendException('AI error: Bad Gateway', httpStatus: status);
   }
 }
 

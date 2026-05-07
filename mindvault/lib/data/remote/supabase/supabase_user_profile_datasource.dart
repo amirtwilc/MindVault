@@ -24,10 +24,10 @@ class SupabaseUserProfileDatasource {
 
     return TierLimits(
       tier: tier,
-      maxNotes: limits['max_notes'] as int,
-      maxCategories: limits['max_categories'] as int,
-      maxCharsPerNote: limits['max_chars_per_note'] as int,
-      aiSearchesPerDay: limits['ai_searches_per_day'] as int,
+      maxNotes: (limits['max_notes'] as num).toInt(),
+      maxCategories: (limits['max_categories'] as num).toInt(),
+      maxCharsPerNote: (limits['max_chars_per_note'] as num).toInt(),
+      aiSearchesPerDay: (limits['ai_searches_per_day'] as num).toInt(),
     );
   }
 }

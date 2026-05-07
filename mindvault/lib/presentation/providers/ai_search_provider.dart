@@ -153,6 +153,7 @@ class AiSearchNotifier extends StateNotifier<AiSearchState> {
             citedNoteIds: citedNoteIds,
             fromCache: fromCache,
           );
+          if (!fromCache) _ref.invalidate(aiSearchesTodayProvider);
           // Write to history only when AI found relevant results
           if (citedTitles.isNotEmpty && answer != AiSearchService.noResultAnswer) {
             await _ref.read(appDatabaseProvider).insertHistory(

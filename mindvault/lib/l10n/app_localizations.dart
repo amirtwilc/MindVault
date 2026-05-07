@@ -7,7 +7,10 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
 import 'app_localizations_he.dart';
+import 'app_localizations_hi.dart';
 
 // ignore_for_file: type=lint
 
@@ -97,7 +100,10 @@ abstract class AppStrings {
   static const List<Locale> supportedLocales = <Locale>[
     Locale('de'),
     Locale('en'),
-    Locale('he')
+    Locale('es'),
+    Locale('fr'),
+    Locale('he'),
+    Locale('hi')
   ];
 
   /// Brand name. Should NOT be translated.
@@ -775,7 +781,7 @@ abstract class AppStrings {
   /// No description provided for @aiSearchSuggestion1.
   ///
   /// In en, this message translates to:
-  /// **'Summarize my notes on Flutter'**
+  /// **'Summarize my workout notes'**
   String get aiSearchSuggestion1;
 
   /// No description provided for @aiSearchSuggestion2.
@@ -1012,6 +1018,24 @@ abstract class AppStrings {
   /// **'Deutsch'**
   String get settingsLanguageGerman;
 
+  /// No description provided for @settingsLanguageHindi.
+  ///
+  /// In en, this message translates to:
+  /// **'हिन्दी'**
+  String get settingsLanguageHindi;
+
+  /// No description provided for @settingsLanguageSpanish.
+  ///
+  /// In en, this message translates to:
+  /// **'Español'**
+  String get settingsLanguageSpanish;
+
+  /// No description provided for @settingsLanguageFrench.
+  ///
+  /// In en, this message translates to:
+  /// **'Français'**
+  String get settingsLanguageFrench;
+
   /// No description provided for @widgetComposeTitle.
   ///
   /// In en, this message translates to:
@@ -1106,8 +1130,14 @@ class _AppStringsDelegate extends LocalizationsDelegate<AppStrings> {
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['de', 'en', 'he'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+        'de',
+        'en',
+        'es',
+        'fr',
+        'he',
+        'hi'
+      ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppStringsDelegate old) => false;
@@ -1120,8 +1150,14 @@ AppStrings lookupAppStrings(Locale locale) {
       return AppStringsDe();
     case 'en':
       return AppStringsEn();
+    case 'es':
+      return AppStringsEs();
+    case 'fr':
+      return AppStringsFr();
     case 'he':
       return AppStringsHe();
+    case 'hi':
+      return AppStringsHi();
   }
 
   throw FlutterError(

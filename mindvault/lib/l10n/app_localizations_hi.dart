@@ -1,0 +1,583 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Hindi (`hi`).
+class AppStringsHi extends AppStrings {
+  AppStringsHi([String locale = 'hi']) : super(locale);
+
+  @override
+  String get appBrand => 'MindVault';
+
+  @override
+  String get actionCancel => 'रद्द करें';
+
+  @override
+  String get actionSave => 'सहेजें';
+
+  @override
+  String get actionDelete => 'हटाएं';
+
+  @override
+  String get actionCreate => 'बनाएं';
+
+  @override
+  String get actionRename => 'नाम बदलें';
+
+  @override
+  String get actionApply => 'लागू करें';
+
+  @override
+  String get actionClose => 'बंद करें';
+
+  @override
+  String get actionDiscard => 'त्यागें';
+
+  @override
+  String get actionTryAgain => 'पुनः प्रयास करें';
+
+  @override
+  String get actionUnlock => 'अनलॉक करें';
+
+  @override
+  String get actionRecoverContinue => 'पुनर्प्राप्त करें और जारी रखें';
+
+  @override
+  String get actionSetupContinue => 'सेट अप करें और जारी रखें';
+
+  @override
+  String get actionStartFresh => 'नए सिरे से शुरू करें';
+
+  @override
+  String get actionContactUs => 'संपर्क करें';
+
+  @override
+  String get actionOk => 'ठीक है';
+
+  @override
+  String get splashTagline => 'आपके विचार, सुरक्षित रूप से एन्क्रिप्टेड।';
+
+  @override
+  String get splashLoading => 'आपका वॉल्ट सुरक्षित हो रहा है…';
+
+  @override
+  String get authSubtitle => 'आपके एन्क्रिप्टेड AI-संचालित नोट्स';
+
+  @override
+  String get authSignInGoogle => 'Google से साइन इन करें';
+
+  @override
+  String get authSigningIn => 'साइन इन हो रहा है...';
+
+  @override
+  String get authDisclaimer =>
+      'आपके नोट्स एंड-टू-एंड एन्क्रिप्टेड हैं।\nकेवल आप उन्हें पढ़ सकते हैं।';
+
+  @override
+  String get pinSetupAppBar => 'एन्क्रिप्शन सेट अप करें';
+
+  @override
+  String get pinRecoveryAppBar => 'एन्क्रिप्शन कुंजी पुनर्प्राप्त करें';
+
+  @override
+  String get pinSetupHeading => 'एक पुनर्प्राप्ति PIN बनाएं';
+
+  @override
+  String get pinRecoveryHeading => 'अपनी पुनर्प्राप्ति PIN दर्ज करें';
+
+  @override
+  String get pinSetupBody =>
+      'यह PIN आपकी एन्क्रिप्शन कुंजी की सुरक्षा करता है। नए डिवाइस पर साइन इन करने पर आपको इसकी आवश्यकता होगी।';
+
+  @override
+  String get pinRecoveryBody =>
+      'आपके नोट्स एन्क्रिप्टेड हैं। इस डिवाइस पर उन्हें अनलॉक करने के लिए अपनी पुनर्प्राप्ति PIN दर्ज करें।';
+
+  @override
+  String get pinLabel => 'पुनर्प्राप्ति PIN (4–8 अंक)';
+
+  @override
+  String get pinConfirmLabel => 'PIN की पुष्टि करें';
+
+  @override
+  String get pinSetupDisclaimer =>
+      'आपका PIN इस डिवाइस से कभी नहीं जाता। आपकी एन्क्रिप्टेड कुंजी हमारे सर्वर पर संग्रहीत है ताकि आप पुनः इंस्टॉल पर इसे पुनर्प्राप्त कर सकें।';
+
+  @override
+  String get pinRecoveryDisclaimer =>
+      'आपका PIN इस डिवाइस से कभी नहीं जाता। केवल आपकी एन्क्रिप्टेड कुंजी हमारे सर्वर पर है — इसे PIN के बिना नहीं पढ़ा जा सकता।';
+
+  @override
+  String get pinForgot => 'PIN भूल गए? नए सिरे से शुरू करें';
+
+  @override
+  String get pinSignOut => 'साइन आउट';
+
+  @override
+  String get pinTooShort => 'PIN कम से कम 4 अक्षर का होना चाहिए।';
+
+  @override
+  String get pinMismatch => 'PINs मेल नहीं खाते।';
+
+  @override
+  String get pinRecoverError =>
+      'गलत PIN। एन्क्रिप्शन कुंजी पुनर्प्राप्त नहीं हो सकी।';
+
+  @override
+  String pinServerError(Object message) {
+    return 'सर्वर त्रुटि: $message';
+  }
+
+  @override
+  String get pinStartFreshTitle => 'नए सिरे से शुरू करें?';
+
+  @override
+  String get pinStartFreshBody =>
+      'इससे एक नई एन्क्रिप्शन कुंजी बनेगी। आपके मौजूदा नोट्स खो जाएंगे।\n\nयह क्रिया पूर्ववत नहीं हो सकती।';
+
+  @override
+  String get pinEntryAppBar => 'पुनर्प्राप्ति PIN दर्ज करें';
+
+  @override
+  String get pinEntryHeading => 'अपनी पुनर्प्राप्ति PIN दर्ज करें';
+
+  @override
+  String get pinEntryLabel => 'पुनर्प्राप्ति PIN';
+
+  @override
+  String get pinEntryNoKey =>
+      'कोई कुंजी नहीं मिली। कृपया सहायता से संपर्क करें।';
+
+  @override
+  String get pinEntryIncorrect => 'गलत PIN। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get pinSetupError =>
+      'एन्क्रिप्शन सेट अप विफल। कृपया पुनः प्रयास करें।';
+
+  @override
+  String pinLockedSeconds(int seconds) {
+    return 'बहुत अधिक विफल प्रयास। ${seconds}s में पुनः प्रयास करें।';
+  }
+
+  @override
+  String pinLockedMinutes(int minutes) {
+    return 'बहुत अधिक विफल प्रयास। ${minutes}m में पुनः प्रयास करें।';
+  }
+
+  @override
+  String get navAllNotes => 'सभी नोट्स';
+
+  @override
+  String get navCategories => 'श्रेणियाँ';
+
+  @override
+  String get navSearch => 'खोजें';
+
+  @override
+  String get navSettings => 'सेटिंग्स';
+
+  @override
+  String get homeNoCategoriesTitle =>
+      'अभी कोई श्रेणी नहीं।\nबनाने के लिए + टैप करें।';
+
+  @override
+  String get newCategoryDialogTitle => 'नई श्रेणी';
+
+  @override
+  String get categoryNameHint => 'श्रेणी का नाम';
+
+  @override
+  String get categoryColorLabel => 'रंग';
+
+  @override
+  String get categoryNameInUse => 'नाम पहले से उपयोग में है';
+
+  @override
+  String categoryLimitReached(int max, Object upgradeHint) {
+    return 'श्रेणी सीमा ($max) पूरी हो गई। $upgradeHint';
+  }
+
+  @override
+  String noteLimitReached(int max, Object upgradeHint) {
+    return 'नोट सीमा ($max) पूरी हो गई। $upgradeHint';
+  }
+
+  @override
+  String get upgradeHintFree => 'अधिक के लिए Pro में अपग्रेड करें।';
+
+  @override
+  String get upgradeHintNone => '';
+
+  @override
+  String get notesListTitleFallback => 'नोट्स';
+
+  @override
+  String get notesListEmptyTitle => 'अभी कोई नोट नहीं';
+
+  @override
+  String get notesListEmptyBody => 'अपना पहला नोट बनाने के लिए + टैप करें';
+
+  @override
+  String get noteUntitled => '(शीर्षक रहित)';
+
+  @override
+  String get noteDeletedSnack => 'नोट हटाया गया';
+
+  @override
+  String get deleteNoteTitle => 'नोट हटाएं?';
+
+  @override
+  String get deleteNoteBody => 'यह क्रिया पूर्ववत नहीं हो सकती।';
+
+  @override
+  String get privateAuthReason => 'इस निजी नोट को देखने के लिए प्रमाणित करें';
+
+  @override
+  String get renameCategory => 'नाम बदलें';
+
+  @override
+  String get changeCategoryColor => 'रंग बदलें';
+
+  @override
+  String get deleteCategoryAction => 'श्रेणी हटाएं';
+
+  @override
+  String get renameCategoryDialog => 'श्रेणी का नाम बदलें';
+
+  @override
+  String get categoryColorDialog => 'श्रेणी का रंग';
+
+  @override
+  String deleteCategoryConfirmTitle(Object name) {
+    return '\"$name\" हटाएं?';
+  }
+
+  @override
+  String get deleteCategoryConfirmBody =>
+      'इस श्रेणी के सभी नोट्स भी हटा दिए जाएंगे।';
+
+  @override
+  String get allNotesEmptyTitle => 'अभी कोई नोट नहीं';
+
+  @override
+  String get allNotesEmptyBody => 'एक श्रेणी बनाएं और अपना पहला नोट जोड़ें';
+
+  @override
+  String get allNotesCreateFirst => 'पहले एक श्रेणी बनाएं';
+
+  @override
+  String get editorNewTitle => 'नया नोट';
+
+  @override
+  String get editorEditTitle => 'नोट संपादित करें';
+
+  @override
+  String get editorSaving => 'सहेजा जा रहा है…';
+
+  @override
+  String editorSavedAt(Object time) {
+    return '$time को सहेजा गया';
+  }
+
+  @override
+  String get editorTitleHint => 'शीर्षक';
+
+  @override
+  String get editorBodyHint => 'लिखना शुरू करें…';
+
+  @override
+  String get editorChangeCategory => 'श्रेणी बदलें';
+
+  @override
+  String get editorNewCategoryEntry => 'नई श्रेणी…';
+
+  @override
+  String get editorTooltipPublic => 'सार्वजनिक';
+
+  @override
+  String get editorTooltipPrivate => 'निजी';
+
+  @override
+  String get editorTooltipDelete => 'नोट हटाएं';
+
+  @override
+  String get editorTooltipEdit => 'नोट संपादित करें';
+
+  @override
+  String get editorTooltipCopy => 'नोट कॉपी करें';
+
+  @override
+  String get editorCopyMenuItem => 'नोट कॉपी करें';
+
+  @override
+  String get editorCopiedSnack => 'नोट कॉपी किया गया';
+
+  @override
+  String get editorSttRecord => 'आवाज़ रिकॉर्ड करें';
+
+  @override
+  String get editorSttStop => 'रिकॉर्डिंग बंद करें';
+
+  @override
+  String get searchHint => 'नोट्स खोजें…';
+
+  @override
+  String get searchIdleTitle => 'अपने नोट्स खोजें';
+
+  @override
+  String get searchIdleBody =>
+      'कीवर्ड टाइप करें या प्रश्न पूछें। \nनिजी नोट्स अनदेखे किए जाते हैं।';
+
+  @override
+  String searchNoResults(Object query) {
+    return '\"$query\" के लिए कोई परिणाम नहीं';
+  }
+
+  @override
+  String get searchTryDifferent => 'अलग कीवर्ड आज़माएं';
+
+  @override
+  String searchMoreLines(int count) {
+    return '+$count और पंक्तियाँ';
+  }
+
+  @override
+  String get searchTryAiHint => 'जो ढूंढ रहे थे वह नहीं मिला? AI खोज आज़माएं';
+
+  @override
+  String get searchNoResultsAiCta =>
+      'कोई परिणाम नहीं मिला। AI खोज करने के लिए क्लिक करें';
+
+  @override
+  String get searchHistoryButtonTooltip => 'AI खोज इतिहास';
+
+  @override
+  String get searchBackToResults => 'परिणामों पर वापस जाएं';
+
+  @override
+  String get widgetSearchTitle => 'अपने नोट्स खोजें';
+
+  @override
+  String get aiSearchTitle => 'AI खोज';
+
+  @override
+  String get aiSearchHint => 'अपने नोट्स के बारे में पूछें…';
+
+  @override
+  String get aiSearchLoading => 'आपके नोट्स खोजे जा रहे हैं…';
+
+  @override
+  String get aiSearchIdleTitle => 'अपने नोट्स के बारे में कुछ भी पूछें';
+
+  @override
+  String get aiSearchIdleBody =>
+      'AI आपके नोट्स खोजता है और उत्तर तैयार करता है';
+
+  @override
+  String get aiSearchSuggestion1 => 'मेरे वर्कआउट नोट्स का सारांश दें';
+
+  @override
+  String get aiSearchSuggestion2 => 'मैंने काम के बारे में क्या लिखा?';
+
+  @override
+  String get aiSearchSuggestion3 => 'मेरे लक्ष्यों के बारे में नोट्स खोजें';
+
+  @override
+  String get aiSearchSuggestion4 => 'मेरी यात्रा की योजनाएं क्या हैं?';
+
+  @override
+  String get aiSearchSources => 'स्रोत';
+
+  @override
+  String get aiSearchFromCache => 'कैश से';
+
+  @override
+  String get aiSearchRateTitle => 'दर सीमा पूरी हो गई';
+
+  @override
+  String aiSearchRateSeconds(int seconds) {
+    return '${seconds}s में पुनः प्रयास करें';
+  }
+
+  @override
+  String aiSearchRateMinutes(int minutes) {
+    return '${minutes}m में पुनः प्रयास करें';
+  }
+
+  @override
+  String aiSearchRateResetsAt(Object time) {
+    return '$time पर रीसेट होगा';
+  }
+
+  @override
+  String get aiSearchRateDefault => 'कृपया फिर से खोजने से पहले प्रतीक्षा करें';
+
+  @override
+  String get aiHistoryTitle => 'AI खोज इतिहास';
+
+  @override
+  String get aiHistoryEmpty => 'अभी कोई खोज इतिहास नहीं';
+
+  @override
+  String get aiHistoryRelativeNow => 'अभी-अभी';
+
+  @override
+  String aiHistoryRelativeMinutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count मिनट पहले',
+      one: '1 मिनट पहले',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String aiHistoryRelativeHours(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count घंटे पहले',
+      one: '1 घंटे पहले',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String aiHistoryRelativeDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count दिन पहले',
+      one: '1 दिन पहले',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get settingsTitle => 'सेटिंग्स';
+
+  @override
+  String get settingsSectionAccount => 'खाता';
+
+  @override
+  String get settingsSectionUsage => 'उपयोग';
+
+  @override
+  String get settingsSectionUpgrade => 'अपग्रेड';
+
+  @override
+  String get settingsSectionApp => 'ऐप';
+
+  @override
+  String get settingsSectionLanguage => 'भाषा';
+
+  @override
+  String get settingsUnknownUser => 'अज्ञात';
+
+  @override
+  String get settingsTierFree => 'निःशुल्क';
+
+  @override
+  String get settingsTierPro => 'Pro';
+
+  @override
+  String get settingsUsageAi => 'आज की AI खोजें';
+
+  @override
+  String get settingsUsageNotes => 'नोट्स';
+
+  @override
+  String get settingsUsageCategories => 'श्रेणियाँ';
+
+  @override
+  String get settingsUpgradeTitle => 'Pro में अपग्रेड करें';
+
+  @override
+  String get settingsUpgradeSubtitle =>
+      '50 AI खोजें/दिन · 1000 नोट्स · 50 श्रेणियाँ';
+
+  @override
+  String get settingsUpgradeDialogBody =>
+      'Pro आपको 50 AI खोजें/दिन, 1000 नोट्स, 50 श्रेणियाँ और प्रति नोट 20,000 अक्षर देता है।';
+
+  @override
+  String get contactUsMessageHint => 'आपका संदेश (वैकल्पिक)…';
+
+  @override
+  String get contactUsNoEmailApp =>
+      'कोई ईमेल ऐप नहीं मिला। कृपया हमें ईमेल करें:';
+
+  @override
+  String get contactUsCopied => 'ईमेल पता कॉपी किया गया';
+
+  @override
+  String get settingsSignOut => 'साइन आउट';
+
+  @override
+  String get settingsLanguageDeviceDefault => 'डिवाइस डिफ़ॉल्ट';
+
+  @override
+  String get settingsLanguageEnglish => 'English';
+
+  @override
+  String get settingsLanguageHebrew => 'עברית';
+
+  @override
+  String get settingsLanguageGerman => 'Deutsch';
+
+  @override
+  String get settingsLanguageHindi => 'हिन्दी';
+
+  @override
+  String get settingsLanguageSpanish => 'Español';
+
+  @override
+  String get settingsLanguageFrench => 'Français';
+
+  @override
+  String get widgetComposeTitle => 'नया नोट';
+
+  @override
+  String get widgetComposeDiscardTitle => 'नोट त्यागें?';
+
+  @override
+  String get widgetComposeDiscardBody => 'आपका नोट सहेजा नहीं जाएगा।';
+
+  @override
+  String get widgetComposeNoCategories =>
+      'कोई श्रेणी नहीं मिली।\nपहले एक बनाने के लिए MindVault खोलें।';
+
+  @override
+  String get widgetComposeCategoryLabel => 'श्रेणी';
+
+  @override
+  String get widgetViewEditTitle => 'नोट संपादित करें';
+
+  @override
+  String get widgetViewEdit => 'संपादित करें';
+
+  @override
+  String get widgetViewDelete => 'हटाएं';
+
+  @override
+  String get widgetViewUnlocking => 'अनलॉक हो रहा है…';
+
+  @override
+  String get widgetViewNoContent => 'कोई सामग्री नहीं';
+
+  @override
+  String get widgetViewNotFound => 'नोट नहीं मिला';
+
+  @override
+  String get widgetViewDiscardTitle => 'परिवर्तन त्यागें?';
+
+  @override
+  String get widgetViewDiscardBody => 'आपके संपादन सहेजे नहीं जाएंगे।';
+
+  @override
+  String get widgetViewKeepEditing => 'संपादन जारी रखें';
+}

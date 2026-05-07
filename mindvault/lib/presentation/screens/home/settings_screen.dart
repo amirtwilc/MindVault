@@ -204,6 +204,12 @@ class SettingsScreen extends ConsumerWidget {
         return l.settingsLanguageHebrew;
       case 'de':
         return l.settingsLanguageGerman;
+      case 'hi':
+        return l.settingsLanguageHindi;
+      case 'es':
+        return l.settingsLanguageSpanish;
+      case 'fr':
+        return l.settingsLanguageFrench;
       default:
         return locale.languageCode;
     }
@@ -217,8 +223,11 @@ class SettingsScreen extends ConsumerWidget {
     final entries = <(Locale?, String)>[
       (null, l.settingsLanguageDeviceDefault),
       (const Locale('en'), l.settingsLanguageEnglish),
-      (const Locale('he'), l.settingsLanguageHebrew),
       (const Locale('de'), l.settingsLanguageGerman),
+      (const Locale('es'), l.settingsLanguageSpanish),
+      (const Locale('fr'), l.settingsLanguageFrench),
+      (const Locale('he'), l.settingsLanguageHebrew),
+      (const Locale('hi'), l.settingsLanguageHindi),
     ];
 
     await showDialog<void>(
