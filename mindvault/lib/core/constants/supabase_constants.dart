@@ -20,6 +20,7 @@ class SupabaseConstants {
 
   // Tables
   static const String profilesTable = 'profiles';
+  static const String tierLimitsTable = 'tier_limits';
   static const String categoriesTable = 'categories';
   static const String notesTable = 'notes';
   static const String userKeysTable = 'user_keys';

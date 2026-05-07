@@ -10,18 +10,18 @@ final userProfileDatasourceProvider =
   return SupabaseUserProfileDatasource(ref.watch(supabaseClientProvider));
 });
 
-/// Resolves the current user's TierLimits from Supabase.
+/// Resolves the current user's TierLimits from Supabase (reads the
+/// tier_limits table — single source of truth).
 /// Falls back to TierLimits.free() if the user is not logged in or the
-/// network is unavailable — so the app always has a valid set of limits.
+/// network is unavailable.
 final tierProvider = FutureProvider<TierLimits>((ref) async {
   final user = ref.watch(currentUserProvider);
   if (user == null) return TierLimits.free();
 
   try {
-    final tier = await ref
+    return await ref
         .read(userProfileDatasourceProvider)
-        .fetchTier(user.id);
-    return tierLimitsFromName(tier);
+        .fetchTierLimits(user.id);
   } catch (_) {
     return TierLimits.free();
   }

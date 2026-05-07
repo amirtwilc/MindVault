@@ -405,10 +405,15 @@ class _ThrowingBackend implements AiBackend {
 }
 
 class _RecordingErrorLogger implements ErrorLogger {
-  final List<({String source, String message})> entries = [];
+  final List<({String source, String message, Map<String, dynamic>? context})>
+      entries = [];
 
   @override
-  Future<void> report({required String source, required String message}) async {
-    entries.add((source: source, message: message));
+  Future<void> report({
+    required String source,
+    required String message,
+    Map<String, dynamic>? context,
+  }) async {
+    entries.add((source: source, message: message, context: context));
   }
 }

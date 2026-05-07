@@ -6,13 +6,37 @@
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
+-- ── tier_limits ─────────────────────────────────────────────
+-- Single source of truth for per-tier quota values.
+-- The Flutter client and the ai-search edge function both read
+-- from this table so there is no duplication. Add a new row to
+-- introduce a new tier; update an existing row to change limits.
+CREATE TABLE IF NOT EXISTS tier_limits (
+  tier                TEXT PRIMARY KEY,
+  max_notes           INT  NOT NULL,
+  max_categories      INT  NOT NULL,
+  max_chars_per_note  INT  NOT NULL,
+  ai_searches_per_day INT  NOT NULL
+);
+
+ALTER TABLE tier_limits ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Anyone can read tier limits" ON tier_limits;
+CREATE POLICY "Anyone can read tier limits" ON tier_limits
+  FOR SELECT USING (true);
+
+-- Seed default tiers. ON CONFLICT DO NOTHING so re-running the script
+-- never overwrites manual adjustments made in the dashboard.
+INSERT INTO tier_limits (tier, max_notes, max_categories, max_chars_per_note, ai_searches_per_day) VALUES
+  ('free', 100,  10,  5000,  5),
+  ('pro',  1000, 50, 20000, 50)
+ON CONFLICT (tier) DO NOTHING;
+
 -- ── profiles ────────────────────────────────────────────────
--- One row per auth user. `tier` drives quota enforcement
--- (mirrors TierLimits in lib/domain/entities/tier_limits.dart
--- and the TIER_LIMITS map in supabase/functions/ai-search/index.ts).
+-- One row per auth user. `tier` references tier_limits.tier.
 CREATE TABLE IF NOT EXISTS profiles (
   id          UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  tier        TEXT NOT NULL DEFAULT 'free' CHECK (tier IN ('free', 'pro')),
+  tier        TEXT NOT NULL DEFAULT 'free' REFERENCES tier_limits(tier),
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
@@ -103,7 +127,7 @@ DO $$ BEGIN
     SELECT 1 FROM information_schema.columns
     WHERE table_name = 'ai_usage' AND column_name = 'tokens_used'
   ) THEN
-    DROP TABLE IF EXISTS ai_usage;
+    DROP TABLE IF EXISTS ai_usage CASCADE;
   END IF;
 END $$;
 
@@ -128,12 +152,15 @@ CREATE POLICY "Users manage own ai_usage" ON ai_usage
 -- Stored fields are intentionally minimal so nothing user-private
 -- (note titles, bodies, queries) leaks into observability.
 CREATE TABLE IF NOT EXISTS error_logs (
-  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id      UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  id           UUID  PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id      UUID  REFERENCES profiles(id) ON DELETE CASCADE,
   occurred_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
   source       TEXT,
-  message      TEXT NOT NULL
+  message      TEXT  NOT NULL,
+  context      JSONB
 );
+-- Idempotent upgrade path for existing installs that predate the context column.
+ALTER TABLE error_logs ADD COLUMN IF NOT EXISTS context JSONB;
 
 CREATE INDEX IF NOT EXISTS idx_error_logs_user_time
   ON error_logs (user_id, occurred_at DESC);
@@ -183,8 +210,8 @@ SELECT
   (SELECT COUNT(*) FROM profiles WHERE created_at::date = CURRENT_DATE)                                  AS signups_today,
   (SELECT COUNT(*) FROM profiles WHERE created_at >= NOW() - INTERVAL '7 days')                          AS signups_7d,
   (SELECT COUNT(*) FROM profiles WHERE created_at >= NOW() - INTERVAL '30 days')                         AS signups_30d,
-  (SELECT COUNT(*) FROM ai_usage WHERE queried_at::date = CURRENT_DATE)                                  AS ai_queries_today,
-  (SELECT COUNT(*) FROM ai_usage WHERE queried_at >= NOW() - INTERVAL '7 days')                          AS ai_queries_7d,
+  (SELECT COUNT(*) FROM ai_usage WHERE usage_date = CURRENT_DATE)                                        AS ai_queries_today,
+  (SELECT COUNT(*) FROM ai_usage WHERE usage_date >= CURRENT_DATE - INTERVAL '7 days')                  AS ai_queries_7d,
   (SELECT COUNT(DISTINCT user_id) FROM analytics_events WHERE created_at::date = CURRENT_DATE)           AS dau_today,
   (SELECT COUNT(*) FROM analytics_events WHERE event_type = 'note_created' AND created_at::date = CURRENT_DATE) AS notes_created_today,
   (SELECT COUNT(*) FROM analytics_events WHERE event_type = 'note_created' AND created_at >= NOW() - INTERVAL '7 days') AS notes_created_7d,
@@ -200,10 +227,10 @@ CREATE OR REPLACE VIEW v_analytics_signups_daily AS
 
 -- AI query volume per day (last 30 days)
 CREATE OR REPLACE VIEW v_analytics_ai_daily AS
-  SELECT queried_at::date AS usage_date, COUNT(*) AS total_queries, COUNT(DISTINCT user_id) AS active_ai_users
+  SELECT usage_date, COUNT(*) AS total_queries, COUNT(DISTINCT user_id) AS active_ai_users
   FROM ai_usage
-  WHERE queried_at >= NOW() - INTERVAL '30 days'
-  GROUP BY queried_at::date
+  WHERE usage_date >= CURRENT_DATE - INTERVAL '30 days'
+  GROUP BY usage_date
   ORDER BY usage_date DESC;
 
 -- Daily active users (last 30 days)
@@ -224,11 +251,13 @@ CREATE OR REPLACE VIEW v_analytics_events_daily AS
 
 -- ── Auto-provision profile + default category on signup ─────
 CREATE OR REPLACE FUNCTION handle_new_user()
-RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $$
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
-  INSERT INTO profiles (id) VALUES (NEW.id)
+  INSERT INTO public.profiles (id) VALUES (NEW.id)
     ON CONFLICT (id) DO NOTHING;
-  INSERT INTO categories (user_id, name, sort_order)
+  INSERT INTO public.categories (user_id, name, sort_order)
     VALUES (NEW.id, 'General', 0)
     ON CONFLICT DO NOTHING;
   RETURN NEW;
@@ -243,5 +272,17 @@ CREATE TRIGGER on_auth_user_created
 -- ── Realtime ────────────────────────────────────────────────
 -- The Flutter app subscribes to notes + categories changes to
 -- keep multiple devices in sync.
-ALTER PUBLICATION supabase_realtime ADD TABLE notes;
-ALTER PUBLICATION supabase_realtime ADD TABLE categories;
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime' AND tablename = 'notes'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE notes;
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime' AND tablename = 'categories'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE categories;
+  END IF;
+END $$;

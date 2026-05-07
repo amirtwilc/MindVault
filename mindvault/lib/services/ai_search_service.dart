@@ -11,6 +11,17 @@ import '../data/local/database/app_database.dart';
 import '../domain/entities/note.dart';
 import 'error_log_service.dart';
 
+// ── Structured backend error ──────────────────────────────────────────────────
+
+class AiBackendException implements Exception {
+  final String message;
+  final int httpStatus;
+  const AiBackendException(this.message, {required this.httpStatus});
+
+  @override
+  String toString() => message;
+}
+
 // ── Backend abstraction (injectable for tests) ────────────────────────────────
 
 abstract interface class AiBackend {
@@ -42,7 +53,7 @@ class SupabaseAiBackend implements AiBackend {
     final msg = (res.data as Map?)?.containsKey('error') == true
         ? res.data['error'] as String
         : 'Request failed (${res.status})';
-    throw Exception(msg);
+    throw AiBackendException(msg, httpStatus: res.status ?? 0);
   }
 }
 
@@ -205,8 +216,11 @@ class AiSearchService {
       );
     } catch (e) {
       // Fire-and-forget — the logger swallows its own failures.
-      unawaited(
-          _errorLogger.report(source: 'ai_search', message: e.toString()));
+      final ctx = e is AiBackendException
+          ? <String, dynamic>{'http_status': e.httpStatus}
+          : null;
+      unawaited(_errorLogger.report(
+          source: 'ai_search', message: e.toString(), context: ctx));
       yield AiErrorEvent(_friendlyError(e.toString()));
     }
   }
