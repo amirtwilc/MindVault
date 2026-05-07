@@ -414,6 +414,19 @@ class AppStringsEn extends AppStrings {
   String get aiSearchRateDefault => 'Please wait before searching again';
 
   @override
+  String get aiInfoTitle => 'About AI Search';
+
+  @override
+  String get aiInfoBody =>
+      'AI Search reads your notes to answer your question.\n\n🔒 Private notes are never sent to AI.\n\n📄 Very long notes are shortened before being sent.';
+
+  @override
+  String get aiInfoDismiss => 'Got it';
+
+  @override
+  String get aiAnswerCopied => 'Copied to clipboard';
+
+  @override
   String get aiHistoryTitle => 'AI Search History';
 
   @override

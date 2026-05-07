@@ -151,6 +151,10 @@
   "aiSearchRateResetsAt": "Réinitialisation à {time}",
   "@aiSearchRateResetsAt": { "placeholders": { "time": {} } },
   "aiSearchRateDefault": "Veuillez patienter avant de relancer une recherche",
+  "aiInfoTitle": "À propos de la recherche IA",
+  "aiInfoBody": "La recherche IA lit vos notes pour répondre à votre question.\n\n🔒 Les notes privées ne sont jamais envoyées à l'IA.\n\n📄 Les notes très longues sont raccourcies avant l'envoi.",
+  "aiInfoDismiss": "Compris",
+  "aiAnswerCopied": "Copié dans le presse-papiers",
 
   "aiHistoryTitle": "Historique de recherche IA",
   "aiHistoryEmpty": "Aucun historique de recherche pour l'instant",

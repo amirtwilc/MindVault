@@ -151,6 +151,10 @@
   "aiSearchRateResetsAt": "מתאפס ב-{time}",
   "@aiSearchRateResetsAt": { "placeholders": { "time": {} } },
   "aiSearchRateDefault": "אנא המתן לפני חיפוש נוסף",
+  "aiInfoTitle": "על חיפוש AI",
+  "aiInfoBody": "חיפוש AI קורא את הפתקים שלך כדי לענות על שאלתך.\n\n🔒 פתקים פרטיים לעולם אינם נשלחים ל-AI.\n\n📄 פתקים ארוכים מאוד מקוצרים לפני השליחה.",
+  "aiInfoDismiss": "הבנתי",
+  "aiAnswerCopied": "הועתק ללוח",
 
   "aiHistoryTitle": "היסטוריית חיפוש AI",
   "aiHistoryEmpty": "אין היסטוריית חיפוש עדיין",

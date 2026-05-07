@@ -416,6 +416,19 @@ class AppStringsHi extends AppStrings {
   String get aiSearchRateDefault => 'कृपया फिर से खोजने से पहले प्रतीक्षा करें';
 
   @override
+  String get aiInfoTitle => 'AI खोज के बारे में';
+
+  @override
+  String get aiInfoBody =>
+      'AI खोज आपके नोट्स पढ़कर आपके सवाल का जवाब देती है।\n\n🔒 निजी नोट्स कभी AI को नहीं भेजे जाते।\n\n📄 बहुत लंबे नोट्स भेजने से पहले छोटे कर दिए जाते हैं।';
+
+  @override
+  String get aiInfoDismiss => 'समझ गया';
+
+  @override
+  String get aiAnswerCopied => 'क्लिपबोर्ड पर कॉपी किया गया';
+
+  @override
   String get aiHistoryTitle => 'AI खोज इतिहास';
 
   @override

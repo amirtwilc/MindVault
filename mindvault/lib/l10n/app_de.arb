@@ -151,6 +151,10 @@
   "aiSearchRateResetsAt": "Zurückgesetzt um {time}",
   "@aiSearchRateResetsAt": { "placeholders": { "time": {} } },
   "aiSearchRateDefault": "Bitte warte vor der nächsten Suche",
+  "aiInfoTitle": "Über die KI-Suche",
+  "aiInfoBody": "Die KI-Suche liest deine Notizen, um deine Frage zu beantworten.\n\n🔒 Private Notizen werden nie an die KI gesendet.\n\n📄 Sehr lange Notizen werden vor dem Senden gekürzt.",
+  "aiInfoDismiss": "Verstanden",
+  "aiAnswerCopied": "In die Zwischenablage kopiert",
 
   "aiHistoryTitle": "KI-Suchverlauf",
   "aiHistoryEmpty": "Noch kein Suchverlauf",

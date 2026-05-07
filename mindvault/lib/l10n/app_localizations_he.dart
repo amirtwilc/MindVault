@@ -409,6 +409,19 @@ class AppStringsHe extends AppStrings {
   String get aiSearchRateDefault => 'אנא המתן לפני חיפוש נוסף';
 
   @override
+  String get aiInfoTitle => 'על חיפוש AI';
+
+  @override
+  String get aiInfoBody =>
+      'חיפוש AI קורא את הפתקים שלך כדי לענות על שאלתך.\n\n🔒 פתקים פרטיים לעולם אינם נשלחים ל-AI.\n\n📄 פתקים ארוכים מאוד מקוצרים לפני השליחה.';
+
+  @override
+  String get aiInfoDismiss => 'הבנתי';
+
+  @override
+  String get aiAnswerCopied => 'הועתק ללוח';
+
+  @override
   String get aiHistoryTitle => 'היסטוריית חיפוש AI';
 
   @override
