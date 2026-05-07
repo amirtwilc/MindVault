@@ -64,7 +64,21 @@ UPDATE user_profiles SET tier = 'pro' WHERE user_id = auth.uid();
 
 ## Tier limits
 
-Defined in `lib/domain/entities/tier_limits.dart`. **Change these constants to adjust limits for all users** — also update the matching `TIER_LIMITS` object in `supabase/functions/ai-search/index.ts`.
+Stored in the `tier_limits` Supabase table — the single source of truth.
+**To change limits for all users, update the table row in the Supabase dashboard:**
+
+```sql
+UPDATE tier_limits SET ai_searches_per_day = 10 WHERE tier = 'free';
+```
+
+The Flutter client reads limits via `SupabaseUserProfileDatasource.fetchTierLimits()`.
+The edge function reads them directly from the table. No code changes or redeployment
+needed when adjusting limits.
+
+`TierLimits.free()` and `TierLimits.pro()` in `lib/domain/entities/tier_limits.dart`
+are **offline fallbacks only** and do not need to match the live table values.
+
+Default values (seeded on schema creation):
 
 | Limit | Free | Pro |
 |-------|------|-----|

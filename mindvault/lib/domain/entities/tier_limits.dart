@@ -12,12 +12,10 @@ class TierLimits with _$TierLimits {
     required int aiSearchesPerDay,
   }) = _TierLimits;
 
-  // ── Tier limit values ────────────────────────────────────────────────────────
-  // IMPORTANT: When you change any number here, you MUST also update the
-  // matching `TIER_LIMITS` constant at the top of
-  // `supabase/functions/ai-search/index.ts` and redeploy the edge function.
-  // The client enforces limits locally; the server enforces them authoritatively.
-  // Both must agree or users will hit unexpected 429s / bypass client-side guards.
+  // ── Offline fallback values ───────────────────────────────────────────────
+  // Used when Supabase is unreachable. The authoritative values live in the
+  // `tier_limits` Supabase table and are fetched on every app launch via
+  // SupabaseUserProfileDatasource.fetchTierLimits().
   factory TierLimits.free() => const TierLimits(
         tier: 'free',
         maxNotes: 100,

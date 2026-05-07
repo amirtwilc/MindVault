@@ -1,19 +1,33 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/constants/supabase_constants.dart';
+import '../../../domain/entities/tier_limits.dart';
 
 class SupabaseUserProfileDatasource {
   final SupabaseClient _client;
   SupabaseUserProfileDatasource(this._client);
 
-  /// Returns the user's tier ('free' or 'pro'). Falls back to 'free' when the
-  /// profile row is missing — the on-signup trigger should populate it, but
-  /// pre-trigger users or transient errors must not lock anyone out.
-  Future<String> fetchTier(String userId) async {
+  /// Fetches the user's tier and its associated limits in a single query via
+  /// PostgREST's embedded resource syntax (inner join on tier_limits).
+  /// Falls back to [TierLimits.free()] on any error or missing row so the app
+  /// always has a valid set of limits.
+  Future<TierLimits> fetchTierLimits(String userId) async {
     final res = await _client
         .from(SupabaseConstants.profilesTable)
-        .select('tier')
+        .select('tier, tier_limits(*)')
         .eq('id', userId)
         .maybeSingle();
-    return res?['tier'] as String? ?? 'free';
+
+    final tier = res?['tier'] as String? ?? 'free';
+    final limits = res?['tier_limits'] as Map<String, dynamic>?;
+
+    if (limits == null) return tierLimitsFromName(tier);
+
+    return TierLimits(
+      tier: tier,
+      maxNotes: limits['max_notes'] as int,
+      maxCategories: limits['max_categories'] as int,
+      maxCharsPerNote: limits['max_chars_per_note'] as int,
+      aiSearchesPerDay: limits['ai_searches_per_day'] as int,
+    );
   }
 }

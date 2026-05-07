@@ -28,8 +28,10 @@
 ```bash
 # Install Supabase CLI if not already: https://supabase.com/docs/guides/cli
 npx supabase functions deploy ai-search --project-ref <your-project-ref>
-# Set the Gemini API key as a secret:
-npx supabase secrets set GEMINI_API_KEY=<your-key> --project-ref <your-project-ref>
+# Set the AI API key as a secret (currently backed by Gemini):
+npx supabase secrets set AI_API_KEY=<your-key> --project-ref <your-project-ref>
 ```
 
-The function reads `SUPABASE_URL`, `SUPABASE_ANON_KEY` from the runtime automatically.
+The function reads `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY`
+from the runtime automatically. The service-role key is used to write server-side error
+logs to `error_logs` when the AI API call fails.

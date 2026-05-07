@@ -11,17 +11,19 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 abstract interface class ErrorLogger {
   /// Records an exception. `source` is a short tag identifying the
   /// component (e.g. `ai_search`); `message` is the exception's
-  /// `toString()`. Call sites should NOT include user-private content
-  /// (note titles, bodies, queries) in either field — this table is
-  /// observability, not analytics.
-  Future<void> report({required String source, required String message});
+  /// `toString()`. Optional `context` carries structured metadata
+  /// (e.g. `{'http_status': 502}`). Call sites should NOT include
+  /// user-private content (note titles, bodies, queries) in any field.
+  Future<void> report({
+    required String source,
+    required String message,
+    Map<String, dynamic>? context,
+  });
 }
 
 class SupabaseErrorLogger implements ErrorLogger {
   final SupabaseClient _client;
 
-  // Hard cap on stored message length so a runaway exception trace
-  // can't blow up the row size.
   static const int _maxMessageLen = 2000;
 
   SupabaseErrorLogger(this._client);
@@ -30,6 +32,7 @@ class SupabaseErrorLogger implements ErrorLogger {
   Future<void> report({
     required String source,
     required String message,
+    Map<String, dynamic>? context,
   }) async {
     try {
       final user = _client.auth.currentUser;
@@ -41,10 +44,10 @@ class SupabaseErrorLogger implements ErrorLogger {
         'user_id': user.id,
         'source': source,
         'message': trimmed,
+        if (context != null) 'context': context,
       });
     } catch (_) {
       // Swallow — offline, RLS rejection, table missing, anything.
-      // The user-visible flow must not depend on this succeeding.
     }
   }
 }
@@ -54,5 +57,9 @@ class NoopErrorLogger implements ErrorLogger {
   const NoopErrorLogger();
 
   @override
-  Future<void> report({required String source, required String message}) async {}
+  Future<void> report({
+    required String source,
+    required String message,
+    Map<String, dynamic>? context,
+  }) async {}
 }
