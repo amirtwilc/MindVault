@@ -11,8 +11,8 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // Service-role client for reads that bypass RLS (tier_limits, error_logs writes).
-// Instantiated once at module scope — edge function instances are single-request,
-// so this is effectively per-request but avoids re-allocation on warm paths.
+// Module-scope instantiation is safe: the client is stateless (no auth session),
+// so warm instance reuse by the Deno runtime doesn't leak state between requests.
 const adminClient = createClient(
   Deno.env.get("SUPABASE_URL")!,
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
@@ -219,6 +219,9 @@ Deno.serve(async (req: Request) => {
   }
 
   if (!usedModel) {
+    // Two failure modes reaching here:
+    // (a) every model returned 429 → skippedModels is full → 503
+    // (b) a non-429 error (4xx/5xx) broke the loop early → lastError is set → 502
     if (skippedModels.length === AI_MODELS.length) {
       await logError(
         adminClient,

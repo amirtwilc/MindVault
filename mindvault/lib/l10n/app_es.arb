@@ -151,6 +151,10 @@
   "aiSearchRateResetsAt": "Se restablece a las {time}",
   "@aiSearchRateResetsAt": { "placeholders": { "time": {} } },
   "aiSearchRateDefault": "Por favor espera antes de buscar de nuevo",
+  "aiInfoTitle": "Acerca de la búsqueda IA",
+  "aiInfoBody": "La búsqueda IA lee tus notas para responder tu pregunta.\n\n🔒 Las notas privadas nunca se envían a la IA.\n\n📄 Las notas muy largas se acortan antes de enviarse.",
+  "aiInfoDismiss": "Entendido",
+  "aiAnswerCopied": "Copiado al portapapeles",
 
   "aiHistoryTitle": "Historial de búsqueda IA",
   "aiHistoryEmpty": "Sin historial de búsqueda aún",

@@ -418,6 +418,19 @@ class AppStringsDe extends AppStrings {
   String get aiSearchRateDefault => 'Bitte warte vor der nächsten Suche';
 
   @override
+  String get aiInfoTitle => 'Über die KI-Suche';
+
+  @override
+  String get aiInfoBody =>
+      'Die KI-Suche liest deine Notizen, um deine Frage zu beantworten.\n\n🔒 Private Notizen werden nie an die KI gesendet.\n\n📄 Sehr lange Notizen werden vor dem Senden gekürzt.';
+
+  @override
+  String get aiInfoDismiss => 'Verstanden';
+
+  @override
+  String get aiAnswerCopied => 'In die Zwischenablage kopiert';
+
+  @override
   String get aiHistoryTitle => 'KI-Suchverlauf';
 
   @override

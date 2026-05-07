@@ -417,6 +417,19 @@ class AppStringsEs extends AppStrings {
   String get aiSearchRateDefault => 'Por favor espera antes de buscar de nuevo';
 
   @override
+  String get aiInfoTitle => 'Acerca de la búsqueda IA';
+
+  @override
+  String get aiInfoBody =>
+      'La búsqueda IA lee tus notas para responder tu pregunta.\n\n🔒 Las notas privadas nunca se envían a la IA.\n\n📄 Las notas muy largas se acortan antes de enviarse.';
+
+  @override
+  String get aiInfoDismiss => 'Entendido';
+
+  @override
+  String get aiAnswerCopied => 'Copiado al portapapeles';
+
+  @override
   String get aiHistoryTitle => 'Historial de búsqueda IA';
 
   @override

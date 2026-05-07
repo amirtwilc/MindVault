@@ -844,6 +844,30 @@ abstract class AppStrings {
   /// **'Please wait before searching again'**
   String get aiSearchRateDefault;
 
+  /// No description provided for @aiInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About AI Search'**
+  String get aiInfoTitle;
+
+  /// No description provided for @aiInfoBody.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Search reads your notes to answer your question.\n\n🔒 Private notes are never sent to AI.\n\n📄 Very long notes are shortened before being sent.'**
+  String get aiInfoBody;
+
+  /// No description provided for @aiInfoDismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get aiInfoDismiss;
+
+  /// No description provided for @aiAnswerCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard'**
+  String get aiAnswerCopied;
+
   /// No description provided for @aiHistoryTitle.
   ///
   /// In en, this message translates to:

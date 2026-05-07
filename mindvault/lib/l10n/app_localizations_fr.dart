@@ -422,6 +422,19 @@ class AppStringsFr extends AppStrings {
       'Veuillez patienter avant de relancer une recherche';
 
   @override
+  String get aiInfoTitle => 'À propos de la recherche IA';
+
+  @override
+  String get aiInfoBody =>
+      'La recherche IA lit vos notes pour répondre à votre question.\n\n🔒 Les notes privées ne sont jamais envoyées à l\'IA.\n\n📄 Les notes très longues sont raccourcies avant l\'envoi.';
+
+  @override
+  String get aiInfoDismiss => 'Compris';
+
+  @override
+  String get aiAnswerCopied => 'Copié dans le presse-papiers';
+
+  @override
   String get aiHistoryTitle => 'Historique de recherche IA';
 
   @override

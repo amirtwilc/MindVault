@@ -57,6 +57,23 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with SttMixin {
     ref.read(aiSearchProvider.notifier).search(q);
   }
 
+  void _showAiInfoDialog() {
+    final l = AppStrings.of(context);
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l.aiInfoTitle),
+        content: Text(l.aiInfoBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l.aiInfoDismiss),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final query = ref.watch(searchQueryProvider);
@@ -165,6 +182,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with SttMixin {
         cs: cs,
         tt: tt,
         onAiSearch: _triggerAiSearch,
+        onInfo: _showAiInfoDialog,
       );
     }
     return _ResultsWithAiCta(
@@ -174,6 +192,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with SttMixin {
       cs: cs,
       tt: tt,
       onAiSearch: _triggerAiSearch,
+      onInfo: _showAiInfoDialog,
     );
   }
 }
@@ -299,12 +318,14 @@ class _NoResultsWithAiCta extends StatelessWidget {
   final ColorScheme cs;
   final TextTheme tt;
   final VoidCallback onAiSearch;
+  final VoidCallback onInfo;
 
   const _NoResultsWithAiCta({
     super.key,
     required this.cs,
     required this.tt,
     required this.onAiSearch,
+    required this.onInfo,
   });
 
   @override
@@ -329,6 +350,18 @@ class _NoResultsWithAiCta extends StatelessWidget {
               icon: const Icon(Icons.auto_awesome_rounded, size: 18),
               label: const Text('AI Search'),
             ),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: onInfo,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.info_outline_rounded, size: 14, color: cs.outline),
+                  const SizedBox(width: 4),
+                  Text(l.aiInfoTitle, style: tt.labelSmall?.copyWith(color: cs.outline)),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -344,6 +377,7 @@ class _ResultsWithAiCta extends StatelessWidget {
   final ColorScheme cs;
   final TextTheme tt;
   final VoidCallback onAiSearch;
+  final VoidCallback onInfo;
 
   const _ResultsWithAiCta({
     super.key,
@@ -352,6 +386,7 @@ class _ResultsWithAiCta extends StatelessWidget {
     required this.cs,
     required this.tt,
     required this.onAiSearch,
+    required this.onInfo,
   });
 
   @override
@@ -364,10 +399,26 @@ class _ResultsWithAiCta extends StatelessWidget {
         if (i == results.length) {
           return Padding(
             padding: const EdgeInsets.fromLTRB(4, 8, 4, 16),
-            child: OutlinedButton.icon(
-              onPressed: onAiSearch,
-              icon: const Icon(Icons.auto_awesome_rounded, size: 16),
-              label: Text(l.searchTryAiHint),
+            child: Column(
+              children: [
+                OutlinedButton.icon(
+                  onPressed: onAiSearch,
+                  icon: const Icon(Icons.auto_awesome_rounded, size: 16),
+                  label: Text(l.searchTryAiHint),
+                ),
+                const SizedBox(height: 8),
+                GestureDetector(
+                  onTap: onInfo,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.info_outline_rounded, size: 14, color: cs.outline),
+                      const SizedBox(width: 4),
+                      Text(l.aiInfoTitle, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: cs.outline)),
+                    ],
+                  ),
+                ),
+              ],
             ),
           );
         }

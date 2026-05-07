@@ -169,9 +169,10 @@ CREATE TABLE IF NOT EXISTS error_logs (
   occurred_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
   source       TEXT,
   message      TEXT  NOT NULL,
-  context      JSONB
+  context      JSONB   -- structured metadata (e.g. http_status); never user-private content
 );
--- Idempotent upgrade path for existing installs that predate the context column.
+-- Idempotent upgrade: adds context to existing installs that predate this column
+-- (the CREATE TABLE above handles fresh installs; IF NOT EXISTS makes it a no-op there).
 ALTER TABLE error_logs ADD COLUMN IF NOT EXISTS context JSONB;
 
 CREATE INDEX IF NOT EXISTS idx_error_logs_user_time

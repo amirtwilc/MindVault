@@ -151,6 +151,10 @@
   "aiSearchRateResetsAt": "{time} पर रीसेट होगा",
   "@aiSearchRateResetsAt": { "placeholders": { "time": {} } },
   "aiSearchRateDefault": "कृपया फिर से खोजने से पहले प्रतीक्षा करें",
+  "aiInfoTitle": "AI खोज के बारे में",
+  "aiInfoBody": "AI खोज आपके नोट्स पढ़कर आपके सवाल का जवाब देती है।\n\n🔒 निजी नोट्स कभी AI को नहीं भेजे जाते।\n\n📄 बहुत लंबे नोट्स भेजने से पहले छोटे कर दिए जाते हैं।",
+  "aiInfoDismiss": "समझ गया",
+  "aiAnswerCopied": "क्लिपबोर्ड पर कॉपी किया गया",
 
   "aiHistoryTitle": "AI खोज इतिहास",
   "aiHistoryEmpty": "अभी कोई खोज इतिहास नहीं",

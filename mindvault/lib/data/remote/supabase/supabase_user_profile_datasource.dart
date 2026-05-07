@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/constants/supabase_constants.dart';
 import '../../../domain/entities/tier_limits.dart';
@@ -17,6 +18,11 @@ class SupabaseUserProfileDatasource {
         .eq('id', userId)
         .maybeSingle();
 
+    return parseTierLimitsResponse(res);
+  }
+
+  @visibleForTesting
+  static TierLimits parseTierLimitsResponse(Map<String, dynamic>? res) {
     final tier = res?['tier'] as String? ?? 'free';
     final limits = res?['tier_limits'] as Map<String, dynamic>?;
 

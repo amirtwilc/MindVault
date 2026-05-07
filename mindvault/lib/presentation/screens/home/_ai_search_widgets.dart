@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -257,18 +258,36 @@ class AiAnswerView extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: hasAnswer ? CrossAxisAlignment.start : CrossAxisAlignment.center,
         children: [
-          if (fromCache)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Row(
-                mainAxisAlignment: hasAnswer ? MainAxisAlignment.start : MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.history_rounded, size: 14, color: cs.outline),
-                  const SizedBox(width: 4),
-                  Text(l.aiSearchFromCache, style: tt.labelSmall?.copyWith(color: cs.outline)),
-                ],
+          Row(
+            mainAxisAlignment: hasAnswer ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
+            children: [
+              if (fromCache)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.history_rounded, size: 14, color: cs.outline),
+                    const SizedBox(width: 4),
+                    Text(l.aiSearchFromCache, style: tt.labelSmall?.copyWith(color: cs.outline)),
+                  ],
+                )
+              else
+                const SizedBox.shrink(),
+              GestureDetector(
+                onTap: () async {
+                  await Clipboard.setData(ClipboardData(text: answer));
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(l.aiAnswerCopied)),
+                    );
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8, bottom: 10),
+                  child: Icon(Icons.copy_rounded, size: 16, color: cs.outline),
+                ),
               ),
-            ),
+            ],
+          ),
           SelectableText(
             answer,
             textAlign: hasAnswer ? TextAlign.start : TextAlign.center,
