@@ -137,7 +137,7 @@
   "aiSearchLoading": "Notizen werden durchsucht…",
   "aiSearchIdleTitle": "Stelle eine Frage zu deinen Notizen",
   "aiSearchIdleBody": "Die KI durchsucht deine Notizen und fasst eine Antwort zusammen",
-  "aiSearchSuggestion1": "Fasse meine Flutter-Notizen zusammen",
+  "aiSearchSuggestion1": "Fasse meine Trainingsnotizen zusammen",
   "aiSearchSuggestion2": "Was habe ich über die Arbeit geschrieben?",
   "aiSearchSuggestion3": "Finde Notizen zu meinen Zielen",
   "aiSearchSuggestion4": "Was sind meine Reisepläne?",
@@ -185,6 +185,9 @@
   "settingsLanguageEnglish": "English",
   "settingsLanguageHebrew": "עברית",
   "settingsLanguageGerman": "Deutsch",
+  "settingsLanguageHindi": "हिन्दी",
+  "settingsLanguageSpanish": "Español",
+  "settingsLanguageFrench": "Français",
 
   "widgetComposeTitle": "Neue Notiz",
   "widgetComposeDiscardTitle": "Notiz verwerfen?",

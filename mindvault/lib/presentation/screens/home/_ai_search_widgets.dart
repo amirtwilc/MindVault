@@ -251,15 +251,17 @@ class AiAnswerView extends ConsumerWidget {
       titleToNote[n.title.toLowerCase()] = n;
     }
 
+    final hasAnswer = citedTitles.isNotEmpty;
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: hasAnswer ? CrossAxisAlignment.start : CrossAxisAlignment.center,
         children: [
           if (fromCache)
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: Row(
+                mainAxisAlignment: hasAnswer ? MainAxisAlignment.start : MainAxisAlignment.center,
                 children: [
                   Icon(Icons.history_rounded, size: 14, color: cs.outline),
                   const SizedBox(width: 4),
@@ -269,6 +271,7 @@ class AiAnswerView extends ConsumerWidget {
             ),
           SelectableText(
             answer,
+            textAlign: hasAnswer ? TextAlign.start : TextAlign.center,
             style: tt.bodyMedium?.copyWith(color: cs.onSurface, height: 1.6),
           ),
           if (citedTitles.isNotEmpty) ...[

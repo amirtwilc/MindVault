@@ -18,8 +18,17 @@ const adminClient = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
 );
 
-const AI_API_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+// Ordered fallback list — first model is tried first; on quota exhaustion (429)
+// the next model is tried automatically. 
+// To check available models: curl "https://generativelanguage.googleapis.com/v1beta/models?key=<YOUR_API_KEY>" | grep -A1 "\"name\""
+const AI_MODELS = [
+  "gemini-2.5-flash",
+  "gemini-2.5-flash-lite",
+  "gemini-3-flash-preview",
+  "gemini-2.0-flash-lite",
+];
+const AI_BASE_URL =
+  "https://generativelanguage.googleapis.com/v1beta/models";
 
 const SYSTEM_PROMPT =
   "You are a personal knowledge assistant. " +
@@ -137,37 +146,68 @@ Deno.serve(async (req: Request) => {
   const aiKey = Deno.env.get("AI_API_KEY");
   if (!aiKey) return json({ error: "AI not configured on server" }, 503);
 
-  let answer: string;
+  let answer = "";
+  let lastError = "";
+  let usedModel = "";
+  const skippedModels: string[] = [];
+  const prompt = buildPrompt(query, notes);
+  const requestBody = JSON.stringify({
+    system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+    contents: [{ role: "user", parts: [{ text: prompt }] }],
+    generationConfig: { maxOutputTokens: 512, temperature: 0.2 },
+  });
+
   try {
-    const prompt = buildPrompt(query, notes);
-    const res = await fetch(`${AI_API_URL}?key=${aiKey}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: 512, temperature: 0.2 },
-      }),
-    });
+    for (const model of AI_MODELS) {
+      const res = await fetch(
+        `${AI_BASE_URL}/${model}:generateContent?key=${aiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: requestBody,
+        },
+      );
 
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      const msg = (err as { error?: { message?: string } }).error?.message ??
-        res.statusText;
-      const errMsg = `AI error: ${msg}`;
-      await logError(adminClient, user.id, errMsg, {
-        http_status: res.status,
-        tier,
-      });
-      return json({ error: errMsg }, 502);
-    }
+      if (res.status === 429) {
+        skippedModels.push(model);
+        await logError(adminClient, user.id, `Model quota exceeded: ${model}`, {
+          model_skipped: model,
+          reason: "quota_exceeded",
+          tier,
+        });
+        continue;
+      }
 
-    const data = await res.json();
-    answer = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-    if (!answer) {
-      const errMsg = "Empty response from AI";
-      await logError(adminClient, user.id, errMsg, { tier });
-      return json({ error: errMsg }, 502);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        lastError = (err as { error?: { message?: string } }).error?.message ??
+          res.statusText;
+        await logError(adminClient, user.id, `AI error: ${lastError}`, {
+          model,
+          http_status: res.status,
+          tier,
+        });
+        break;
+      }
+
+      const data = await res.json();
+      answer = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+      if (!answer) {
+        lastError = "Empty response from AI";
+        await logError(adminClient, user.id, lastError, { model, tier });
+        break;
+      }
+
+      usedModel = model;
+      if (skippedModels.length > 0) {
+        await logError(
+          adminClient,
+          user.id,
+          `Fallback succeeded on model: ${model}`,
+          { models_skipped: skippedModels, model_used: model, tier },
+        );
+      }
+      break;
     }
   } catch (e) {
     const errMsg = `AI request failed: ${(e as Error).message}`;
@@ -176,6 +216,19 @@ Deno.serve(async (req: Request) => {
       tier,
     });
     return json({ error: errMsg }, 502);
+  }
+
+  if (!usedModel) {
+    if (skippedModels.length === AI_MODELS.length) {
+      await logError(
+        adminClient,
+        user.id,
+        "All models quota exceeded",
+        { models_tried: AI_MODELS, tier },
+      );
+      return json({ error: "all_models_quota_exceeded" }, 503);
+    }
+    return json({ error: lastError ? `AI error: ${lastError}` : "AI request failed" }, 502);
   }
 
   await supabase.from("ai_usage").upsert(

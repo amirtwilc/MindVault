@@ -277,12 +277,15 @@ class _AiSuccessView extends StatelessWidget {
             tt: tt,
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          child: TextButton.icon(
-            onPressed: onBack,
-            icon: const Icon(Icons.arrow_back_rounded, size: 16),
-            label: Text(AppStrings.of(context).searchBackToResults),
+        Align(
+          alignment: Alignment.center,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: TextButton.icon(
+              onPressed: onBack,
+              icon: const Icon(Icons.arrow_back_rounded, size: 16),
+              label: Text(AppStrings.of(context).searchBackToResults),
+            ),
           ),
         ),
       ],

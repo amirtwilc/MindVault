@@ -24,6 +24,7 @@ abstract interface class ErrorLogger {
 class SupabaseErrorLogger implements ErrorLogger {
   final SupabaseClient _client;
 
+  // Hard cap so a runaway exception trace can't blow up the row size.
   static const int _maxMessageLen = 2000;
 
   SupabaseErrorLogger(this._client);

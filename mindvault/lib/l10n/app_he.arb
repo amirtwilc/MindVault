@@ -137,7 +137,7 @@
   "aiSearchLoading": "מחפש בפתקים שלך…",
   "aiSearchIdleTitle": "שאל כל דבר על הפתקים שלך",
   "aiSearchIdleBody": "ה-AI מחפש בפתקים שלך ומסכם תשובה",
-  "aiSearchSuggestion1": "סכם את הפתקים שלי על Flutter",
+  "aiSearchSuggestion1": "סכם את פתקי האימון שלי",
   "aiSearchSuggestion2": "מה כתבתי על העבודה?",
   "aiSearchSuggestion3": "מצא פתקים על המטרות שלי",
   "aiSearchSuggestion4": "מהן תוכניות הנסיעה שלי?",
@@ -185,6 +185,9 @@
   "settingsLanguageEnglish": "English",
   "settingsLanguageHebrew": "עברית",
   "settingsLanguageGerman": "Deutsch",
+  "settingsLanguageHindi": "हिन्दी",
+  "settingsLanguageSpanish": "Español",
+  "settingsLanguageFrench": "Français",
 
   "widgetComposeTitle": "פתק חדש",
   "widgetComposeDiscardTitle": "להתעלם מהפתק?",

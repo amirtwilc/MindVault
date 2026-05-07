@@ -375,7 +375,7 @@ class AppStringsEn extends AppStrings {
       'AI searches your notes and synthesises an answer';
 
   @override
-  String get aiSearchSuggestion1 => 'Summarize my notes on Flutter';
+  String get aiSearchSuggestion1 => 'Summarize my workout notes';
 
   @override
   String get aiSearchSuggestion2 => 'What did I write about work?';
@@ -525,6 +525,15 @@ class AppStringsEn extends AppStrings {
 
   @override
   String get settingsLanguageGerman => 'Deutsch';
+
+  @override
+  String get settingsLanguageHindi => 'हिन्दी';
+
+  @override
+  String get settingsLanguageSpanish => 'Español';
+
+  @override
+  String get settingsLanguageFrench => 'Français';
 
   @override
   String get widgetComposeTitle => 'New Note';

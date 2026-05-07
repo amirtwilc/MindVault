@@ -370,7 +370,7 @@ class AppStringsHe extends AppStrings {
   String get aiSearchIdleBody => 'ה-AI מחפש בפתקים שלך ומסכם תשובה';
 
   @override
-  String get aiSearchSuggestion1 => 'סכם את הפתקים שלי על Flutter';
+  String get aiSearchSuggestion1 => 'סכם את פתקי האימון שלי';
 
   @override
   String get aiSearchSuggestion2 => 'מה כתבתי על העבודה?';
@@ -521,6 +521,15 @@ class AppStringsHe extends AppStrings {
 
   @override
   String get settingsLanguageGerman => 'Deutsch';
+
+  @override
+  String get settingsLanguageHindi => 'हिन्दी';
+
+  @override
+  String get settingsLanguageSpanish => 'Español';
+
+  @override
+  String get settingsLanguageFrench => 'Français';
 
   @override
   String get widgetComposeTitle => 'פתק חדש';
