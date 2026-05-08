@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 import '../../../core/constants/category_colors.dart';
+import '../../../core/constants/category_defaults.dart';
 import '../../../core/utils/note_preview.dart';
 import '../../../domain/entities/category.dart';
 import '../../../domain/entities/note.dart';
@@ -72,7 +73,7 @@ class _AllNotesScreenState extends ConsumerState<AllNotesScreen> {
         onPressed: () {
           final categories = categoriesAsync.valueOrNull ?? [];
           final general = categories
-              .where((c) => c.name.toLowerCase() == 'general')
+              .where((c) => isGeneralCategoryName(c.name))
               .firstOrNull;
           final target = general ?? (categories.isEmpty ? null : categories.first);
           if (target == null) {

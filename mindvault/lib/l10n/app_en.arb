@@ -194,6 +194,7 @@
   "settingsLanguageSpanish": "Español",
   "settingsLanguageFrench": "Français",
 
+  "widgetAddNoteTooltip": "Add note",
   "widgetComposeTitle": "New Note",
   "widgetComposeDiscardTitle": "Discard note?",
   "widgetComposeDiscardBody": "Your note will not be saved.",

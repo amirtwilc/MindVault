@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/widget_note_item_root"
+    android:id="@+id/widget_category_item_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -9,18 +9,18 @@
     android:paddingBottom="3dp">
 
     <ImageView
-        android:id="@+id/widget_note_dot"
+        android:id="@+id/widget_category_dot"
         android:layout_width="8dp"
         android:layout_height="8dp"
         android:src="@drawable/widget_category_dot"
         android:contentDescription="@null"/>
 
     <TextView
-        android:id="@+id/widget_note_label"
+        android:id="@+id/widget_category_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:textColor="#CCFFFFFF"
+        android:textSize="13sp"
+        android:textColor="#EEFFFFFF"
         android:maxLines="1"
         android:ellipsize="end"
         android:textDirection="firstStrong"

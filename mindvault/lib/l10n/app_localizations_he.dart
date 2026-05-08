@@ -545,6 +545,9 @@ class AppStringsHe extends AppStrings {
   String get settingsLanguageFrench => 'Français';
 
   @override
+  String get widgetAddNoteTooltip => 'הוסף פתק';
+
+  @override
   String get widgetComposeTitle => 'פתק חדש';
 
   @override
