@@ -23,6 +23,7 @@ import '../screens/home/note_editor_screen.dart';
 import '../screens/home/search_screen.dart';
 import '../screens/home/ai_search_history_screen.dart';
 import '../screens/home/settings_screen.dart';
+import '../screens/widget/widget_category_notes_screen.dart';
 import '../screens/widget/widget_compose_screen.dart';
 import '../screens/widget/widget_note_view_screen.dart';
 import '../screens/widget/widget_search_screen.dart';
@@ -82,7 +83,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // Deep link from home widget "New Note" button
       GoRoute(
         path: '/new-note',
-        builder: (_, __) => const WidgetComposeScreen(),
+        builder: (_, state) => WidgetComposeScreen(
+          initialCategoryId: state.uri.queryParameters['categoryId'],
+        ),
       ),
       // Deep link from home widget note row tap
       GoRoute(
@@ -90,6 +93,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (_, state) => WidgetNoteViewScreen(
           noteId: state.uri.queryParameters['id'] ?? '',
           initialTitle: state.uri.queryParameters['title'],
+        ),
+      ),
+      // Deep link from categories widget category row tap
+      GoRoute(
+        path: '/category-notes',
+        builder: (_, state) => WidgetCategoryNotesScreen(
+          categoryId: state.uri.queryParameters['categoryId'] ?? '',
+          initialName: state.uri.queryParameters['name'],
         ),
       ),
       // Deep link from home widget search button

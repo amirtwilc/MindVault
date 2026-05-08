@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 import '../../../core/constants/category_colors.dart';
+import '../../../core/constants/category_defaults.dart';
 import '../../../core/utils/note_preview.dart';
 import '../../../domain/entities/note.dart';
 import '../../../domain/entities/tier_limits.dart';
@@ -48,7 +49,7 @@ class NotesListScreen extends ConsumerWidget {
               : context.go('/home/categories'),
         ),
         actions: [
-          if (categoryName.toLowerCase() != 'general')
+          if (!isGeneralCategoryName(categoryName))
             PopupMenuButton<String>(
               iconColor: fg,
               onSelected: (value) {

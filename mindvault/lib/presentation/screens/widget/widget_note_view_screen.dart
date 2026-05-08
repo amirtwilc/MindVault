@@ -21,11 +21,24 @@ import '../home/_ai_search_widgets.dart' show SttMixin;
 
 class WidgetNoteViewScreen extends ConsumerStatefulWidget {
   final String noteId;
+
   /// Pre-decoded title from the deep link URI — displayed immediately while
   /// the encrypted body is loading, eliminating the full-screen spinner.
   final String? initialTitle;
 
-  const WidgetNoteViewScreen({super.key, required this.noteId, this.initialTitle});
+  /// When set, view-mode close paths (the X button, the not-found screen, a
+  /// successful delete) call this instead of dismissing the activity — used
+  /// by the categories widget's floating window so the user returns to the
+  /// per-category list. Edit-mode close paths and tap-outside still dismiss
+  /// the activity (entering edit mode means "I'm done with the list").
+  final VoidCallback? onClose;
+
+  const WidgetNoteViewScreen({
+    super.key,
+    required this.noteId,
+    this.initialTitle,
+    this.onClose,
+  });
 
   @override
   ConsumerState<WidgetNoteViewScreen> createState() =>
@@ -93,6 +106,18 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
       );
     } else {
       ctrl.text = '${ctrl.text}$insertText';
+    }
+  }
+
+  /// Closes from a view-mode interaction (X button, delete success, not-found).
+  /// Routes through [onClose] when supplied so the categories widget can
+  /// drop back to its list, otherwise dismisses the activity entirely.
+  void _closeFromView() {
+    final onClose = widget.onClose;
+    if (onClose != null) {
+      onClose();
+    } else {
+      SystemNavigator.pop();
     }
   }
 
@@ -319,7 +344,10 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
 
     await ref.read(widgetDataServiceProvider).patchNoteRemoved(noteId: _note!.id);
     await repo.deleteNote(_note!.id);
-    if (mounted) SystemNavigator.pop();
+    // After a successful delete the note is gone; if we're hosted by the
+    // categories floating window, dropping back to the list lets the user see
+    // the updated count without reopening the widget.
+    if (mounted) _closeFromView();
   }
 
   @override
@@ -417,7 +445,7 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
             IconButton(
               icon: const Icon(Icons.close),
               visualDensity: VisualDensity.compact,
-              onPressed: () => SystemNavigator.pop(),
+              onPressed: _closeFromView,
             ),
           ],
         ),
@@ -438,7 +466,7 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
         Text(l.widgetViewNotFound, style: theme.textTheme.titleMedium),
         const SizedBox(height: 16),
         FilledButton(
-          onPressed: () => SystemNavigator.pop(),
+          onPressed: _closeFromView,
           child: Text(l.actionClose),
         ),
       ],
@@ -486,7 +514,7 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
             IconButton(
               icon: const Icon(Icons.close),
               visualDensity: VisualDensity.compact,
-              onPressed: () => SystemNavigator.pop(),
+              onPressed: _closeFromView,
             ),
           ],
         ),

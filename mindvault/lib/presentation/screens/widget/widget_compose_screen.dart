@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart' show RenderEditable;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/constants/category_defaults.dart';
 import '../../../core/utils/bidi_utils.dart';
 import '../../../core/utils/note_clipboard.dart';
 import '../../../core/utils/paragraph_spacing_controller.dart';
@@ -17,7 +18,22 @@ import '../../../presentation/widgets/bidi_aware_text_field.dart';
 import '../home/_ai_search_widgets.dart' show SttMixin;
 
 class WidgetComposeScreen extends ConsumerStatefulWidget {
-  const WidgetComposeScreen({super.key});
+  /// When set, the dropdown defaults to this category if it exists in the
+  /// user's category list. Falls back to General (then first) if not.
+  final String? initialCategoryId;
+
+  /// When set, the X (close) button calls this instead of dismissing the
+  /// activity — used by the categories widget's floating window so X returns
+  /// to the per-category note list rather than exiting. Save and tap-outside
+  /// always dismiss the activity (matches the user expectation that finishing
+  /// the compose flow means "I'm done with the floating window").
+  final VoidCallback? onClose;
+
+  const WidgetComposeScreen({
+    super.key,
+    this.initialCategoryId,
+    this.onClose,
+  });
 
   @override
   ConsumerState<WidgetComposeScreen> createState() =>
@@ -182,29 +198,49 @@ class _WidgetComposeScreenState extends ConsumerState<WidgetComposeScreen>
   bool get _hasInput =>
       _titleCtrl.text.trim().isNotEmpty || _bodyCtrl.text.trim().isNotEmpty;
 
-  Future<void> _attemptClose() async {
-    if (_hasInput) {
-      final l = AppStrings.of(context);
-      final discard = await showDialog<bool>(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: Text(l.widgetComposeDiscardTitle),
-          content: Text(l.widgetComposeDiscardBody),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: Text(l.actionCancel),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: Text(l.actionDiscard),
-            ),
-          ],
-        ),
-      );
-      if (discard != true) return;
+  /// Confirms a discard with the user when there's unsaved input. Returns
+  /// true when the caller should proceed with closing.
+  Future<bool> _confirmDiscardIfNeeded() async {
+    if (!_hasInput) return true;
+    final l = AppStrings.of(context);
+    final discard = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(l.widgetComposeDiscardTitle),
+        content: Text(l.widgetComposeDiscardBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l.actionCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l.actionDiscard),
+          ),
+        ],
+      ),
+    );
+    return discard == true;
+  }
+
+  /// Tap-outside-the-card path: always dismisses the activity, even when
+  /// launched inside the categories widget's floating window. This matches
+  /// the existing notes-widget behavior — outside taps mean "exit".
+  Future<void> _onTapOutside() async {
+    if (await _confirmDiscardIfNeeded() && mounted) SystemNavigator.pop();
+  }
+
+  /// X-button path: returns to the parent screen via [onClose] when one is
+  /// supplied (categories widget floating window), otherwise dismisses the
+  /// activity (top-level deep link from the notes widget).
+  Future<void> _onClosePressed() async {
+    if (!await _confirmDiscardIfNeeded() || !mounted) return;
+    final onClose = widget.onClose;
+    if (onClose != null) {
+      onClose();
+    } else {
+      SystemNavigator.pop();
     }
-    SystemNavigator.pop();
   }
 
   Future<void> _save(NoteRepository repo, List<Category> categories) async {
@@ -232,7 +268,8 @@ class _WidgetComposeScreenState extends ConsumerState<WidgetComposeScreen>
     } finally {
       if (mounted) setState(() => _saving = false);
     }
-    if (mounted) SystemNavigator.pop();
+    if (!mounted) return;
+    SystemNavigator.pop();
   }
 
   @override
@@ -241,26 +278,28 @@ class _WidgetComposeScreenState extends ConsumerState<WidgetComposeScreen>
     final repo = ref.watch(noteRepositoryProvider);
     final categories = categoriesAsync.valueOrNull ?? [];
 
+    String pickDefault(List<Category> cats) {
+      final initial = widget.initialCategoryId;
+      if (initial != null && cats.any((c) => c.id == initial)) return initial;
+      final generalIdx = cats.indexWhere((c) => isGeneralCategoryName(c.name));
+      return generalIdx >= 0 ? cats[generalIdx].id : cats.first.id;
+    }
+
     ref.listen(categoriesProvider, (_, next) {
       final cats = next.valueOrNull ?? [];
       if (_selectedCategoryId != null && cats.any((c) => c.id == _selectedCategoryId)) {
         return;
       }
       if (cats.isEmpty) return;
-      final generalIdx = cats.indexWhere((c) => c.name.toLowerCase() == 'general');
-      setState(() {
-        _selectedCategoryId = generalIdx >= 0 ? cats[generalIdx].id : cats.first.id;
-      });
+      setState(() => _selectedCategoryId = pickDefault(cats));
     });
 
     if (_selectedCategoryId == null && categories.isNotEmpty) {
-      final generalIdx = categories.indexWhere((c) => c.name.toLowerCase() == 'general');
-      _selectedCategoryId = generalIdx >= 0 ? categories[generalIdx].id : categories.first.id;
+      _selectedCategoryId = pickDefault(categories);
     } else if (_selectedCategoryId != null &&
         categories.isNotEmpty &&
         !categories.any((c) => c.id == _selectedCategoryId)) {
-      final generalIdx = categories.indexWhere((c) => c.name.toLowerCase() == 'general');
-      _selectedCategoryId = generalIdx >= 0 ? categories[generalIdx].id : categories.first.id;
+      _selectedCategoryId = pickDefault(categories);
     }
 
     final isReady = repo != null && categories.isNotEmpty;
@@ -272,7 +311,7 @@ class _WidgetComposeScreenState extends ConsumerState<WidgetComposeScreen>
       backgroundColor: Colors.transparent,
       resizeToAvoidBottomInset: true,
       body: GestureDetector(
-        onTap: _saving ? null : _attemptClose,
+        onTap: _saving ? null : _onTapOutside,
         behavior: HitTestBehavior.opaque,
         child: Center(
           child: SingleChildScrollView(
@@ -318,7 +357,7 @@ class _WidgetComposeScreenState extends ConsumerState<WidgetComposeScreen>
                             ),
                             IconButton(
                               icon: const Icon(Icons.close),
-                              onPressed: _saving ? null : _attemptClose,
+                              onPressed: _saving ? null : _onClosePressed,
                               visualDensity: VisualDensity.compact,
                             ),
                           ],

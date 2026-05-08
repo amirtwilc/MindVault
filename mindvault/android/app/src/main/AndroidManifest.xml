@@ -70,13 +70,33 @@
         <!-- Home widget provider -->
         <receiver
             android:name=".HomeWidgetProvider"
-            android:exported="true">
+            android:exported="true"
+            android:label="@string/widget_notes_label">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/mindvault_widget_info"/>
+        </receiver>
+
+        <!-- Categories widget: list data service -->
+        <service
+            android:name=".CategoryWidgetService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+
+        <!-- Categories widget provider -->
+        <receiver
+            android:name=".CategoriesWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_categories_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/categories_widget_info"/>
         </receiver>
 
         <meta-data

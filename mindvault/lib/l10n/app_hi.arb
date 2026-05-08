@@ -193,6 +193,7 @@
   "settingsLanguageSpanish": "Español",
   "settingsLanguageFrench": "Français",
 
+  "widgetAddNoteTooltip": "नोट जोड़ें",
   "widgetComposeTitle": "नया नोट",
   "widgetComposeDiscardTitle": "नोट त्यागें?",
   "widgetComposeDiscardBody": "आपका नोट सहेजा नहीं जाएगा।",

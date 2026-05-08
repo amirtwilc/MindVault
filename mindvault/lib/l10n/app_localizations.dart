@@ -1060,6 +1060,12 @@ abstract class AppStrings {
   /// **'Français'**
   String get settingsLanguageFrench;
 
+  /// No description provided for @widgetAddNoteTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Add note'**
+  String get widgetAddNoteTooltip;
+
   /// No description provided for @widgetComposeTitle.
   ///
   /// In en, this message translates to:

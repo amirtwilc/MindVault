@@ -193,6 +193,7 @@
   "settingsLanguageSpanish": "Español",
   "settingsLanguageFrench": "Français",
 
+  "widgetAddNoteTooltip": "הוסף פתק",
   "widgetComposeTitle": "פתק חדש",
   "widgetComposeDiscardTitle": "להתעלם מהפתק?",
   "widgetComposeDiscardBody": "הפתק שלך לא יישמר.",

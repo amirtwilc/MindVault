@@ -1,5 +1,3 @@
-# Built APK at the repo root — produced by `flutter build apk` and copied
-# here so it can be installed on a test device. Do not commit (60 MB+).
 mindvault-latest.apk
 mindvault-latest.aab
 

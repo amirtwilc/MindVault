@@ -554,6 +554,9 @@ class AppStringsDe extends AppStrings {
   String get settingsLanguageFrench => 'Français';
 
   @override
+  String get widgetAddNoteTooltip => 'Notiz hinzufügen';
+
+  @override
   String get widgetComposeTitle => 'Neue Notiz';
 
   @override

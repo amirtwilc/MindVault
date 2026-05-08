@@ -2,4 +2,7 @@
 <resources>
     <string name="app_name">MindVault</string>
     <string name="widget_description">Quick access to your notes</string>
+    <string name="widget_categories_description">Quick access to your categories</string>
+    <string name="widget_notes_label">Notes</string>
+    <string name="widget_categories_label">Categories</string>
 </resources>

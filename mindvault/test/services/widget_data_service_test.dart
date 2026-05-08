@@ -3,12 +3,12 @@ import 'package:mindvault/domain/entities/category.dart';
 import 'package:mindvault/domain/entities/note.dart';
 import 'package:mindvault/services/widget_data_service.dart';
 
-Category _cat(String id, String name) => Category(
+Category _cat(String id, String name, {String? color}) => Category(
       id: id,
       userId: 'u1',
       name: name,
       sortOrder: 0,
-      color: null,
+      color: color,
       lastUsedAt: DateTime(2024),
       createdAt: DateTime(2024),
     );
@@ -98,18 +98,27 @@ void main() {
       expect(entry['category_name'], 'Personal');
     });
 
+    test('entry includes category_color from the note\'s category', () {
+      final colored = [
+        _cat('c1', 'Work', color: '#FF0000'),
+        _cat('c2', 'Personal'),
+      ];
+      final notes = [
+        _note('n1', 'Red one', categoryId: 'c1'),
+        _note('n2', 'No color', categoryId: 'c2'),
+      ];
+      final payload =
+          WidgetDataService.buildPayload(categories: colored, allNotes: notes);
+      final list = payload['notes'] as List;
+      expect(list.firstWhere((e) => e['id'] == 'n1')['category_color'],
+          '#FF0000');
+      expect(list.firstWhere((e) => e['id'] == 'n2')['category_color'], isNull);
+    });
+
     test('empty lists produce empty notes array', () {
       final payload =
           WidgetDataService.buildPayload(categories: [], allNotes: []);
       expect((payload['notes'] as List).isEmpty, isTrue);
-      expect(payload['recent_category_id'], '');
-    });
-
-    test('recent_category_id from most recently touched note', () {
-      final notes = [_note('n1', 'Hello', categoryId: 'c2')];
-      final payload =
-          WidgetDataService.buildPayload(categories: cats, allNotes: notes);
-      expect(payload['recent_category_id'], 'c2');
     });
   });
 
@@ -152,12 +161,6 @@ void main() {
           {}, _note('n1', 'T', categoryId: 'c2'), cats);
       final entry = (result['notes'] as List).first as Map;
       expect(entry['category_name'], 'Personal');
-    });
-
-    test('updates recent_category_id', () {
-      final result = WidgetDataService.applyNewNote(
-          {}, _note('n1', 'T', categoryId: 'c2'), cats);
-      expect(result['recent_category_id'], 'c2');
     });
 
     test('preserves other fields in current data', () {
@@ -340,13 +343,11 @@ void main() {
     test('preserves other top-level fields', () {
       final current = {
         'custom': 'keep',
-        'recent_category_id': 'c2',
         'notes': <Map<String, dynamic>>[],
       };
       final result = WidgetDataService.applyUpsertNote(
           current, _note('n', 'T', categoryId: 'c1'), cats);
       expect(result['custom'], 'keep');
-      expect(result['recent_category_id'], 'c2');
     });
   });
 }

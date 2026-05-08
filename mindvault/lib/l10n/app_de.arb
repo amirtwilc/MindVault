@@ -193,6 +193,7 @@
   "settingsLanguageSpanish": "Español",
   "settingsLanguageFrench": "Français",
 
+  "widgetAddNoteTooltip": "Notiz hinzufügen",
   "widgetComposeTitle": "Neue Notiz",
   "widgetComposeDiscardTitle": "Notiz verwerfen?",
   "widgetComposeDiscardBody": "Deine Notiz wird nicht gespeichert.",

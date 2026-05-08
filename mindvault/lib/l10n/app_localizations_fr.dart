@@ -558,6 +558,9 @@ class AppStringsFr extends AppStrings {
   String get settingsLanguageFrench => 'Français';
 
   @override
+  String get widgetAddNoteTooltip => 'Ajouter une note';
+
+  @override
   String get widgetComposeTitle => 'Nouvelle note';
 
   @override

@@ -552,6 +552,9 @@ class AppStringsHi extends AppStrings {
   String get settingsLanguageFrench => 'Français';
 
   @override
+  String get widgetAddNoteTooltip => 'नोट जोड़ें';
+
+  @override
   String get widgetComposeTitle => 'नया नोट';
 
   @override

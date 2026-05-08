@@ -193,6 +193,7 @@
   "settingsLanguageSpanish": "Español",
   "settingsLanguageFrench": "Français",
 
+  "widgetAddNoteTooltip": "Ajouter une note",
   "widgetComposeTitle": "Nouvelle note",
   "widgetComposeDiscardTitle": "Ignorer la note ?",
   "widgetComposeDiscardBody": "Votre note ne sera pas enregistrée.",

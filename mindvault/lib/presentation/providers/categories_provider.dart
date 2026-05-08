@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart' show OrderingTerm, Value;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/constants/category_defaults.dart';
 import '../../core/utils/id_generator.dart';
 import '../../data/local/database/app_database.dart';
 import '../../data/models/category_model.dart';
@@ -31,7 +32,7 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
     var local = await _loadFromDrift();
 
     // Failsafe: ensure the General category always exists.
-    if (!local.any((c) => c.name.toLowerCase() == 'general')) {
+    if (!local.any((c) => isGeneralCategoryName(c.name))) {
       await _createGeneralCategory(sortOrder: local.length);
       local = await _loadFromDrift();
     }
@@ -118,7 +119,7 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
       // Failsafe: re-ensure General exists after a remote sync that might
       // have removed it (e.g. synced from a device that deleted it).
       final current = state.valueOrNull ?? [];
-      if (!current.any((c) => c.name.toLowerCase() == 'general')) {
+      if (!current.any((c) => isGeneralCategoryName(c.name))) {
         await _createGeneralCategory(sortOrder: current.length);
         await _reloadFromDrift();
       }
@@ -169,7 +170,7 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
 
     // Guard against races: re-read Drift before inserting.
     final existing = await _loadFromDrift();
-    if (existing.any((c) => c.name.toLowerCase() == 'general')) return;
+    if (existing.any((c) => isGeneralCategoryName(c.name))) return;
 
     // On reinstall, local DB is empty but Supabase already has a General
     // (created by the DB trigger on first sign-up, or from a previous session).
@@ -179,10 +180,10 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
       final datasource = ref.read(categoriesDatasourceProvider);
       final remote = await datasource.fetchCategories();
       final CategoryModel? remoteGeneral =
-          remote.where((m) => m.name.toLowerCase() == 'general').firstOrNull;
+          remote.where((m) => isGeneralCategoryName(m.name)).firstOrNull;
       if (remoteGeneral != null) {
         final check = await _loadFromDrift();
-        if (check.any((c) => c.name.toLowerCase() == 'general')) return;
+        if (check.any((c) => isGeneralCategoryName(c.name))) return;
         await db.upsertCategory(CategoriesTableCompanion(
           id: Value(remoteGeneral.id),
           userId: Value(remoteGeneral.userId),
@@ -205,7 +206,7 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
     await db.upsertCategory(CategoriesTableCompanion(
       id: Value(id),
       userId: Value(user.id),
-      name: const Value('General'),
+      name: const Value(kGeneralCategoryName),
       sortOrder: Value(sortOrder),
       color: const Value(null),
       lastUsedAt: Value(now),
@@ -215,7 +216,7 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
     try {
       await ref
           .read(categoriesDatasourceProvider)
-          .insertCategory('General', sortOrder, id: id);
+          .insertCategory(kGeneralCategoryName, sortOrder, id: id);
     } catch (_) {
       await db.upsertPendingOp('cat_$id', 'upsert_category', id);
     }
@@ -301,7 +302,7 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
     final current = state.valueOrNull ?? [];
     final cat = current.where((c) => c.id == id).firstOrNull;
     if (cat == null) return;
-    if (cat.name.toLowerCase() == 'general') return;
+    if (isGeneralCategoryName(cat.name)) return;
 
     await db.upsertCategory(CategoriesTableCompanion(
       id: Value(id),
@@ -326,7 +327,7 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
     final current = state.valueOrNull ?? [];
     final cat = current.where((c) => c.id == id).firstOrNull;
     if (cat == null) return;
-    if (cat.name.toLowerCase() == 'general') return;
+    if (isGeneralCategoryName(cat.name)) return;
 
     await db.upsertCategory(CategoriesTableCompanion(
       id: Value(id),
@@ -349,7 +350,7 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
   Future<void> deleteCategory(String id) async {
     final current = state.valueOrNull ?? [];
     final cat = current.where((c) => c.id == id).firstOrNull;
-    if (cat?.name.toLowerCase() == 'general') return;
+    if (cat != null && isGeneralCategoryName(cat.name)) return;
 
     final db = ref.read(appDatabaseProvider);
 

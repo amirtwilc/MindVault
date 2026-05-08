@@ -553,6 +553,9 @@ class AppStringsEs extends AppStrings {
   String get settingsLanguageFrench => 'Français';
 
   @override
+  String get widgetAddNoteTooltip => 'Añadir nota';
+
+  @override
   String get widgetComposeTitle => 'Nueva nota';
 
   @override
