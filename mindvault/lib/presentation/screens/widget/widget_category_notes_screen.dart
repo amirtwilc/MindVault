@@ -48,13 +48,12 @@ class _WidgetCategoryNotesScreenState
   @override
   void initState() {
     super.initState();
-    // Bootstrap the AES key on the list screen itself, not just on the
-    // child compose/view screens. List mode reads [notesByCategoryProvider],
-    // which depends on [noteRepositoryProvider], which only resolves once
-    // [aesKeyProvider] is populated — without this, a fresh activity launched
-    // from the widget tap would sit on an indefinite loading spinner because
-    // the repo provider returns null and the stream provider falls back to
-    // [Stream.empty] (no values, never resolves).
+    // Bootstrap the AES key for the compose/view child screens. The list
+    // itself reads [notesByCategoryLocalProvider] and does not need the key,
+    // but tapping a note (→ WidgetNoteViewScreen) or "+ create" (→
+    // WidgetComposeScreen) will hit code paths that encrypt outgoing writes
+    // and decrypt private-note bodies. Loading the key here means the user
+    // doesn't see a spinner on their first tap.
     WidgetsBinding.instance.addPostFrameCallback((_) => _ensureKeyLoaded());
   }
 
@@ -123,7 +122,11 @@ class _WidgetCategoryNotesScreenState
     final headerName = category?.name ?? widget.initialName ?? '';
     final cardAccent = categoryColor(category?.color);
 
-    final notesAsync = ref.watch(notesByCategoryProvider(widget.categoryId));
+    // Read directly from the local Drift DB (plaintext rows) — bypassing the
+    // AES-key gate on `noteRepositoryProvider` lets the list paint as soon as
+    // the engine boots, instead of after `flutter_secure_storage.read()`.
+    final notesAsync =
+        ref.watch(notesByCategoryLocalProvider(widget.categoryId));
 
     // Cap the inner list at ~60% of the viewport so the floating card stays
     // visually centered on tablets/foldables without growing edge-to-edge.
