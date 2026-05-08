@@ -162,9 +162,17 @@ void main() {
       final n2 = _note(id: 'new').copyWith(updatedAt: Value(newer));
       await db.upsertNote(n1);
       await db.upsertNote(n2);
-      final rows = await db.watchNotesByCategory('cat-1').first;
+      final rows = await db.watchNotesByCategory('cat-1', 'user-1').first;
       expect(rows.first.id, equals('new'));
       expect(rows.last.id, equals('old'));
+    });
+
+    test('returns only notes for the given userId', () async {
+      await db.upsertNote(_note(id: 'mine', userId: 'user-1'));
+      await db.upsertNote(_note(id: 'theirs', userId: 'other'));
+      final rows = await db.watchNotesByCategory('cat-1', 'user-1').first;
+      expect(rows.length, equals(1));
+      expect(rows.first.id, equals('mine'));
     });
   });
 
@@ -293,7 +301,7 @@ void main() {
         isPinned: const Value(true),
         pinOrder: const Value(0),
       ));
-      final rows = await db.watchNotesByCategory('cat-1').first;
+      final rows = await db.watchNotesByCategory('cat-1', 'user-1').first;
       expect(rows.first.id, equals('pinned'));
       expect(rows.last.id, equals('unpinned'));
     });

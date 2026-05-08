@@ -176,9 +176,12 @@ class AppDatabase extends _$AppDatabase {
 
   // ── Notes queries ────────────────────────────────────────────
 
-  Stream<List<NotesTableData>> watchNotesByCategory(String categoryId) {
+  Stream<List<NotesTableData>> watchNotesByCategory(
+    String categoryId,
+    String userId,
+  ) {
     return (select(notesTable)
-          ..where((t) => t.categoryId.equals(categoryId))
+          ..where((t) => t.categoryId.equals(categoryId) & t.userId.equals(userId))
           ..orderBy([
             (t) => OrderingTerm(expression: t.isPinned, mode: OrderingMode.desc),
             (t) => OrderingTerm(expression: t.pinOrder, mode: OrderingMode.asc),

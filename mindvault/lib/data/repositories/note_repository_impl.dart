@@ -3,6 +3,7 @@ import '../../domain/entities/note.dart';
 import '../../domain/repositories/note_repository.dart';
 import '../remote/supabase/supabase_notes_datasource.dart';
 import '../local/database/app_database.dart';
+import '../local/database/note_mappers.dart';
 import '../models/note_model.dart';
 import '../../services/encryption_service.dart';
 import '../../services/analytics_service.dart';
@@ -86,33 +87,17 @@ class NoteRepositoryImpl implements NoteRepository {
 
   @override
   Stream<List<Note>> watchNotesByCategory(String categoryId) {
-    return _local.watchNotesByCategory(categoryId).map(
-          (rows) => rows.map(_rowToNote).toList(),
+    return _local.watchNotesByCategory(categoryId, _userId).map(
+          (rows) => rows.map(rowToNote).toList(),
         );
   }
 
   @override
   Stream<List<Note>> watchAllNotes() {
     return _local.watchAllNotes(_userId).map(
-          (rows) => rows.map(_rowToNote).toList(),
+          (rows) => rows.map(rowToNote).toList(),
         );
   }
-
-  Note _rowToNote(NotesTableData row) => Note(
-        id: row.id,
-        userId: row.userId,
-        categoryId: row.categoryId,
-        title: row.title,
-        body: row.body,
-        isPrivate: row.isPrivate,
-        lastUsedAt: row.lastUsedAt,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-        lastOpenedAt: row.lastOpenedAt,
-        isPinned: row.isPinned,
-        pinnedAt: row.pinnedAt,
-        pinOrder: row.pinOrder,
-      );
 
   // ── Sync helpers ──────────────────────────────────────────────
 
@@ -174,7 +159,7 @@ class NoteRepositoryImpl implements NoteRepository {
   @override
   Future<Note?> getNoteById(String id) async {
     final row = await _local.getNote(id);
-    return row == null ? null : _rowToNote(row);
+    return row == null ? null : rowToNote(row);
   }
 
   @override
@@ -301,7 +286,7 @@ class NoteRepositoryImpl implements NoteRepository {
             await _local.deletePendingOp(op.id);
             continue;
           }
-          final note = _rowToNote(row);
+          final note = rowToNote(row);
 
           // Last-write-wins: skip if the remote already has a newer version.
           // This can happen when another device edits the same note while this
@@ -355,7 +340,7 @@ class NoteRepositoryImpl implements NoteRepository {
     final rows = await (_local.select(_local.notesTable)
           ..where((t) => t.id.isIn(ids)))
         .get();
-    return rows.map(_rowToNote).toList();
+    return rows.map(rowToNote).toList();
   }
 
   @override

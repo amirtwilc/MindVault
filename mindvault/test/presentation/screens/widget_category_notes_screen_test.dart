@@ -50,7 +50,7 @@ Widget _harness({
   return ProviderScope(
     overrides: [
       categoriesProvider.overrideWith(() => _FakeCategoriesNotifier(categories)),
-      notesByCategoryProvider
+      notesByCategoryLocalProvider
           .overrideWith((ref, _) => Stream.value(notesForCategory)),
     ],
     child: MaterialApp(
@@ -120,4 +120,5 @@ void main() {
     final l = await AppStrings.delegate.load(const Locale('en'));
     expect(find.text(l.notesListEmptyTitle), findsOneWidget);
   });
+
 }
