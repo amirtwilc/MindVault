@@ -89,7 +89,7 @@ class AppStringsEs extends AppStrings {
 
   @override
   String get pinSetupBody =>
-      'Este PIN protege tu clave de cifrado. Lo necesitarás si inicias sesión en un nuevo dispositivo.';
+      'Este PIN protege tus notas para que nadie más que tú pueda leerlas. Lo necesitarás si inicias sesión en un nuevo dispositivo.';
 
   @override
   String get pinRecoveryBody =>
@@ -103,7 +103,7 @@ class AppStringsEs extends AppStrings {
 
   @override
   String get pinSetupDisclaimer =>
-      'Tu PIN nunca sale de este dispositivo. Tu clave cifrada se almacena en nuestros servidores para que puedas recuperarla al reinstalar.';
+      'Tu PIN nunca sale de este dispositivo. Tu clave cifrada se almacena en nuestros servidores para que puedas recuperarla al reinstalar, pero no se puede leer sin el PIN.';
 
   @override
   String get pinRecoveryDisclaimer =>

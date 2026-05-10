@@ -89,7 +89,7 @@ class AppStringsHi extends AppStrings {
 
   @override
   String get pinSetupBody =>
-      'यह PIN आपकी एन्क्रिप्शन कुंजी की सुरक्षा करता है। नए डिवाइस पर साइन इन करने पर आपको इसकी आवश्यकता होगी।';
+      'यह PIN आपकी नोट्स को किसी और द्वारा पढ़े जाने से बचाता है। नए डिवाइस पर साइन इन करने पर आपको इसकी आवश्यकता होगी।';
 
   @override
   String get pinRecoveryBody =>
@@ -103,7 +103,7 @@ class AppStringsHi extends AppStrings {
 
   @override
   String get pinSetupDisclaimer =>
-      'आपका PIN इस डिवाइस से कभी नहीं जाता। आपकी एन्क्रिप्टेड कुंजी हमारे सर्वर पर संग्रहीत है ताकि आप पुनः इंस्टॉल पर इसे पुनर्प्राप्त कर सकें।';
+      'आपका PIN इस डिवाइस से कभी नहीं जाता। आपकी एन्क्रिप्टेड कुंजी हमारे सर्वर पर संग्रहीत है ताकि आप पुनः इंस्टॉल पर इसे पुनर्प्राप्त कर सकें, लेकिन PIN के बिना इसे पढ़ा नहीं जा सकता।';
 
   @override
   String get pinRecoveryDisclaimer =>

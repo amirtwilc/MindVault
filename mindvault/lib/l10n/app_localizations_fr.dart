@@ -89,7 +89,7 @@ class AppStringsFr extends AppStrings {
 
   @override
   String get pinSetupBody =>
-      'Ce code PIN protège votre clé de chiffrement. Vous en aurez besoin si vous vous connectez sur un nouvel appareil.';
+      'Ce code PIN empêche que vos notes soient lues par quelqu’un d’autre que vous. Vous en aurez besoin si vous vous connectez sur un nouvel appareil.';
 
   @override
   String get pinRecoveryBody =>
@@ -103,7 +103,7 @@ class AppStringsFr extends AppStrings {
 
   @override
   String get pinSetupDisclaimer =>
-      'Votre code PIN ne quitte jamais cet appareil. Votre clé chiffrée est stockée sur nos serveurs pour que vous puissiez la récupérer après une réinstallation.';
+      'Votre code PIN ne quitte jamais cet appareil. Votre clé chiffrée est stockée sur nos serveurs pour que vous puissiez la récupérer après une réinstallation, mais elle ne peut pas être lue sans le code PIN.';
 
   @override
   String get pinRecoveryDisclaimer =>

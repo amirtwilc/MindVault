@@ -265,7 +265,7 @@ abstract class AppStrings {
   /// No description provided for @pinSetupBody.
   ///
   /// In en, this message translates to:
-  /// **'This PIN protects your encryption key. You\'ll need it if you sign in on a new device.'**
+  /// **'This PIN protects your notes from being read by anyone but you. You\'ll need it if you sign in on a new device.'**
   String get pinSetupBody;
 
   /// No description provided for @pinRecoveryBody.
@@ -289,7 +289,7 @@ abstract class AppStrings {
   /// No description provided for @pinSetupDisclaimer.
   ///
   /// In en, this message translates to:
-  /// **'Your PIN never leaves this device. Your encrypted key is stored on our servers so you can recover it on reinstall.'**
+  /// **'Your PIN never leaves this device. Your encrypted key is stored on our servers so you can recover it on reinstall, but it cannot be read without the PIN.'**
   String get pinSetupDisclaimer;
 
   /// No description provided for @pinRecoveryDisclaimer.

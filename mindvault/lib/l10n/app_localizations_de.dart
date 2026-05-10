@@ -89,7 +89,7 @@ class AppStringsDe extends AppStrings {
 
   @override
   String get pinSetupBody =>
-      'Diese PIN schützt deinen Verschlüsselungsschlüssel. Du brauchst sie, wenn du dich auf einem neuen Gerät anmeldest.';
+      'Diese PIN schützt deine Notizen davor, von anderen gelesen zu werden. Du brauchst sie, wenn du dich auf einem neuen Gerät anmeldest.';
 
   @override
   String get pinRecoveryBody =>
@@ -103,7 +103,7 @@ class AppStringsDe extends AppStrings {
 
   @override
   String get pinSetupDisclaimer =>
-      'Deine PIN verlässt nie dieses Gerät. Dein verschlüsselter Schlüssel wird auf unseren Servern gespeichert, damit du ihn nach einer Neuinstallation wiederherstellen kannst.';
+      'Deine PIN verlässt nie dieses Gerät. Dein verschlüsselter Schlüssel wird auf unseren Servern gespeichert, damit du ihn nach einer Neuinstallation wiederherstellen kannst, aber ohne die PIN kann er nicht gelesen werden.';
 
   @override
   String get pinRecoveryDisclaimer =>
