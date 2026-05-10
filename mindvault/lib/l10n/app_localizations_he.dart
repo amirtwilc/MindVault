@@ -89,7 +89,7 @@ class AppStringsHe extends AppStrings {
 
   @override
   String get pinSetupBody =>
-      'קוד זה מגן על מפתח ההצפנה שלך. תזדקק לו אם תתחבר ממכשיר חדש.';
+      'הקוד הזה מגן על ההערות שלך כך שאף אחד מלבדך לא יוכל לקרוא אותן. תזדקק לו אם תתחבר ממכשיר חדש.';
 
   @override
   String get pinRecoveryBody =>
@@ -103,7 +103,7 @@ class AppStringsHe extends AppStrings {
 
   @override
   String get pinSetupDisclaimer =>
-      'הקוד שלך לעולם לא יוצא מהמכשיר. המפתח המוצפן שלך מאוחסן בשרתים שלנו כדי שתוכל לשחזר אותו לאחר התקנה מחדש.';
+      'הקוד שלך לעולם לא יוצא מהמכשיר. המפתח המוצפן שלך מאוחסן בשרתים שלנו כדי שתוכל לשחזר אותו לאחר התקנה מחדש, אבל אי אפשר לקרוא אותו בלי הקוד.';
 
   @override
   String get pinRecoveryDisclaimer =>
