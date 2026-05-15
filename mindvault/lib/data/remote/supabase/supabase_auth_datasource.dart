@@ -16,6 +16,75 @@ class SupabaseAuthDatasource {
 
   Stream<AuthState> get authStateChanges => _client.auth.onAuthStateChange;
 
+  Future<AuthResponse> signInWithEmail({
+    required String email,
+    required String password,
+  }) {
+    return _client.auth.signInWithPassword(
+      email: email.trim(),
+      password: password,
+    );
+  }
+
+  Future<AuthResponse> signUpWithEmail({
+    required String email,
+    required String password,
+    required String localeCode,
+  }) {
+    return _client.auth.signUp(
+      email: email.trim(),
+      password: password,
+      data: {
+        'locale': localeCode,
+      },
+    );
+  }
+
+  Future<AuthResponse> verifyEmailOtp({
+    required String email,
+    required String token,
+  }) {
+    return _client.auth.verifyOTP(
+      email: email.trim(),
+      token: token.trim(),
+      type: OtpType.email,
+    );
+  }
+
+  Future<ResendResponse> resendSignupOtp({
+    required String email,
+  }) {
+    return _client.auth.resend(
+      email: email.trim(),
+      type: OtpType.signup,
+    );
+  }
+
+  Future<void> sendPasswordRecoveryEmail({
+    required String email,
+  }) {
+    return _client.auth.resetPasswordForEmail(email.trim());
+  }
+
+  Future<AuthResponse> verifyRecoveryOtp({
+    required String email,
+    required String token,
+  }) {
+    return _client.auth.verifyOTP(
+      email: email.trim(),
+      token: token.trim(),
+      type: OtpType.recovery,
+    );
+  }
+
+  Future<UserResponse> updatePassword({
+    required String password,
+  }) {
+    return _client.auth.updateUser(
+      UserAttributes(password: password),
+    );
+  }
+
   Future<void> signInWithGoogle() async {
     // Make sure no stale session is cached, so the account picker always shows.
     await _googleSignIn.signOut();

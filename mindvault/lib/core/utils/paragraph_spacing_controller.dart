@@ -34,10 +34,6 @@ class ParagraphSpacingController extends TextEditingController {
   ParagraphSpacingController({super.text});
 
   static const double _lineHeight = 1.0;
-  // With proportional leading on a typical font, (height - 1.0) * ~0.8 * fontSize
-  // of extra space appears above the elevated char — for bodyLarge (16sp) at
-  // height 2.0 that's ~13dp, clearly visible as a paragraph break without
-  // feeling excessive.
   static const double _paragraphHeight = 2.5;
 
   // Zero-width-space (U+200B) — invisible glyph used to carry an elevated
@@ -229,8 +225,7 @@ class _BidiAwareViewState extends State<_BidiAwareView> {
     }
 
     final fontSize = widget.baseStyle.fontSize ?? 14;
-    // Gap inserted between consecutive non-empty paragraphs (mirrors the
-    // ~1.2× extra leading that ParagraphSpacingController adds in edit mode).
+    // Gap inserted between consecutive non-empty paragraphs
     final paragraphGap = fontSize * 0.8;
     // Height for blank lines (empty paragraphs between two \n).
     final emptyHeight = fontSize * 0.9;

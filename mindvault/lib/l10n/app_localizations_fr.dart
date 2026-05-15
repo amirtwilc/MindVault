@@ -66,6 +66,178 @@ class AppStringsFr extends AppStrings {
   String get authSubtitle => 'Vos notes chiffrées propulsées par l\'IA';
 
   @override
+  String get authEmailLabel => 'E-mail';
+
+  @override
+  String get authPasswordLabel => 'Mot de passe';
+
+  @override
+  String get authEmailRequired => 'L\'e-mail est requis.';
+
+  @override
+  String get authEmailInvalid => 'Saisissez une adresse e-mail valide.';
+
+  @override
+  String get authPasswordRequired => 'Le mot de passe est requis.';
+
+  @override
+  String get authPasswordTooShort =>
+      'Le mot de passe doit contenir au moins 6 caractères.';
+
+  @override
+  String get authSignInEmail => 'Se connecter par e-mail';
+
+  @override
+  String get authCreateAccount => 'Créer un compte';
+
+  @override
+  String get authNeedAccount => 'Besoin d\'un compte ? Créez-en un';
+
+  @override
+  String get authHaveAccount => 'Déjà un compte ? Connectez-vous';
+
+  @override
+  String get authOr => 'ou';
+
+  @override
+  String get authCheckEmail =>
+      'Consultez vos e-mails pour confirmer votre compte, puis connectez-vous.';
+
+  @override
+  String get authCheckEmailOtp =>
+      'Nous vous avons envoyé un code de confirmation par e-mail. Saisissez-le ici pour terminer la création de votre compte.';
+
+  @override
+  String get authOtpResent => 'Un nouveau code de confirmation a été envoyé.';
+
+  @override
+  String get authRecoveryCodeSent =>
+      'Nous vous avons envoyé un code de récupération par e-mail.';
+
+  @override
+  String get authRecoveryCodeResent =>
+      'Un nouveau code de récupération a été envoyé.';
+
+  @override
+  String get authInvalidCredentials =>
+      'L\'e-mail ou le mot de passe est incorrect.';
+
+  @override
+  String get authEmailAlreadyUsed =>
+      'Un compte existe déjà pour cet e-mail. Essayez de vous connecter.';
+
+  @override
+  String get authWeakPassword =>
+      'Choisissez un mot de passe plus fort, puis réessayez.';
+
+  @override
+  String get authEmailNotConfirmed =>
+      'Veuillez confirmer votre e-mail avant de vous connecter.';
+
+  @override
+  String get authInvalidOtp =>
+      'Ce code est invalide. Vérifiez-le puis réessayez.';
+
+  @override
+  String get authExpiredOtp =>
+      'Ce code a expiré. Demandez-en un nouveau puis réessayez.';
+
+  @override
+  String get authRateLimited =>
+      'Trop de tentatives. Patientez un instant, puis réessayez.';
+
+  @override
+  String get authNetworkError =>
+      'Impossible de joindre le serveur de connexion. Vérifiez votre connexion, puis réessayez.';
+
+  @override
+  String get authGenericError => 'La connexion a échoué. Veuillez réessayer.';
+
+  @override
+  String get authForgotPassword => 'Mot de passe oublié ?';
+
+  @override
+  String get authForgotPasswordTitle => 'Réinitialiser votre mot de passe';
+
+  @override
+  String get authVerifyEmailTitle => 'Confirmez votre e-mail';
+
+  @override
+  String get authVerifyRecoveryTitle => 'Vérifiez votre code de récupération';
+
+  @override
+  String get authSetNewPasswordTitle => 'Choisissez un nouveau mot de passe';
+
+  @override
+  String get authVerifyEmailCode => 'Vérifier le code e-mail';
+
+  @override
+  String get authVerifyRecoveryCode => 'Vérifier le code de récupération';
+
+  @override
+  String get authOtpHelper =>
+      'Saisissez le code reçu dans votre e-mail de confirmation.';
+
+  @override
+  String get authRecoveryOtpHelper =>
+      'Saisissez le code reçu dans votre e-mail de récupération.';
+
+  @override
+  String get authOtpLabel => 'Code e-mail';
+
+  @override
+  String get authOtpRequired => 'Le code de vérification est requis.';
+
+  @override
+  String get authOtpInvalidFormat => 'Saisissez le code reçu par e-mail.';
+
+  @override
+  String get authResendCode => 'Renvoyer le code';
+
+  @override
+  String get authSendingCode => 'Envoi du code...';
+
+  @override
+  String get authVerifyingCode => 'Vérification du code...';
+
+  @override
+  String get authSendRecoveryCode => 'Envoyer le code de récupération';
+
+  @override
+  String get authBackToSignIn => 'Retour à la connexion';
+
+  @override
+  String get authSetNewPasswordBody =>
+      'Saisissez un nouveau mot de passe pour votre compte.';
+
+  @override
+  String get authNewPasswordLabel => 'Nouveau mot de passe';
+
+  @override
+  String get authConfirmPasswordLabel => 'Confirmer le nouveau mot de passe';
+
+  @override
+  String get authConfirmPasswordRequired =>
+      'Veuillez confirmer votre mot de passe.';
+
+  @override
+  String get authPasswordsDoNotMatch =>
+      'Les mots de passe ne correspondent pas.';
+
+  @override
+  String get authUpdatingPassword => 'Mise à jour du mot de passe...';
+
+  @override
+  String get authUpdatePassword => 'Mettre à jour le mot de passe';
+
+  @override
+  String get authCancelRecovery => 'Annuler la récupération';
+
+  @override
+  String get authPasswordUpdated =>
+      'Mot de passe mis à jour. Finalisation de la connexion...';
+
+  @override
   String get authSignInGoogle => 'Se connecter avec Google';
 
   @override

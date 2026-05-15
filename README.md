@@ -381,6 +381,81 @@ edited by hand — regenerate them with `dart run build_runner build`.
 
 ---
 
+## What's Next
+
+MindVault already provides what I consider the foundations of a modern notes app:  
+privacy-first storage, offline reliability, and intelligent search.
+
+But this is only the beginning of the broader vision.
+
+As the name **MindVault** suggests, the goal is not simply to store notes - it is to become a trusted extension of the user’s memory: 
+a secure personal knowledge space that can preserve information, organize it intelligently, and surface it exactly when needed.
+
+How that vision should evolve is still being explored, but the direction is clear:  
+to move from *note-taking* toward a more capable **personal knowledge companion**.
+
+### Other Planned improvements
+
+- **First-time onboarding guide**  
+  An interactive introduction to key features such as encryption, sync, AI search, and the home widget.
+
+- **Richer note types**  
+  Support for structured content such as:
+  - checklists
+  - reminders and alerts
+  - templates for recurring note formats
+
+- **Smarter knowledge retrieval**  
+  Continued improvements to AI search, ranking, and contextual understanding.
+
+- **Expanded platform support**  
+  iOS support and broader cross-device experiences.
+
+
+## Technical Deep-Dives
+
+### Achieving Local-first architecture
+
+MindVault is built around a local-first sync model, designed to make note operations feel instantaneous while maintaining reliable cross-device consistency.
+
+#### Instant local writes, resilient remote sync
+
+Every note or category mutation (**create, update, or delete**) is committed immediately to the local **Drift (SQLite)** database. Because the UI is driven by **Riverpod stream providers**, changes appear instantly without waiting for network round-trips.
+
+Remote persistence to **Supabase** happens asynchronously in the background. If a request fails (for example, due to connectivity loss), the operation is not discarded—instead, it is written to a PendingOpsTable, which acts as a durable **outbox queue**. This ensures the local database remains authoritative, allowing users to continue working seamlessly even while offline.
+
+#### Automatic reconnection and queued operation replay
+
+MindVault continuously monitors connectivity through a `StreamProvider<bool>` built on `connectivity_plus`. When the device transitions from **offline to online**, `HomeShell` automatically triggers synchronization by replaying all queued category and note operations.
+
+The same flush process also runs when the app returns to the foreground (`didChangeAppLifecycleState(resumed)`), ensuring pending changes are pushed as soon as possible. Operations are replayed **oldest-first**, preserving intent and maintaining deterministic sync behavior.
+
+#### Conflict resolution with last-write-wins guarantees
+
+To prevent stale offline updates from overwriting newer changes made on another device, MindVault applies a **last-write-wins** strategy based on the `updated_at` timestamp.
+
+Before replaying a queued `update_note` operation, the sync engine fetches the current remote version of the note. If the remote copy has a newer timestamp, the local pending update is silently discarded, and the newer remote state is pulled during the next full reconciliation. This guarantees that the most recent successful edit always wins.
+
+#### Realtime multi-device synchronization
+
+For active sessions, `NoteRepositoryImpl.startSync()` opens a **Supabase Realtime Postgres Changes** channel filtered by `user_id`.
+
+Incoming `INSERT` and `UPDATE` events are decrypted and merged directly into the local database, while `DELETE` events remove notes locally. This keeps multiple devices synchronized in near real time, typically within sub-second latency.
+
+On application startup, MindVault also performs a full synchronization (`_syncAllNotes()`) to reconcile any drift between local and remote state before realtime updates begin.
+
+#### Safe deletion reconciliation
+
+Deletion handling includes additional safeguards to support offline workflows.
+
+During full sync, MindVault compares the complete remote note ID set against the local database. Any local note missing remotely is removed, **unless** it has a pending `create_note` operation, which indicates the note was created offline and has not yet been uploaded.
+
+Offline deletions are queued as `delete_note` operations and replayed once connectivity returns. After the remote delete succeeds, the note is deleted locally again to guard against race conditions where delayed realtime events could otherwise restore a stale record.
+
+Together, these mechanisms provide a sync experience that is fast, offline-capable, and eventually consistent, allowing MindVault to behave like a local app while seamlessly keeping data synchronized across devices.
+
+---
+
 ## Author
 
 Developed by Amir Twil-Cohen
