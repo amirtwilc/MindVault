@@ -66,6 +66,170 @@ class AppStringsHi extends AppStrings {
   String get authSubtitle => 'आपके एन्क्रिप्टेड AI-संचालित नोट्स';
 
   @override
+  String get authEmailLabel => 'ईमेल';
+
+  @override
+  String get authPasswordLabel => 'पासवर्ड';
+
+  @override
+  String get authEmailRequired => 'ईमेल आवश्यक है.';
+
+  @override
+  String get authEmailInvalid => 'एक मान्य ईमेल पता दर्ज करें.';
+
+  @override
+  String get authPasswordRequired => 'पासवर्ड आवश्यक है.';
+
+  @override
+  String get authPasswordTooShort =>
+      'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए.';
+
+  @override
+  String get authSignInEmail => 'ईमेल से साइन इन करें';
+
+  @override
+  String get authCreateAccount => 'खाता बनाएं';
+
+  @override
+  String get authNeedAccount => 'खाता चाहिए? एक बनाएं';
+
+  @override
+  String get authHaveAccount => 'पहले से खाता है? साइन इन करें';
+
+  @override
+  String get authOr => 'या';
+
+  @override
+  String get authCheckEmail =>
+      'अपना खाता पुष्टि करने के लिए ईमेल देखें, फिर साइन इन करें.';
+
+  @override
+  String get authCheckEmailOtp =>
+      'हमने आपको ईमेल से पुष्टि कोड भेजा है। अपना खाता पूरा बनाने के लिए उसे यहां दर्ज करें.';
+
+  @override
+  String get authOtpResent => 'नया पुष्टि कोड भेज दिया गया है.';
+
+  @override
+  String get authRecoveryCodeSent => 'हमने आपको ईमेल से रिकवरी कोड भेजा है.';
+
+  @override
+  String get authRecoveryCodeResent => 'नया रिकवरी कोड भेज दिया गया है.';
+
+  @override
+  String get authInvalidCredentials => 'ईमेल या पासवर्ड गलत है.';
+
+  @override
+  String get authEmailAlreadyUsed =>
+      'इस ईमेल के लिए पहले से खाता मौजूद है. साइन इन करके देखें.';
+
+  @override
+  String get authWeakPassword => 'एक मजबूत पासवर्ड चुनें और फिर कोशिश करें.';
+
+  @override
+  String get authEmailNotConfirmed =>
+      'साइन इन करने से पहले अपना ईमेल पुष्टि करें.';
+
+  @override
+  String get authInvalidOtp =>
+      'यह कोड मान्य नहीं है. इसे जांचकर फिर कोशिश करें.';
+
+  @override
+  String get authExpiredOtp =>
+      'यह कोड समाप्त हो चुका है. नया कोड मांगें और फिर कोशिश करें.';
+
+  @override
+  String get authRateLimited =>
+      'बहुत अधिक प्रयास हुए. कृपया थोड़ी देर बाद फिर कोशिश करें.';
+
+  @override
+  String get authNetworkError =>
+      'साइन-इन सर्वर तक नहीं पहुंच सके. अपना कनेक्शन जांचें और फिर कोशिश करें.';
+
+  @override
+  String get authGenericError => 'साइन इन विफल रहा. कृपया फिर कोशिश करें.';
+
+  @override
+  String get authForgotPassword => 'पासवर्ड भूल गए?';
+
+  @override
+  String get authForgotPasswordTitle => 'अपना पासवर्ड रीसेट करें';
+
+  @override
+  String get authVerifyEmailTitle => 'अपना ईमेल पुष्टि करें';
+
+  @override
+  String get authVerifyRecoveryTitle => 'अपना रिकवरी कोड सत्यापित करें';
+
+  @override
+  String get authSetNewPasswordTitle => 'नया पासवर्ड चुनें';
+
+  @override
+  String get authVerifyEmailCode => 'ईमेल कोड सत्यापित करें';
+
+  @override
+  String get authVerifyRecoveryCode => 'रिकवरी कोड सत्यापित करें';
+
+  @override
+  String get authOtpHelper => 'अपने पुष्टि ईमेल में आया कोड दर्ज करें.';
+
+  @override
+  String get authRecoveryOtpHelper => 'अपने रिकवरी ईमेल में आया कोड दर्ज करें.';
+
+  @override
+  String get authOtpLabel => 'ईमेल कोड';
+
+  @override
+  String get authOtpRequired => 'सत्यापन कोड आवश्यक है.';
+
+  @override
+  String get authOtpInvalidFormat => 'अपने ईमेल का कोड दर्ज करें.';
+
+  @override
+  String get authResendCode => 'कोड फिर भेजें';
+
+  @override
+  String get authSendingCode => 'कोड भेजा जा रहा है...';
+
+  @override
+  String get authVerifyingCode => 'कोड सत्यापित किया जा रहा है...';
+
+  @override
+  String get authSendRecoveryCode => 'रिकवरी कोड भेजें';
+
+  @override
+  String get authBackToSignIn => 'साइन इन पर वापस जाएं';
+
+  @override
+  String get authSetNewPasswordBody =>
+      'अपने खाते के लिए नया पासवर्ड दर्ज करें.';
+
+  @override
+  String get authNewPasswordLabel => 'नया पासवर्ड';
+
+  @override
+  String get authConfirmPasswordLabel => 'नए पासवर्ड की पुष्टि करें';
+
+  @override
+  String get authConfirmPasswordRequired => 'कृपया अपना पासवर्ड पुष्टि करें.';
+
+  @override
+  String get authPasswordsDoNotMatch => 'पासवर्ड मेल नहीं खाते.';
+
+  @override
+  String get authUpdatingPassword => 'पासवर्ड अपडेट किया जा रहा है...';
+
+  @override
+  String get authUpdatePassword => 'पासवर्ड अपडेट करें';
+
+  @override
+  String get authCancelRecovery => 'रिकवरी रद्द करें';
+
+  @override
+  String get authPasswordUpdated =>
+      'पासवर्ड अपडेट हो गया. साइन-इन पूरा किया जा रहा है...';
+
+  @override
   String get authSignInGoogle => 'Google से साइन इन करें';
 
   @override

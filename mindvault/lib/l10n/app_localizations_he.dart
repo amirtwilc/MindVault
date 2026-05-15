@@ -66,6 +66,162 @@ class AppStringsHe extends AppStrings {
   String get authSubtitle => 'פתקים מוצפנים מבוססי בינה מלאכותית';
 
   @override
+  String get authEmailLabel => 'אימייל';
+
+  @override
+  String get authPasswordLabel => 'סיסמה';
+
+  @override
+  String get authEmailRequired => 'נדרש אימייל.';
+
+  @override
+  String get authEmailInvalid => 'הזן כתובת אימייל תקינה.';
+
+  @override
+  String get authPasswordRequired => 'נדרשת סיסמה.';
+
+  @override
+  String get authPasswordTooShort => 'הסיסמה חייבת להכיל לפחות 6 תווים.';
+
+  @override
+  String get authSignInEmail => 'התחבר עם אימייל';
+
+  @override
+  String get authCreateAccount => 'צור חשבון';
+
+  @override
+  String get authNeedAccount => 'צריך חשבון? צור אחד';
+
+  @override
+  String get authHaveAccount => 'כבר יש לך חשבון? התחבר';
+
+  @override
+  String get authOr => 'או';
+
+  @override
+  String get authCheckEmail => 'בדוק את האימייל כדי לאשר את החשבון, ואז התחבר.';
+
+  @override
+  String get authCheckEmailOtp =>
+      'שלחנו אליך קוד אישור באימייל. הזן אותו כאן כדי להשלים את יצירת החשבון.';
+
+  @override
+  String get authOtpResent => 'קוד אישור חדש נשלח.';
+
+  @override
+  String get authRecoveryCodeSent => 'שלחנו אליך קוד שחזור באימייל.';
+
+  @override
+  String get authRecoveryCodeResent => 'קוד שחזור חדש נשלח.';
+
+  @override
+  String get authInvalidCredentials => 'האימייל או הסיסמה שגויים.';
+
+  @override
+  String get authEmailAlreadyUsed =>
+      'כבר קיים חשבון עם האימייל הזה. נסה להתחבר.';
+
+  @override
+  String get authWeakPassword => 'בחר סיסמה חזקה יותר ונסה שוב.';
+
+  @override
+  String get authEmailNotConfirmed => 'יש לאשר את האימייל לפני ההתחברות.';
+
+  @override
+  String get authInvalidOtp => 'הקוד הזה לא תקין. בדוק אותו ונסה שוב.';
+
+  @override
+  String get authExpiredOtp => 'הקוד הזה פג תוקף. בקש קוד חדש ונסה שוב.';
+
+  @override
+  String get authRateLimited => 'יותר מדי ניסיונות. המתן רגע ונסה שוב.';
+
+  @override
+  String get authNetworkError =>
+      'לא ניתן להתחבר לשרת ההתחברות. בדוק את החיבור ונסה שוב.';
+
+  @override
+  String get authGenericError => 'ההתחברות נכשלה. נסה שוב.';
+
+  @override
+  String get authForgotPassword => 'שכחת סיסמה?';
+
+  @override
+  String get authForgotPasswordTitle => 'איפוס סיסמה';
+
+  @override
+  String get authVerifyEmailTitle => 'אימות האימייל';
+
+  @override
+  String get authVerifyRecoveryTitle => 'אימות קוד השחזור';
+
+  @override
+  String get authSetNewPasswordTitle => 'בחירת סיסמה חדשה';
+
+  @override
+  String get authVerifyEmailCode => 'אמת קוד אימייל';
+
+  @override
+  String get authVerifyRecoveryCode => 'אמת קוד שחזור';
+
+  @override
+  String get authOtpHelper => 'הזן את הקוד מהאימייל לאישור.';
+
+  @override
+  String get authRecoveryOtpHelper => 'הזן את הקוד מהאימייל לשחזור.';
+
+  @override
+  String get authOtpLabel => 'קוד אימייל';
+
+  @override
+  String get authOtpRequired => 'נדרש קוד אימות.';
+
+  @override
+  String get authOtpInvalidFormat => 'הזן את הקוד מהאימייל.';
+
+  @override
+  String get authResendCode => 'שלח קוד מחדש';
+
+  @override
+  String get authSendingCode => 'שולח קוד...';
+
+  @override
+  String get authVerifyingCode => 'מאמת קוד...';
+
+  @override
+  String get authSendRecoveryCode => 'שלח קוד שחזור';
+
+  @override
+  String get authBackToSignIn => 'חזרה להתחברות';
+
+  @override
+  String get authSetNewPasswordBody => 'הזן סיסמה חדשה לחשבון שלך.';
+
+  @override
+  String get authNewPasswordLabel => 'סיסמה חדשה';
+
+  @override
+  String get authConfirmPasswordLabel => 'אימות סיסמה חדשה';
+
+  @override
+  String get authConfirmPasswordRequired => 'נא לאשר את הסיסמה.';
+
+  @override
+  String get authPasswordsDoNotMatch => 'הסיסמאות אינן תואמות.';
+
+  @override
+  String get authUpdatingPassword => 'מעדכן סיסמה...';
+
+  @override
+  String get authUpdatePassword => 'עדכן סיסמה';
+
+  @override
+  String get authCancelRecovery => 'בטל שחזור';
+
+  @override
+  String get authPasswordUpdated => 'הסיסמה עודכנה. משלים את ההתחברות...';
+
+  @override
   String get authSignInGoogle => 'התחבר עם Google';
 
   @override

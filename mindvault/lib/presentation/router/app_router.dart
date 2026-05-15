@@ -10,7 +10,8 @@ import '../providers/categories_provider.dart';
 import '../providers/connectivity_provider.dart';
 import '../providers/encryption_provider.dart';
 import '../providers/notes_provider.dart';
-import '../providers/ai_search_provider.dart' show aiHistoryIsolationProvider, aiSearchHistoryProvider;
+import '../providers/ai_search_provider.dart'
+    show aiHistoryIsolationProvider, aiSearchHistoryProvider;
 import '../providers/widget_sync_provider.dart';
 import '../screens/splash/splash_screen.dart';
 import '../screens/auth/auth_screen.dart';
@@ -28,7 +29,6 @@ import '../screens/widget/widget_compose_screen.dart';
 import '../screens/widget/widget_note_view_screen.dart';
 import '../screens/widget/widget_search_screen.dart';
 
-
 final appRouterProvider = Provider<GoRouter>((ref) {
   final authNotifier = _AuthListenable(ref);
 
@@ -39,12 +39,19 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final authState = ref.read(authStateProvider).valueOrNull;
       final isLoggedIn = authState?.session != null ||
           Supabase.instance.client.auth.currentSession != null;
+      final isPasswordRecovery =
+          authState?.event == AuthChangeEvent.passwordRecovery;
 
       final location = state.uri.path;
 
       if (location == '/splash') return null;
 
       if (!isLoggedIn) {
+        if (location != '/auth') return '/auth';
+        return null;
+      }
+
+      if (isPasswordRecovery) {
         if (location != '/auth') return '/auth';
         return null;
       }
@@ -57,7 +64,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         return '/pin-setup';
       }
 
-      if (encryptionReady && (location == '/auth' || location == '/pin-setup')) {
+      if (encryptionReady &&
+          (location == '/auth' || location == '/pin-setup')) {
         return '/home/all-notes';
       }
 
@@ -285,10 +293,14 @@ class _HomeShellState extends ConsumerState<HomeShell>
       ),
       bottomNavigationBar: NavigationBar(
         destinations: [
-          NavigationDestination(icon: const Icon(Icons.notes), label: l.navAllNotes),
-          NavigationDestination(icon: const Icon(Icons.grid_view), label: l.navCategories),
-          NavigationDestination(icon: const Icon(Icons.search), label: l.navSearch),
-          NavigationDestination(icon: const Icon(Icons.settings), label: l.navSettings),
+          NavigationDestination(
+              icon: const Icon(Icons.notes), label: l.navAllNotes),
+          NavigationDestination(
+              icon: const Icon(Icons.grid_view), label: l.navCategories),
+          NavigationDestination(
+              icon: const Icon(Icons.search), label: l.navSearch),
+          NavigationDestination(
+              icon: const Icon(Icons.settings), label: l.navSettings),
         ],
         selectedIndex: _currentPage,
         onDestinationSelected: (i) {
@@ -297,10 +309,10 @@ class _HomeShellState extends ConsumerState<HomeShell>
           _programmaticTargetPage = i;
           _pageController
               .animateToPage(
-                i,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              )
+            i,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          )
               .then((_) {
             if (mounted) _programmaticTargetPage = null;
           });
@@ -319,10 +331,14 @@ class _HomeShellState extends ConsumerState<HomeShell>
 
   void _navigate(BuildContext context, int index) {
     switch (index) {
-      case 0: context.go('/home/all-notes');
-      case 1: context.go('/home/categories');
-      case 2: context.go('/home/search');
-      case 3: context.go('/home/settings');
+      case 0:
+        context.go('/home/all-notes');
+      case 1:
+        context.go('/home/categories');
+      case 2:
+        context.go('/home/search');
+      case 3:
+        context.go('/home/settings');
     }
   }
 }

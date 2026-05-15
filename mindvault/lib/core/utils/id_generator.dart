@@ -1,5 +1,6 @@
 import 'dart:math';
 
+// Generate RFC 4122 UUID v4 using cryptographically secure random bytes
 String generateId() {
   final r = Random.secure();
   final bytes = List<int>.generate(16, (_) => r.nextInt(256));

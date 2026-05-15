@@ -66,6 +66,167 @@ class AppStringsEn extends AppStrings {
   String get authSubtitle => 'Your encrypted AI-powered notes';
 
   @override
+  String get authEmailLabel => 'Email';
+
+  @override
+  String get authPasswordLabel => 'Password';
+
+  @override
+  String get authEmailRequired => 'Email is required.';
+
+  @override
+  String get authEmailInvalid => 'Enter a valid email address.';
+
+  @override
+  String get authPasswordRequired => 'Password is required.';
+
+  @override
+  String get authPasswordTooShort => 'Password must be at least 6 characters.';
+
+  @override
+  String get authSignInEmail => 'Sign in with email';
+
+  @override
+  String get authCreateAccount => 'Create account';
+
+  @override
+  String get authNeedAccount => 'Need an account? Create one';
+
+  @override
+  String get authHaveAccount => 'Already have an account? Sign in';
+
+  @override
+  String get authOr => 'or';
+
+  @override
+  String get authCheckEmail =>
+      'Check your email to confirm your account, then sign in.';
+
+  @override
+  String get authCheckEmailOtp =>
+      'We emailed you a confirmation code. Enter it here to finish creating your account.';
+
+  @override
+  String get authOtpResent => 'A new confirmation code has been sent.';
+
+  @override
+  String get authRecoveryCodeSent => 'We emailed you a recovery code.';
+
+  @override
+  String get authRecoveryCodeResent => 'A new recovery code has been sent.';
+
+  @override
+  String get authInvalidCredentials => 'The email or password is incorrect.';
+
+  @override
+  String get authEmailAlreadyUsed =>
+      'An account already exists for this email. Try signing in instead.';
+
+  @override
+  String get authWeakPassword => 'Choose a stronger password and try again.';
+
+  @override
+  String get authEmailNotConfirmed =>
+      'Please confirm your email before signing in.';
+
+  @override
+  String get authInvalidOtp => 'That code is invalid. Check it and try again.';
+
+  @override
+  String get authExpiredOtp =>
+      'That code has expired. Request a new one and try again.';
+
+  @override
+  String get authRateLimited =>
+      'Too many attempts. Please wait a moment and try again.';
+
+  @override
+  String get authNetworkError =>
+      'Could not reach the sign-in server. Check your connection and try again.';
+
+  @override
+  String get authGenericError => 'Sign-in failed. Please try again.';
+
+  @override
+  String get authForgotPassword => 'Forgot password?';
+
+  @override
+  String get authForgotPasswordTitle => 'Reset your password';
+
+  @override
+  String get authVerifyEmailTitle => 'Confirm your email';
+
+  @override
+  String get authVerifyRecoveryTitle => 'Verify your recovery code';
+
+  @override
+  String get authSetNewPasswordTitle => 'Choose a new password';
+
+  @override
+  String get authVerifyEmailCode => 'Verify email code';
+
+  @override
+  String get authVerifyRecoveryCode => 'Verify recovery code';
+
+  @override
+  String get authOtpHelper => 'Enter the code from your confirmation email.';
+
+  @override
+  String get authRecoveryOtpHelper =>
+      'Enter the code from your recovery email.';
+
+  @override
+  String get authOtpLabel => 'Email code';
+
+  @override
+  String get authOtpRequired => 'Verification code is required.';
+
+  @override
+  String get authOtpInvalidFormat => 'Enter the code from your email.';
+
+  @override
+  String get authResendCode => 'Resend code';
+
+  @override
+  String get authSendingCode => 'Sending code...';
+
+  @override
+  String get authVerifyingCode => 'Verifying code...';
+
+  @override
+  String get authSendRecoveryCode => 'Send recovery code';
+
+  @override
+  String get authBackToSignIn => 'Back to sign in';
+
+  @override
+  String get authSetNewPasswordBody => 'Enter a new password for your account.';
+
+  @override
+  String get authNewPasswordLabel => 'New password';
+
+  @override
+  String get authConfirmPasswordLabel => 'Confirm new password';
+
+  @override
+  String get authConfirmPasswordRequired => 'Please confirm your password.';
+
+  @override
+  String get authPasswordsDoNotMatch => 'Passwords do not match.';
+
+  @override
+  String get authUpdatingPassword => 'Updating password...';
+
+  @override
+  String get authUpdatePassword => 'Update password';
+
+  @override
+  String get authCancelRecovery => 'Cancel recovery';
+
+  @override
+  String get authPasswordUpdated => 'Password updated. Finishing sign-in...';
+
+  @override
   String get authSignInGoogle => 'Sign in with Google';
 
   @override

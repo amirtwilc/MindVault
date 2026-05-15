@@ -66,6 +66,176 @@ class AppStringsDe extends AppStrings {
   String get authSubtitle => 'Deine verschlüsselten KI-Notizen';
 
   @override
+  String get authEmailLabel => 'E-Mail';
+
+  @override
+  String get authPasswordLabel => 'Passwort';
+
+  @override
+  String get authEmailRequired => 'E-Mail ist erforderlich.';
+
+  @override
+  String get authEmailInvalid => 'Gib eine gültige E-Mail-Adresse ein.';
+
+  @override
+  String get authPasswordRequired => 'Passwort ist erforderlich.';
+
+  @override
+  String get authPasswordTooShort =>
+      'Das Passwort muss mindestens 6 Zeichen lang sein.';
+
+  @override
+  String get authSignInEmail => 'Mit E-Mail anmelden';
+
+  @override
+  String get authCreateAccount => 'Konto erstellen';
+
+  @override
+  String get authNeedAccount => 'Noch kein Konto? Erstelle eins';
+
+  @override
+  String get authHaveAccount => 'Schon ein Konto? Anmelden';
+
+  @override
+  String get authOr => 'oder';
+
+  @override
+  String get authCheckEmail =>
+      'Prüfe deine E-Mails, um dein Konto zu bestätigen, und melde dich dann an.';
+
+  @override
+  String get authCheckEmailOtp =>
+      'Wir haben dir einen Bestätigungscode per E-Mail geschickt. Gib ihn hier ein, um dein Konto fertig einzurichten.';
+
+  @override
+  String get authOtpResent => 'Ein neuer Bestätigungscode wurde gesendet.';
+
+  @override
+  String get authRecoveryCodeSent =>
+      'Wir haben dir einen Wiederherstellungscode per E-Mail geschickt.';
+
+  @override
+  String get authRecoveryCodeResent =>
+      'Ein neuer Wiederherstellungscode wurde gesendet.';
+
+  @override
+  String get authInvalidCredentials => 'E-Mail oder Passwort ist falsch.';
+
+  @override
+  String get authEmailAlreadyUsed =>
+      'Für diese E-Mail existiert bereits ein Konto. Versuche dich anzumelden.';
+
+  @override
+  String get authWeakPassword =>
+      'Wähle ein stärkeres Passwort und versuche es erneut.';
+
+  @override
+  String get authEmailNotConfirmed =>
+      'Bitte bestätige deine E-Mail, bevor du dich anmeldest.';
+
+  @override
+  String get authInvalidOtp =>
+      'Dieser Code ist ungültig. Prüfe ihn und versuche es erneut.';
+
+  @override
+  String get authExpiredOtp =>
+      'Dieser Code ist abgelaufen. Fordere einen neuen an und versuche es erneut.';
+
+  @override
+  String get authRateLimited =>
+      'Zu viele Versuche. Bitte warte kurz und versuche es erneut.';
+
+  @override
+  String get authNetworkError =>
+      'Der Anmeldeserver ist nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.';
+
+  @override
+  String get authGenericError =>
+      'Anmeldung fehlgeschlagen. Bitte versuche es erneut.';
+
+  @override
+  String get authForgotPassword => 'Passwort vergessen?';
+
+  @override
+  String get authForgotPasswordTitle => 'Passwort zurücksetzen';
+
+  @override
+  String get authVerifyEmailTitle => 'E-Mail bestätigen';
+
+  @override
+  String get authVerifyRecoveryTitle => 'Wiederherstellungscode prüfen';
+
+  @override
+  String get authSetNewPasswordTitle => 'Neues Passwort festlegen';
+
+  @override
+  String get authVerifyEmailCode => 'E-Mail-Code prüfen';
+
+  @override
+  String get authVerifyRecoveryCode => 'Wiederherstellungscode prüfen';
+
+  @override
+  String get authOtpHelper =>
+      'Gib den Code aus deiner Bestätigungs-E-Mail ein.';
+
+  @override
+  String get authRecoveryOtpHelper =>
+      'Gib den Code aus deiner Wiederherstellungs-E-Mail ein.';
+
+  @override
+  String get authOtpLabel => 'E-Mail-Code';
+
+  @override
+  String get authOtpRequired => 'Ein Bestätigungscode ist erforderlich.';
+
+  @override
+  String get authOtpInvalidFormat => 'Gib den Code aus deiner E-Mail ein.';
+
+  @override
+  String get authResendCode => 'Code erneut senden';
+
+  @override
+  String get authSendingCode => 'Code wird gesendet...';
+
+  @override
+  String get authVerifyingCode => 'Code wird geprüft...';
+
+  @override
+  String get authSendRecoveryCode => 'Wiederherstellungscode senden';
+
+  @override
+  String get authBackToSignIn => 'Zurück zur Anmeldung';
+
+  @override
+  String get authSetNewPasswordBody =>
+      'Gib ein neues Passwort für dein Konto ein.';
+
+  @override
+  String get authNewPasswordLabel => 'Neues Passwort';
+
+  @override
+  String get authConfirmPasswordLabel => 'Neues Passwort bestätigen';
+
+  @override
+  String get authConfirmPasswordRequired => 'Bitte bestätige dein Passwort.';
+
+  @override
+  String get authPasswordsDoNotMatch => 'Die Passwörter stimmen nicht überein.';
+
+  @override
+  String get authUpdatingPassword => 'Passwort wird aktualisiert...';
+
+  @override
+  String get authUpdatePassword => 'Passwort aktualisieren';
+
+  @override
+  String get authCancelRecovery => 'Wiederherstellung abbrechen';
+
+  @override
+  String get authPasswordUpdated =>
+      'Passwort aktualisiert. Anmeldung wird abgeschlossen...';
+
+  @override
   String get authSignInGoogle => 'Mit Google anmelden';
 
   @override
