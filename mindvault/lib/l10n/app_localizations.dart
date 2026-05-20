@@ -1402,6 +1402,42 @@ abstract class AppStrings {
   /// **'Category'**
   String get widgetComposeCategoryLabel;
 
+  /// No description provided for @noteTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get noteTypeLabel;
+
+  /// No description provided for @noteTypeText.
+  ///
+  /// In en, this message translates to:
+  /// **'Text'**
+  String get noteTypeText;
+
+  /// No description provided for @noteTypeChecklist.
+  ///
+  /// In en, this message translates to:
+  /// **'Checklist'**
+  String get noteTypeChecklist;
+
+  /// No description provided for @removeDoneTasksLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove done tasks'**
+  String get removeDoneTasksLabel;
+
+  /// No description provided for @removeDoneTasksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove done tasks?'**
+  String get removeDoneTasksTitle;
+
+  /// No description provided for @removeDoneTasksBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed tasks will be permanently removed.'**
+  String get removeDoneTasksBody;
+
   /// No description provided for @widgetViewEditTitle.
   ///
   /// In en, this message translates to:

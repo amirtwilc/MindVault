@@ -26,6 +26,8 @@ class NoteModel {
   final String? pinnedAt;
   @JsonKey(name: 'pin_order')
   final int? pinOrder;
+  @JsonKey(name: 'note_type', defaultValue: 'text')
+  final String noteType;
 
   const NoteModel({
     required this.id,
@@ -40,6 +42,7 @@ class NoteModel {
     this.isPinned = false,
     this.pinnedAt,
     this.pinOrder,
+    this.noteType = 'text',
   });
 
   factory NoteModel.fromJson(Map<String, dynamic> json) =>
@@ -60,6 +63,7 @@ class NoteModel {
         isPinned: isPinned,
         pinnedAt: pinnedAt != null ? DateTime.parse(pinnedAt!) : null,
         pinOrder: pinOrder,
+        noteType: NoteType.fromStorage(noteType),
       );
 
   static NoteModel fromEntity(Note note) => NoteModel(
@@ -75,5 +79,6 @@ class NoteModel {
         isPinned: note.isPinned,
         pinnedAt: note.pinnedAt?.toIso8601String(),
         pinOrder: note.pinOrder,
+        noteType: note.noteType.storageValue,
       );
 }

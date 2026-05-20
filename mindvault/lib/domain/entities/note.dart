@@ -2,6 +2,19 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'note.freezed.dart';
 
+enum NoteType {
+  text,
+  checklist;
+
+  static NoteType fromStorage(String value) =>
+      value == 'checklist' ? NoteType.checklist : NoteType.text;
+
+  String get storageValue => switch (this) {
+        NoteType.text => 'text',
+        NoteType.checklist => 'checklist',
+      };
+}
+
 @freezed
 class Note with _$Note {
   const factory Note({
@@ -15,6 +28,7 @@ class Note with _$Note {
     required DateTime createdAt,
     required DateTime updatedAt,
     @Default(null) DateTime? lastOpenedAt,
+    @Default(NoteType.text) NoteType noteType,
     @Default(false) bool isPinned,
     @Default(null) DateTime? pinnedAt,
     @Default(null) int? pinOrder,

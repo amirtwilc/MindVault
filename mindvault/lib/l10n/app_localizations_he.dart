@@ -720,6 +720,24 @@ class AppStringsHe extends AppStrings {
   String get widgetComposeCategoryLabel => 'קטגוריה';
 
   @override
+  String get noteTypeLabel => 'סוג';
+
+  @override
+  String get noteTypeText => 'טקסט';
+
+  @override
+  String get noteTypeChecklist => 'רשימת משימות';
+
+  @override
+  String get removeDoneTasksLabel => 'הסר משימות שהושלמו';
+
+  @override
+  String get removeDoneTasksTitle => 'להסיר משימות שהושלמו?';
+
+  @override
+  String get removeDoneTasksBody => 'משימות שהושלמו יימחקו לצמיתות.';
+
+  @override
   String get widgetViewEditTitle => 'עריכת פתק';
 
   @override

@@ -743,6 +743,25 @@ class AppStringsDe extends AppStrings {
   String get widgetComposeCategoryLabel => 'Kategorie';
 
   @override
+  String get noteTypeLabel => 'Typ';
+
+  @override
+  String get noteTypeText => 'Text';
+
+  @override
+  String get noteTypeChecklist => 'Checkliste';
+
+  @override
+  String get removeDoneTasksLabel => 'Erledigte Aufgaben entfernen';
+
+  @override
+  String get removeDoneTasksTitle => 'Erledigte Aufgaben entfernen?';
+
+  @override
+  String get removeDoneTasksBody =>
+      'Abgeschlossene Aufgaben werden dauerhaft entfernt.';
+
+  @override
   String get widgetViewEditTitle => 'Notiz bearbeiten';
 
   @override

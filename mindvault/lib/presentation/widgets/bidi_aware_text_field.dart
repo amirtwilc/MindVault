@@ -68,6 +68,7 @@ class _BidiAwareTextFieldState extends State<BidiAwareTextField> {
   }
 
   void _onChanged() {
+    if (widget.focusNode?.hasFocus ?? false) return;
     if (mounted) setState(() {});
   }
 

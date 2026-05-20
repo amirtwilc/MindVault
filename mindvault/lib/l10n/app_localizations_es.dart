@@ -743,6 +743,25 @@ class AppStringsEs extends AppStrings {
   String get widgetComposeCategoryLabel => 'Categoría';
 
   @override
+  String get noteTypeLabel => 'Tipo';
+
+  @override
+  String get noteTypeText => 'Texto';
+
+  @override
+  String get noteTypeChecklist => 'Lista';
+
+  @override
+  String get removeDoneTasksLabel => 'Eliminar tareas hechas';
+
+  @override
+  String get removeDoneTasksTitle => '¿Eliminar tareas hechas?';
+
+  @override
+  String get removeDoneTasksBody =>
+      'Las tareas completadas se eliminarán permanentemente.';
+
+  @override
   String get widgetViewEditTitle => 'Editar nota';
 
   @override
