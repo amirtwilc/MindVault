@@ -12,6 +12,7 @@ import '../../../core/utils/bidi_utils.dart';
 import '../../../core/utils/note_clipboard.dart';
 import '../../../core/utils/paragraph_spacing_controller.dart';
 import '../../../domain/entities/category.dart';
+import '../../../domain/entities/checklist_item.dart';
 import '../../../domain/entities/note.dart';
 import '../../../domain/entities/tier_limits.dart';
 import '../../../l10n/app_localizations.dart';
@@ -21,6 +22,7 @@ import '../../providers/tier_provider.dart';
 import '../../providers/widget_sync_provider.dart';
 import '../../widgets/bidi_aware_text_field.dart';
 import '../../widgets/category_color_picker.dart';
+import '../../widgets/checklist_note_view.dart';
 import '_ai_search_widgets.dart' show SttMixin;
 
 class NoteEditorScreen extends ConsumerStatefulWidget {
@@ -48,6 +50,8 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
   bool _isDirty = false;
   bool _saveInProgress = false;
   DateTime? _lastSaved;
+  NoteType _noteType = NoteType.text;
+  List<ChecklistRowData> _checklistRows = const [];
 
   // True for an existing note before the user taps the body to edit; false
   // for new notes (start in edit mode) and after the user enters edit mode.
@@ -71,6 +75,30 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
   // cursor's visual Y with the tap Y and correct when they diverge.
   Offset? _lastBodyTapGlobal;
   bool _suppressRtlCorrection = false;
+
+  List<ChecklistRowData> _rowsFromItemsPreservingDrafts(
+      List<ChecklistItem> items) {
+    final existingById = {
+      for (final row in _checklistRows)
+        if (row.id != null) row.id!: row,
+    };
+    final draftRows =
+        _checklistRows.where((row) => row.id == null && row.text.trim().isNotEmpty).toList();
+    final blankDrafts =
+        _checklistRows.where((row) => row.text.trim().isEmpty).toList();
+    final mapped = <ChecklistRowData>[];
+    for (var i = 0; i < items.length; i++) {
+      final item = items[i];
+      final base = existingById[item.id] ?? (i < draftRows.length ? draftRows[i] : null);
+      mapped.add(ChecklistRowData(
+        id: item.id,
+        text: item.text,
+        isCompleted: item.isCompleted,
+        localId: base?.localId,
+      ));
+    }
+    return [...mapped, ...blankDrafts];
+  }
 
   @override
   void initState() {
@@ -210,7 +238,20 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
       setState(() {
         _isPrivate = note.isPrivate;
         _currentCategoryId = note.categoryId;
+        _noteType = note.noteType;
       });
+      if (note.noteType == NoteType.checklist) {
+        final items = await repo.getChecklistItems(note.id);
+        if (mounted) {
+          setState(() => _checklistRows = items
+              .map((item) => ChecklistRowData(
+                    id: item.id,
+                    text: item.text,
+                    isCompleted: item.isCompleted,
+                  ))
+              .toList());
+        }
+      }
     }
     await repo.markNoteOpened(widget.noteId!);
     if (note != null && mounted) {
@@ -288,19 +329,36 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
   }
 
   void _markDirty() {
-    if (!_isDirty) setState(() => _isDirty = true);
+    _isDirty = true;
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 800), _save);
   }
 
-  Future<void> _save() async {
+  Future<void> _save({bool allowDeleteEmptyUntitled = false}) async {
     if (_saveInProgress) return;
     final title = _titleCtrl.text.trim();
-    final body = _bodyCtrl.text.trim();
-    if (title.isEmpty && body.isEmpty) return;
-
+    final checklistTexts = _checklistRows
+        .map((row) => row.text.trim())
+        .where((text) => text.isNotEmpty)
+        .toList();
+    final rawChecklistTexts = _checklistRows.map((row) => row.text).toList();
+    final rawChecklistStates =
+        _checklistRows.map((row) => row.isCompleted).toList();
+    final rawChecklistIds = _checklistRows.map((row) => row.id).toList();
+    final body = _noteType == NoteType.checklist
+        ? checklistTexts.join('\n')
+        : _bodyCtrl.text.trim();
     final repo = ref.read(noteRepositoryProvider);
     if (repo == null) return;
+    if (title.isEmpty && body.isEmpty) {
+      if (allowDeleteEmptyUntitled) {
+        final existingId = _noteId;
+        if (existingId != null) {
+          await _deleteEmptyUntitledNote(existingId);
+        }
+      }
+      return;
+    }
 
     _saveInProgress = true;
     if (mounted) setState(() => _isSaving = true);
@@ -312,6 +370,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
           title: title,
           body: body,
           isPrivate: _isPrivate,
+          noteType: _noteType,
         );
         _noteId = saved.id;
       } else {
@@ -321,7 +380,17 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
           body: body,
           isPrivate: _isPrivate,
           categoryId: _currentCategoryId,
+          noteType: _noteType,
         );
+      }
+      if (_noteType == NoteType.checklist) {
+        final items = await repo.replaceChecklistItems(
+          noteId: saved.id,
+          texts: rawChecklistTexts,
+          completionStates: rawChecklistStates,
+          rowIds: rawChecklistIds,
+        );
+        _checklistRows = _rowsFromItemsPreservingDrafts(items);
       }
       // Push the new state to the home widget directly. The shared
       // `widgetSyncProvider` only fires while HomeShell is mounted, and the
@@ -344,6 +413,15 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
         _debounce = Timer(const Duration(milliseconds: 300), _save);
       }
     }
+  }
+
+  Future<void> _deleteEmptyUntitledNote(String noteId) async {
+    final repo = ref.read(noteRepositoryProvider);
+    if (repo == null) return;
+    await repo.deleteNote(noteId);
+    await ref.read(widgetDataServiceProvider).patchNoteRemoved(noteId: noteId);
+    _noteId = null;
+    _isDirty = false;
   }
 
   Future<void> _showCategoryPicker(
@@ -400,6 +478,56 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
       _debounce?.cancel();
       _debounce = Timer(const Duration(milliseconds: 200), _save);
     }
+  }
+
+  Future<void> _changeNoteType(NoteType next) async {
+    if (next == _noteType) return;
+    final repo = ref.read(noteRepositoryProvider);
+    final id = _noteId;
+    if (id == null || repo == null) {
+      setState(() {
+        if (next == NoteType.checklist) {
+          final lines = _bodyCtrl.text
+              .split('\n')
+              .map((line) => line.trim())
+              .where((line) => line.isNotEmpty)
+              .toList();
+          _checklistRows = lines
+              .map((line) =>
+                  ChecklistRowData(id: null, text: line, isCompleted: false))
+              .toList();
+        } else {
+          _bodyCtrl.text = _checklistRows
+              .map((row) => row.text.trim())
+              .where((text) => text.isNotEmpty)
+              .join('\n');
+          _checklistRows = const [];
+        }
+        _noteType = next;
+        _isDirty = true;
+      });
+      _debounce?.cancel();
+      _debounce = Timer(const Duration(milliseconds: 200), _save);
+      return;
+    }
+
+    await repo.convertNoteType(noteId: id, noteType: next);
+    final note = await repo.getNoteById(id);
+    final items = next == NoteType.checklist
+        ? await repo.getChecklistItems(id)
+        : const [];
+    if (!mounted) return;
+    setState(() {
+      _noteType = next;
+      if (note != null) _bodyCtrl.text = note.body;
+      _checklistRows = items
+          .map((item) => ChecklistRowData(
+                id: item.id,
+                text: item.text,
+                isCompleted: item.isCompleted,
+              ))
+          .toList();
+    });
   }
 
   Future<void> _showNewCategoryDialog(BuildContext context) async {
@@ -478,16 +606,21 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
 
   Future<bool> _onPop() async {
     _debounce?.cancel();
+    final shouldDeleteEmptyChecklist = _noteType == NoteType.checklist &&
+        _titleCtrl.text.trim().isEmpty &&
+        _checklistRows.every((row) => row.text.trim().isEmpty);
     // Wait for any in-flight save to finish before popping.
     while (_saveInProgress) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
     if (_isDirty) {
       try {
-        await _save();
+        await _save(allowDeleteEmptyUntitled: shouldDeleteEmptyChecklist);
       } catch (_) {
         // Save failed (e.g. category deleted); pop anyway so user isn't stuck.
       }
+    } else if (shouldDeleteEmptyChecklist && _noteId != null) {
+      await _deleteEmptyUntitledNote(_noteId!);
     }
     return true;
   }
@@ -613,6 +746,8 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
                             DateFormat('HH:mm').format(_lastSaved!)),
                         style: tt.labelSmall?.copyWith(color: cs.outline)),
                   const Spacer(),
+                  _buildNoteTypePicker(cs, tt),
+                  const SizedBox(width: 8),
                   GestureDetector(
                     onTap: categories.isEmpty
                         ? null
@@ -673,6 +808,47 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
     );
   }
 
+  Widget _buildNoteTypePicker(ColorScheme cs, TextTheme tt) {
+    final l = AppStrings.of(context);
+    return PopupMenuButton<NoteType>(
+      tooltip: l.noteTypeLabel,
+      onSelected: _changeNoteType,
+      itemBuilder: (_) => [
+        PopupMenuItem(value: NoteType.text, child: Text(l.noteTypeText)),
+        PopupMenuItem(
+            value: NoteType.checklist, child: Text(l.noteTypeChecklist)),
+      ],
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: cs.surfaceVariant,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              _noteType == NoteType.checklist
+                  ? Icons.check_box_outlined
+                  : Icons.notes_outlined,
+              size: 14,
+              color: cs.onSurfaceVariant,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              _noteType == NoteType.checklist
+                  ? l.noteTypeChecklist
+                  : l.noteTypeText,
+              style: tt.labelSmall,
+            ),
+            const SizedBox(width: 2),
+            Icon(Icons.arrow_drop_down, size: 16, color: cs.onSurfaceVariant),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildReadMode(TextTheme tt) {
     final localeDefault = Directionality.of(context);
     final cs = Theme.of(context).colorScheme;
@@ -714,7 +890,20 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
                 ),
               const Divider(height: 1),
               const SizedBox(height: 8),
-              if (body.isEmpty)
+              if (_noteType == NoteType.checklist)
+                ChecklistNoteView(
+                  rows: _checklistRows,
+                  isEditing: false,
+                  textStyle: tt.bodyLarge,
+                  onRowsChanged: (rows) => setState(() => _checklistRows = rows),
+                  onToggle: (id, done) async {
+                    await ref
+                        .read(noteRepositoryProvider)
+                        ?.toggleChecklistItem(id: id, isCompleted: done);
+                  },
+                  onRemoveCompleted: _confirmRemoveCompleted,
+                )
+              else if (body.isEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Text(
@@ -764,7 +953,40 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
-            child: Listener(
+            child: _noteType == NoteType.checklist
+                ? ChecklistNoteView(
+                    rows: _checklistRows,
+                    isEditing: true,
+                    textStyle: tt.bodyLarge,
+                    onEditFieldFocusRequested: () {
+                      _titleFocusNode.unfocus();
+                      _bodyFocusNode.unfocus();
+                    },
+                    onRowsChanged: (rows) {
+                      setState(() {
+                        _checklistRows = rows;
+                        _isDirty = true;
+                      });
+                      _debounce?.cancel();
+                      _debounce = Timer(const Duration(milliseconds: 800), _save);
+                    },
+                    onToggle: (id, done) async {
+                      await ref
+                          .read(noteRepositoryProvider)
+                          ?.toggleChecklistItem(id: id, isCompleted: done);
+                      _isDirty = true;
+                    },
+                    onReorder: (ids) async {
+                      final noteId = _noteId;
+                      if (noteId != null) {
+                        await ref
+                            .read(noteRepositoryProvider)
+                            ?.reorderChecklistItems(noteId: noteId, orderedIds: ids);
+                      }
+                    },
+                    onRemoveCompleted: _confirmRemoveCompleted,
+                  )
+                : Listener(
               onPointerDown: (e) => _lastBodyTapGlobal = e.position,
               child: Directionality(
                 textDirection: dir,
@@ -793,5 +1015,44 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
         ),
       ],
     );
+  }
+
+  Future<void> _confirmRemoveCompleted() async {
+    final l = AppStrings.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l.removeDoneTasksTitle),
+        content: Text(l.removeDoneTasksBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(l.actionCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(l.actionDelete),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    final id = _noteId;
+    final repo = ref.read(noteRepositoryProvider);
+    if (id == null || repo == null) {
+      setState(() => _checklistRows =
+          _checklistRows.where((row) => !row.isCompleted).toList());
+      return;
+    }
+    await repo.deleteCompletedChecklistItems(id);
+    final items = await repo.getChecklistItems(id);
+    if (!mounted) return;
+    setState(() => _checklistRows = items
+        .map((item) => ChecklistRowData(
+              id: item.id,
+              text: item.text,
+              isCompleted: item.isCompleted,
+            ))
+        .toList());
   }
 }

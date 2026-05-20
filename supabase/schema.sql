@@ -93,10 +93,23 @@ CREATE TABLE IF NOT EXISTS notes (
   last_used_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+  note_type    TEXT NOT NULL DEFAULT 'text' CHECK (note_type IN ('text', 'checklist')),
   is_pinned    BOOLEAN NOT NULL DEFAULT FALSE,
   pinned_at    TIMESTAMPTZ,
   pin_order    INTEGER
 );
+
+ALTER TABLE notes ADD COLUMN IF NOT EXISTS note_type TEXT NOT NULL DEFAULT 'text';
+
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE table_name = 'notes' AND constraint_name = 'notes_note_type_check'
+  ) THEN
+    ALTER TABLE notes ADD CONSTRAINT notes_note_type_check
+      CHECK (note_type IN ('text', 'checklist'));
+  END IF;
+END $$;
 
 CREATE INDEX IF NOT EXISTS idx_notes_user_updated
   ON notes (user_id, updated_at DESC);
@@ -108,6 +121,31 @@ ALTER TABLE notes ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Users manage own notes" ON notes;
 CREATE POLICY "Users manage own notes" ON notes
+  FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- Checklist item text is AES-256-GCM ciphertext (Base64), matching notes.body.
+CREATE TABLE IF NOT EXISTS checklist_items (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  note_id      UUID NOT NULL REFERENCES notes(id) ON DELETE CASCADE,
+  user_id      UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  text         TEXT NOT NULL,
+  is_completed BOOLEAN NOT NULL DEFAULT FALSE,
+  sort_order   INTEGER NOT NULL DEFAULT 0,
+  completed_at TIMESTAMPTZ,
+  created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at   TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_checklist_items_note_order
+  ON checklist_items (note_id, is_completed ASC, sort_order ASC, created_at ASC);
+
+CREATE INDEX IF NOT EXISTS idx_checklist_items_user_updated
+  ON checklist_items (user_id, updated_at DESC);
+
+ALTER TABLE checklist_items ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users manage own checklist items" ON checklist_items;
+CREATE POLICY "Users manage own checklist items" ON checklist_items
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
 -- ── user_keys ───────────────────────────────────────────────
@@ -297,5 +335,11 @@ DO $$ BEGIN
     WHERE pubname = 'supabase_realtime' AND tablename = 'categories'
   ) THEN
     ALTER PUBLICATION supabase_realtime ADD TABLE categories;
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime' AND tablename = 'checklist_items'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE checklist_items;
   END IF;
 END $$;

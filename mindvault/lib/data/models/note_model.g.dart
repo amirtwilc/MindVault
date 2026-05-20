@@ -19,6 +19,7 @@ NoteModel _$NoteModelFromJson(Map<String, dynamic> json) => NoteModel(
       isPinned: json['is_pinned'] as bool? ?? false,
       pinnedAt: json['pinned_at'] as String?,
       pinOrder: (json['pin_order'] as num?)?.toInt(),
+      noteType: json['note_type'] as String? ?? 'text',
     );
 
 Map<String, dynamic> _$NoteModelToJson(NoteModel instance) => <String, dynamic>{
@@ -34,4 +35,5 @@ Map<String, dynamic> _$NoteModelToJson(NoteModel instance) => <String, dynamic>{
       'is_pinned': instance.isPinned,
       'pinned_at': instance.pinnedAt,
       'pin_order': instance.pinOrder,
+      'note_type': instance.noteType,
     };

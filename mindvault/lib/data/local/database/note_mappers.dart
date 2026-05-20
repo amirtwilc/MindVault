@@ -1,4 +1,5 @@
 import '../../../domain/entities/note.dart';
+import '../../../domain/entities/checklist_item.dart';
 import 'app_database.dart';
 
 Note rowToNote(NotesTableData r) => Note(
@@ -12,7 +13,20 @@ Note rowToNote(NotesTableData r) => Note(
       createdAt: r.createdAt,
       updatedAt: r.updatedAt,
       lastOpenedAt: r.lastOpenedAt,
+      noteType: NoteType.fromStorage(r.noteType),
       isPinned: r.isPinned,
       pinnedAt: r.pinnedAt,
       pinOrder: r.pinOrder,
+    );
+
+ChecklistItem rowToChecklistItem(ChecklistItemsTableData r) => ChecklistItem(
+      id: r.id,
+      noteId: r.noteId,
+      userId: r.userId,
+      text: r.itemText,
+      isCompleted: r.isCompleted,
+      sortOrder: r.sortOrder,
+      completedAt: r.completedAt,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
     );

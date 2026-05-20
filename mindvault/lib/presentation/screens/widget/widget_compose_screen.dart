@@ -8,6 +8,7 @@ import '../../../core/utils/bidi_utils.dart';
 import '../../../core/utils/note_clipboard.dart';
 import '../../../core/utils/paragraph_spacing_controller.dart';
 import '../../../domain/entities/category.dart';
+import '../../../domain/entities/note.dart';
 import '../../../domain/repositories/note_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../presentation/providers/categories_provider.dart';
@@ -15,6 +16,7 @@ import '../../../presentation/providers/encryption_provider.dart';
 import '../../../presentation/providers/notes_provider.dart';
 import '../../../presentation/providers/widget_sync_provider.dart';
 import '../../../presentation/widgets/bidi_aware_text_field.dart';
+import '../../../presentation/widgets/checklist_note_view.dart';
 import '../home/_ai_search_widgets.dart' show SttMixin;
 
 class WidgetComposeScreen extends ConsumerStatefulWidget {
@@ -48,6 +50,8 @@ class _WidgetComposeScreenState extends ConsumerState<WidgetComposeScreen>
   final _titleFocusNode = FocusNode();
   String? _selectedCategoryId;
   bool _saving = false;
+  NoteType _noteType = NoteType.text;
+  List<ChecklistRowData> _checklistRows = const [];
 
   Offset? _lastBodyTapGlobal;
   bool _suppressRtlCorrection = false;
@@ -126,7 +130,8 @@ class _WidgetComposeScreenState extends ConsumerState<WidgetComposeScreen>
       );
       ctrl.value = ctrl.value.copyWith(
         text: newText,
-        selection: TextSelection.collapsed(offset: sel.start + insertText.length),
+        selection:
+            TextSelection.collapsed(offset: sel.start + insertText.length),
       );
     } else {
       ctrl.text = '${ctrl.text}$insertText';
@@ -161,9 +166,13 @@ class _WidgetComposeScreenState extends ConsumerState<WidgetComposeScreen>
     RenderEditable? re;
     void visit(RenderObject o) {
       if (re != null) return;
-      if (o is RenderEditable) { re = o; return; }
+      if (o is RenderEditable) {
+        re = o;
+        return;
+      }
       o.visitChildren(visit);
     }
+
     final root = ctx.findRenderObject();
     if (root is RenderEditable) {
       re = root;
@@ -196,7 +205,9 @@ class _WidgetComposeScreenState extends ConsumerState<WidgetComposeScreen>
   }
 
   bool get _hasInput =>
-      _titleCtrl.text.trim().isNotEmpty || _bodyCtrl.text.trim().isNotEmpty;
+      _titleCtrl.text.trim().isNotEmpty ||
+      _bodyCtrl.text.trim().isNotEmpty ||
+      _checklistRows.any((row) => row.text.trim().isNotEmpty);
 
   /// Confirms a discard with the user when there's unsaved input. Returns
   /// true when the caller should proceed with closing.
@@ -245,7 +256,13 @@ class _WidgetComposeScreenState extends ConsumerState<WidgetComposeScreen>
 
   Future<void> _save(NoteRepository repo, List<Category> categories) async {
     final rawTitle = _titleCtrl.text.trim();
-    final body = _bodyCtrl.text.trim();
+    final checklistTexts = _checklistRows
+        .map((row) => row.text.trim())
+        .where((text) => text.isNotEmpty)
+        .toList();
+    final body = _noteType == NoteType.checklist
+        ? checklistTexts.join('\n')
+        : _bodyCtrl.text.trim();
     if (rawTitle.isEmpty && body.isEmpty) return;
 
     final cat = categories.firstWhere(
@@ -261,7 +278,17 @@ class _WidgetComposeScreenState extends ConsumerState<WidgetComposeScreen>
         title: title,
         body: body,
         isPrivate: false,
+        noteType: _noteType,
       );
+      if (_noteType == NoteType.checklist) {
+        await repo.replaceChecklistItems(
+          noteId: note.id,
+          texts: _checklistRows.map((row) => row.text).toList(),
+          completionStates:
+              _checklistRows.map((row) => row.isCompleted).toList(),
+          rowIds: _checklistRows.map((row) => row.id).toList(),
+        );
+      }
       await ref
           .read(widgetDataServiceProvider)
           .patchWithNewNote(note: note, categories: categories);
@@ -287,7 +314,8 @@ class _WidgetComposeScreenState extends ConsumerState<WidgetComposeScreen>
 
     ref.listen(categoriesProvider, (_, next) {
       final cats = next.valueOrNull ?? [];
-      if (_selectedCategoryId != null && cats.any((c) => c.id == _selectedCategoryId)) {
+      if (_selectedCategoryId != null &&
+          cats.any((c) => c.id == _selectedCategoryId)) {
         return;
       }
       if (cats.isEmpty) return;
@@ -341,11 +369,16 @@ class _WidgetComposeScreenState extends ConsumerState<WidgetComposeScreen>
                             const Spacer(),
                             if (sttAvailable)
                               IconButton(
-                                icon: Icon(listening ? Icons.mic : Icons.mic_none),
-                                tooltip: listening ? l.editorSttStop : l.editorSttRecord,
+                                icon: Icon(
+                                    listening ? Icons.mic : Icons.mic_none),
+                                tooltip: listening
+                                    ? l.editorSttStop
+                                    : l.editorSttRecord,
                                 visualDensity: VisualDensity.compact,
                                 color: listening ? cs.error : null,
-                                onPressed: _saving ? null : () => toggleListen(_onSttResult),
+                                onPressed: _saving
+                                    ? null
+                                    : () => toggleListen(_onSttResult),
                               ),
                             IconButton(
                               icon: const Icon(Icons.copy_outlined),
@@ -363,7 +396,6 @@ class _WidgetComposeScreenState extends ConsumerState<WidgetComposeScreen>
                           ],
                         ),
                         const SizedBox(height: 12),
-
                         if (categoriesAsync.isLoading && categories.isEmpty)
                           const Center(
                             child: Padding(
@@ -384,7 +416,7 @@ class _WidgetComposeScreenState extends ConsumerState<WidgetComposeScreen>
                           )
                         else ...[
                           DropdownButtonFormField<String>(
-                            value: _selectedCategoryId,
+                            initialValue: _selectedCategoryId,
                             decoration: InputDecoration(
                               labelText: l.widgetComposeCategoryLabel,
                               border: const OutlineInputBorder(),
@@ -398,7 +430,49 @@ class _WidgetComposeScreenState extends ConsumerState<WidgetComposeScreen>
                                 .toList(),
                             onChanged: _saving
                                 ? null
-                                : (v) => setState(() => _selectedCategoryId = v),
+                                : (v) =>
+                                    setState(() => _selectedCategoryId = v),
+                          ),
+                          const SizedBox(height: 12),
+                          DropdownButtonFormField<NoteType>(
+                            initialValue: _noteType,
+                            decoration: InputDecoration(
+                              labelText: l.noteTypeLabel,
+                              border: const OutlineInputBorder(),
+                              isDense: true,
+                            ),
+                            items: [
+                              DropdownMenuItem(
+                                  value: NoteType.text,
+                                  child: Text(l.noteTypeText)),
+                              DropdownMenuItem(
+                                  value: NoteType.checklist,
+                                  child: Text(l.noteTypeChecklist)),
+                            ],
+                            onChanged: _saving
+                                ? null
+                                : (value) {
+                                    if (value == null) return;
+                                    setState(() {
+                                      if (value == NoteType.checklist) {
+                                        _checklistRows = _bodyCtrl.text
+                                            .split('\n')
+                                            .map((line) => line.trim())
+                                            .where((line) => line.isNotEmpty)
+                                            .map((line) => ChecklistRowData(
+                                                id: null,
+                                                text: line,
+                                                isCompleted: false))
+                                            .toList();
+                                      } else {
+                                        _bodyCtrl.text = _checklistRows
+                                            .map((row) => row.text.trim())
+                                            .where((text) => text.isNotEmpty)
+                                            .join('\n');
+                                      }
+                                      _noteType = value;
+                                    });
+                                  },
                           ),
                           const SizedBox(height: 16),
                           BidiAwareTextField(
@@ -410,55 +484,75 @@ class _WidgetComposeScreenState extends ConsumerState<WidgetComposeScreen>
                               hintText: l.editorTitleHint,
                               border: InputBorder.none,
                               isDense: true,
-                              contentPadding: const EdgeInsets.symmetric(vertical: 4),
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 4),
                             ),
                             textCapitalization: TextCapitalization.sentences,
                           ),
                           const Divider(height: 1),
                           const SizedBox(height: 8),
-                          Builder(
-                            builder: (ctx) {
-                              final bodyDir = lockedBodyDirection(
-                                  _bodyCtrl.text, Directionality.of(ctx));
-                              return ConstrainedBox(
-                                constraints: const BoxConstraints(minHeight: 96, maxHeight: 200),
-                                child: SingleChildScrollView(
-                                  child: Listener(
-                                    onPointerDown: (e) =>
-                                        _lastBodyTapGlobal = e.position,
-                                    child: Directionality(
-                                      textDirection: bodyDir,
-                                      child: TextField(
-                                        controller: _bodyCtrl,
-                                        focusNode: _bodyFocusNode,
-                                      enabled: !_saving,
-                                      maxLines: null,
-                                      keyboardType: TextInputType.multiline,
-                                      textCapitalization: TextCapitalization.sentences,
-                                      textDirection: bodyDir,
-                                      textAlign: TextAlign.start,
-                                      style: theme.textTheme.bodyLarge,
-                                      strutStyle:
-                                          const StrutStyle(forceStrutHeight: false),
-                                      contextMenuBuilder: _buildBodyContextMenu,
-                                      decoration: InputDecoration(
-                                        hintText: l.editorBodyHint,
-                                        border: InputBorder.none,
-                                        isDense: true,
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(vertical: 4),
+                          if (_noteType == NoteType.checklist)
+                            ConstrainedBox(
+                              constraints: const BoxConstraints(
+                                  minHeight: 96, maxHeight: 220),
+                              child: SingleChildScrollView(
+                                child: ChecklistNoteView(
+                                  rows: _checklistRows,
+                                  isEditing: true,
+                                  onRowsChanged: (rows) =>
+                                      setState(() => _checklistRows = rows),
+                                ),
+                              ),
+                            )
+                          else
+                            Builder(
+                              builder: (ctx) {
+                                final bodyDir = lockedBodyDirection(
+                                    _bodyCtrl.text, Directionality.of(ctx));
+                                return ConstrainedBox(
+                                  constraints: const BoxConstraints(
+                                      minHeight: 96, maxHeight: 200),
+                                  child: SingleChildScrollView(
+                                    child: Listener(
+                                      onPointerDown: (e) =>
+                                          _lastBodyTapGlobal = e.position,
+                                      child: Directionality(
+                                        textDirection: bodyDir,
+                                        child: TextField(
+                                          controller: _bodyCtrl,
+                                          focusNode: _bodyFocusNode,
+                                          enabled: !_saving,
+                                          maxLines: null,
+                                          keyboardType: TextInputType.multiline,
+                                          textCapitalization:
+                                              TextCapitalization.sentences,
+                                          textDirection: bodyDir,
+                                          textAlign: TextAlign.start,
+                                          style: theme.textTheme.bodyLarge,
+                                          strutStyle: const StrutStyle(
+                                              forceStrutHeight: false),
+                                          contextMenuBuilder:
+                                              _buildBodyContextMenu,
+                                          decoration: InputDecoration(
+                                            hintText: l.editorBodyHint,
+                                            border: InputBorder.none,
+                                            isDense: true,
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                    vertical: 4),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 16),
+                                );
+                              },
+                            ),
+                          const SizedBox(height: 16),
                           FilledButton(
-                            onPressed:
-                                _saving || !isReady ? null : () => _save(repo, categories),
+                            onPressed: _saving || !isReady
+                                ? null
+                                : () => _save(repo, categories),
                             child: _saving
                                 ? const SizedBox(
                                     width: 20,

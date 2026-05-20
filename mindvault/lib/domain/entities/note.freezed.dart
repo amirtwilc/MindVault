@@ -26,6 +26,7 @@ mixin _$Note {
   DateTime get createdAt => throw _privateConstructorUsedError;
   DateTime get updatedAt => throw _privateConstructorUsedError;
   DateTime? get lastOpenedAt => throw _privateConstructorUsedError;
+  NoteType get noteType => throw _privateConstructorUsedError;
   bool get isPinned => throw _privateConstructorUsedError;
   DateTime? get pinnedAt => throw _privateConstructorUsedError;
   int? get pinOrder => throw _privateConstructorUsedError;
@@ -52,6 +53,7 @@ abstract class $NoteCopyWith<$Res> {
       DateTime createdAt,
       DateTime updatedAt,
       DateTime? lastOpenedAt,
+      NoteType noteType,
       bool isPinned,
       DateTime? pinnedAt,
       int? pinOrder});
@@ -82,6 +84,7 @@ class _$NoteCopyWithImpl<$Res, $Val extends Note>
     Object? createdAt = null,
     Object? updatedAt = null,
     Object? lastOpenedAt = freezed,
+    Object? noteType = null,
     Object? isPinned = null,
     Object? pinnedAt = freezed,
     Object? pinOrder = freezed,
@@ -127,6 +130,10 @@ class _$NoteCopyWithImpl<$Res, $Val extends Note>
           ? _value.lastOpenedAt
           : lastOpenedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      noteType: null == noteType
+          ? _value.noteType
+          : noteType // ignore: cast_nullable_to_non_nullable
+              as NoteType,
       isPinned: null == isPinned
           ? _value.isPinned
           : isPinned // ignore: cast_nullable_to_non_nullable
@@ -161,6 +168,7 @@ abstract class _$$NoteImplCopyWith<$Res> implements $NoteCopyWith<$Res> {
       DateTime createdAt,
       DateTime updatedAt,
       DateTime? lastOpenedAt,
+      NoteType noteType,
       bool isPinned,
       DateTime? pinnedAt,
       int? pinOrder});
@@ -188,6 +196,7 @@ class __$$NoteImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = null,
     Object? lastOpenedAt = freezed,
+    Object? noteType = null,
     Object? isPinned = null,
     Object? pinnedAt = freezed,
     Object? pinOrder = freezed,
@@ -233,6 +242,10 @@ class __$$NoteImplCopyWithImpl<$Res>
           ? _value.lastOpenedAt
           : lastOpenedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      noteType: null == noteType
+          ? _value.noteType
+          : noteType // ignore: cast_nullable_to_non_nullable
+              as NoteType,
       isPinned: null == isPinned
           ? _value.isPinned
           : isPinned // ignore: cast_nullable_to_non_nullable
@@ -263,6 +276,7 @@ class _$NoteImpl implements _Note {
       required this.createdAt,
       required this.updatedAt,
       this.lastOpenedAt = null,
+      this.noteType = NoteType.text,
       this.isPinned = false,
       this.pinnedAt = null,
       this.pinOrder = null});
@@ -290,6 +304,9 @@ class _$NoteImpl implements _Note {
   final DateTime? lastOpenedAt;
   @override
   @JsonKey()
+  final NoteType noteType;
+  @override
+  @JsonKey()
   final bool isPinned;
   @override
   @JsonKey()
@@ -300,7 +317,7 @@ class _$NoteImpl implements _Note {
 
   @override
   String toString() {
-    return 'Note(id: $id, userId: $userId, categoryId: $categoryId, title: $title, body: $body, isPrivate: $isPrivate, lastUsedAt: $lastUsedAt, createdAt: $createdAt, updatedAt: $updatedAt, lastOpenedAt: $lastOpenedAt, isPinned: $isPinned, pinnedAt: $pinnedAt, pinOrder: $pinOrder)';
+    return 'Note(id: $id, userId: $userId, categoryId: $categoryId, title: $title, body: $body, isPrivate: $isPrivate, lastUsedAt: $lastUsedAt, createdAt: $createdAt, updatedAt: $updatedAt, lastOpenedAt: $lastOpenedAt, noteType: $noteType, isPinned: $isPinned, pinnedAt: $pinnedAt, pinOrder: $pinOrder)';
   }
 
   @override
@@ -324,6 +341,8 @@ class _$NoteImpl implements _Note {
                 other.updatedAt == updatedAt) &&
             (identical(other.lastOpenedAt, lastOpenedAt) ||
                 other.lastOpenedAt == lastOpenedAt) &&
+            (identical(other.noteType, noteType) ||
+                other.noteType == noteType) &&
             (identical(other.isPinned, isPinned) ||
                 other.isPinned == isPinned) &&
             (identical(other.pinnedAt, pinnedAt) ||
@@ -345,6 +364,7 @@ class _$NoteImpl implements _Note {
       createdAt,
       updatedAt,
       lastOpenedAt,
+      noteType,
       isPinned,
       pinnedAt,
       pinOrder);
@@ -370,6 +390,7 @@ abstract class _Note implements Note {
       required final DateTime createdAt,
       required final DateTime updatedAt,
       final DateTime? lastOpenedAt,
+      final NoteType noteType,
       final bool isPinned,
       final DateTime? pinnedAt,
       final int? pinOrder}) = _$NoteImpl;
@@ -394,6 +415,8 @@ abstract class _Note implements Note {
   DateTime get updatedAt;
   @override
   DateTime? get lastOpenedAt;
+  @override
+  NoteType get noteType;
   @override
   bool get isPinned;
   @override

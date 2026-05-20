@@ -15,7 +15,7 @@ import 'auth_form_validator.dart';
 // 2. "Forgot password" will become reachable from the main auth view again.
 // 3. OTP verification and password reset flows already remain implemented
 //    below, so no extra wiring is needed.
-const bool _showEmailAuthOptions = false;
+const bool _showEmailAuthOptions = true;
 
 enum _AuthView {
   signIn,

@@ -735,6 +735,25 @@ class AppStringsHi extends AppStrings {
   String get widgetComposeCategoryLabel => 'श्रेणी';
 
   @override
+  String get noteTypeLabel => 'प्रकार';
+
+  @override
+  String get noteTypeText => 'पाठ';
+
+  @override
+  String get noteTypeChecklist => 'चेकलिस्ट';
+
+  @override
+  String get removeDoneTasksLabel => 'पूर्ण कार्य हटाएं';
+
+  @override
+  String get removeDoneTasksTitle => 'पूर्ण कार्य हटाएं?';
+
+  @override
+  String get removeDoneTasksBody =>
+      'पूर्ण किए गए कार्य स्थायी रूप से हटा दिए जाएंगे।';
+
+  @override
   String get widgetViewEditTitle => 'नोट संपादित करें';
 
   @override

@@ -17,6 +17,8 @@ import '../../../presentation/providers/encryption_provider.dart';
 import '../../../presentation/providers/notes_provider.dart';
 import '../../../presentation/providers/widget_sync_provider.dart';
 import '../../../presentation/widgets/bidi_aware_text_field.dart';
+import '../../../presentation/widgets/checklist_note_view.dart';
+import '../../../data/local/database/app_database.dart';
 import '../home/_ai_search_widgets.dart' show SttMixin;
 
 class WidgetNoteViewScreen extends ConsumerStatefulWidget {
@@ -60,9 +62,21 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
   // editor's behavior so users get the same feel in both surfaces).
   TextDirection? _lockedDir;
   String? _selectedCategoryId;
+  NoteType _noteType = NoteType.text;
+  List<ChecklistRowData> _checklistRows = const [];
 
   Offset? _lastBodyTapGlobal;
   bool _suppressRtlCorrection = false;
+
+  List<ChecklistRowData> _mapChecklistRows(
+          List<ChecklistItemsTableData> items) =>
+      items
+          .map((item) => ChecklistRowData(
+                id: item.id,
+                text: item.itemText,
+                isCompleted: item.isCompleted,
+              ))
+          .toList();
 
   @override
   void initState() {
@@ -102,7 +116,8 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
       );
       ctrl.value = ctrl.value.copyWith(
         text: newText,
-        selection: TextSelection.collapsed(offset: sel.start + insertText.length),
+        selection:
+            TextSelection.collapsed(offset: sel.start + insertText.length),
       );
     } else {
       ctrl.text = '${ctrl.text}$insertText';
@@ -201,9 +216,13 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
     RenderEditable? re;
     void visit(RenderObject o) {
       if (re != null) return;
-      if (o is RenderEditable) { re = o; return; }
+      if (o is RenderEditable) {
+        re = o;
+        return;
+      }
       o.visitChildren(visit);
     }
+
     final root = ctx.findRenderObject();
     if (root is RenderEditable) {
       re = root;
@@ -253,6 +272,7 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
             createdAt: row.createdAt,
             updatedAt: row.updatedAt,
             lastOpenedAt: row.lastOpenedAt,
+            noteType: NoteType.fromStorage(row.noteType),
             isPinned: row.isPinned,
             pinnedAt: row.pinnedAt,
             pinOrder: row.pinOrder,
@@ -279,35 +299,77 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
         _titleCtrl.text = note.title;
         _bodyCtrl.text = note.body;
         _selectedCategoryId = note.categoryId;
+        _noteType = note.noteType;
       }
       _loading = false;
     });
+    if (note != null && note.noteType == NoteType.checklist) {
+      final items = await db.getChecklistItems(note.id);
+      if (mounted) {
+        setState(() => _checklistRows = _mapChecklistRows(items));
+      }
+    }
     if (note != null && mounted) {
       final categories = ref.read(categoriesProvider).valueOrNull ?? [];
       await ref.read(widgetDataServiceProvider).patchNoteOpened(
-        note: note,
-        categories: categories,
-      );
+            note: note,
+            categories: categories,
+          );
     }
   }
 
   bool _hasUnsavedChanges() {
     if (_note == null) return false;
     return _titleCtrl.text.trim() != _note!.title.trim() ||
-        _bodyCtrl.text.trim() != _note!.body.trim() ||
+        (_noteType == NoteType.checklist
+                ? _checklistRows
+                    .map((row) => row.text.trim())
+                    .where((text) => text.isNotEmpty)
+                    .join('\n')
+                : _bodyCtrl.text.trim()) !=
+            _note!.body.trim() ||
         _selectedCategoryId != _note!.categoryId;
   }
 
   Future<void> _save(List<Category> categories, NoteRepository repo) async {
     if (_note == null) return;
+    final title = _titleCtrl.text.trim();
+    final checklistTexts = _checklistRows
+        .map((row) => row.text.trim())
+        .where((text) => text.isNotEmpty)
+        .toList();
+    final rawChecklistTexts = _checklistRows.map((row) => row.text).toList();
+    final rawChecklistStates =
+        _checklistRows.map((row) => row.isCompleted).toList();
+    final rawChecklistIds = _checklistRows.map((row) => row.id).toList();
+    final body = _noteType == NoteType.checklist
+        ? checklistTexts.join('\n')
+        : _bodyCtrl.text.trim();
+    if (title.isEmpty && body.isEmpty) {
+      await ref
+          .read(widgetDataServiceProvider)
+          .patchNoteRemoved(noteId: _note!.id);
+      await repo.deleteNote(_note!.id);
+      if (mounted) SystemNavigator.pop();
+      return;
+    }
     setState(() => _saving = true);
     try {
       final updatedNote = await repo.updateNote(
         id: _note!.id,
-        title: _titleCtrl.text.trim().isEmpty ? _note!.title : _titleCtrl.text.trim(),
-        body: _bodyCtrl.text.trim(),
+        title: title.isEmpty ? _note!.title : title,
+        body: body,
         categoryId: _selectedCategoryId,
+        noteType: _noteType,
       );
+      if (_noteType == NoteType.checklist) {
+        await repo.replaceChecklistItems(
+          noteId: _note!.id,
+          texts: rawChecklistTexts,
+          completionStates: rawChecklistStates,
+          rowIds: rawChecklistIds,
+        );
+      }
       await ref
           .read(widgetDataServiceProvider)
           .patchWithUpdatedNote(note: updatedNote, categories: categories);
@@ -342,12 +404,56 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
     );
     if (confirmed != true || !mounted) return;
 
-    await ref.read(widgetDataServiceProvider).patchNoteRemoved(noteId: _note!.id);
+    await ref
+        .read(widgetDataServiceProvider)
+        .patchNoteRemoved(noteId: _note!.id);
     await repo.deleteNote(_note!.id);
     // After a successful delete the note is gone; if we're hosted by the
     // categories floating window, dropping back to the list lets the user see
     // the updated count without reopening the widget.
     if (mounted) _closeFromView();
+  }
+
+  Future<void> _confirmRemoveCompleted(NoteRepository repo) async {
+    final l = AppStrings.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l.removeDoneTasksTitle),
+        content: Text(l.removeDoneTasksBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l.actionCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l.actionDelete),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    await repo.deleteCompletedChecklistItems(_note!.id);
+    final items = await repo.getChecklistItems(_note!.id);
+    if (!mounted) return;
+    if (_titleCtrl.text.trim().isEmpty && items.isEmpty) {
+      await ref
+          .read(widgetDataServiceProvider)
+          .patchNoteRemoved(noteId: _note!.id);
+      await repo.deleteNote(_note!.id);
+      if (mounted) _closeFromView();
+      return;
+    }
+    setState(() {
+      _checklistRows = items
+          .map((item) => ChecklistRowData(
+                id: item.id,
+                text: item.text,
+                isCompleted: item.isCompleted,
+              ))
+          .toList();
+    });
   }
 
   @override
@@ -473,8 +579,13 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
     );
   }
 
-  Widget _buildViewMode(ThemeData theme, ColorScheme cs, bool canEdit, NoteRepository? repo) {
+  Widget _buildViewMode(
+      ThemeData theme, ColorScheme cs, bool canEdit, NoteRepository? repo) {
     final l = AppStrings.of(context);
+    final removeCompletedAction = repo != null &&
+            _checklistRows.where((row) => row.isCompleted).isNotEmpty
+        ? () => _confirmRemoveCompleted(repo)
+        : null;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -509,7 +620,8 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
               icon: const Icon(Icons.delete_outline),
               tooltip: canEdit ? l.widgetViewDelete : l.widgetViewUnlocking,
               visualDensity: VisualDensity.compact,
-              onPressed: (canEdit && repo != null) ? () => _confirmDelete(repo) : null,
+              onPressed:
+                  (canEdit && repo != null) ? () => _confirmDelete(repo) : null,
             ),
             IconButton(
               icon: const Icon(Icons.close),
@@ -519,7 +631,22 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
           ],
         ),
         const SizedBox(height: 12),
-        if (_note!.body.isNotEmpty)
+        if (_noteType == NoteType.checklist)
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 360),
+            child: SingleChildScrollView(
+              child: ChecklistNoteView(
+                rows: _checklistRows,
+                isEditing: false,
+                onRowsChanged: (rows) => setState(() => _checklistRows = rows),
+                onToggle: (id, done) async {
+                  await repo?.toggleChecklistItem(id: id, isCompleted: done);
+                },
+                onRemoveCompleted: removeCompletedAction,
+              ),
+            ),
+          )
+        else if (_note!.body.isNotEmpty)
           ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 360),
             child: SingleChildScrollView(
@@ -537,7 +664,7 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
           Text(
             l.widgetViewNoContent,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: cs.onSurfaceVariant.withOpacity(0.5),
+              color: cs.onSurfaceVariant.withValues(alpha: 0.5),
               fontStyle: FontStyle.italic,
             ),
           ),
@@ -622,7 +749,7 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
         const SizedBox(height: 16),
         if (categories.isNotEmpty) ...[
           DropdownButtonFormField<String>(
-            value: _selectedCategoryId,
+            initialValue: _selectedCategoryId,
             decoration: InputDecoration(
               labelText: l.widgetComposeCategoryLabel,
               border: const OutlineInputBorder(),
@@ -630,7 +757,43 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
             items: categories
                 .map((c) => DropdownMenuItem(value: c.id, child: Text(c.name)))
                 .toList(),
-            onChanged: _saving ? null : (v) => setState(() => _selectedCategoryId = v),
+            onChanged:
+                _saving ? null : (v) => setState(() => _selectedCategoryId = v),
+          ),
+          const SizedBox(height: 12),
+          DropdownButtonFormField<NoteType>(
+            initialValue: _noteType,
+            decoration: InputDecoration(
+              labelText: l.noteTypeLabel,
+              border: const OutlineInputBorder(),
+            ),
+            items: [
+              DropdownMenuItem(
+                  value: NoteType.text, child: Text(l.noteTypeText)),
+              DropdownMenuItem(
+                  value: NoteType.checklist, child: Text(l.noteTypeChecklist)),
+            ],
+            onChanged: _saving
+                ? null
+                : (value) async {
+                    if (value == null || value == _noteType) return;
+                    if (value == NoteType.checklist) {
+                      _checklistRows = _bodyCtrl.text
+                          .split('\n')
+                          .map((line) => line.trim())
+                          .where((line) => line.isNotEmpty)
+                          .map((line) => ChecklistRowData(
+                              id: null, text: line, isCompleted: false))
+                          .toList();
+                    } else {
+                      _bodyCtrl.text = _checklistRows
+                          .map((row) => row.text.trim())
+                          .where((text) => text.isNotEmpty)
+                          .join('\n');
+                      _checklistRows = const [];
+                    }
+                    setState(() => _noteType = value);
+                  },
           ),
           const SizedBox(height: 12),
         ],
@@ -649,43 +812,64 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
         ),
         const Divider(height: 1),
         const SizedBox(height: 8),
-        Builder(
-          builder: (ctx) {
-            final bodyDir = _lockedDir ??
-                lockedBodyDirection(_bodyCtrl.text, Directionality.of(ctx));
-            return ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 80, maxHeight: 200),
-              child: SingleChildScrollView(
-                child: Listener(
-                  onPointerDown: (e) => _lastBodyTapGlobal = e.position,
-                  child: Directionality(
-                    textDirection: bodyDir,
-                    child: TextField(
-                      controller: _bodyCtrl,
-                      focusNode: _bodyFocusNode,
-                      enabled: !_saving,
-                      maxLines: null,
-                      keyboardType: TextInputType.multiline,
-                      textCapitalization: TextCapitalization.sentences,
+        if (_noteType == NoteType.checklist)
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 80, maxHeight: 220),
+            child: SingleChildScrollView(
+              child: ChecklistNoteView(
+                rows: _checklistRows,
+                isEditing: true,
+                onRowsChanged: (rows) => setState(() => _checklistRows = rows),
+                onToggle: (id, done) =>
+                    repo.toggleChecklistItem(id: id, isCompleted: done),
+                onReorder: (ids) => repo.reorderChecklistItems(
+                    noteId: _note!.id, orderedIds: ids),
+                onRemoveCompleted:
+                    _checklistRows.where((row) => row.isCompleted).isNotEmpty
+                        ? () => _confirmRemoveCompleted(repo)
+                        : null,
+              ),
+            ),
+          )
+        else
+          Builder(
+            builder: (ctx) {
+              final bodyDir = _lockedDir ??
+                  lockedBodyDirection(_bodyCtrl.text, Directionality.of(ctx));
+              return ConstrainedBox(
+                constraints:
+                    const BoxConstraints(minHeight: 80, maxHeight: 200),
+                child: SingleChildScrollView(
+                  child: Listener(
+                    onPointerDown: (e) => _lastBodyTapGlobal = e.position,
+                    child: Directionality(
                       textDirection: bodyDir,
-                      textAlign: TextAlign.start,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                      strutStyle: const StrutStyle(forceStrutHeight: false),
-                      contextMenuBuilder: _buildBodyContextMenu,
-                      decoration: InputDecoration(
-                        hintText: l.editorBodyHint,
-                        border: InputBorder.none,
-                        isDense: true,
-                        contentPadding:
-                            const EdgeInsets.symmetric(vertical: 4),
+                      child: TextField(
+                        controller: _bodyCtrl,
+                        focusNode: _bodyFocusNode,
+                        enabled: !_saving,
+                        maxLines: null,
+                        keyboardType: TextInputType.multiline,
+                        textCapitalization: TextCapitalization.sentences,
+                        textDirection: bodyDir,
+                        textAlign: TextAlign.start,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        strutStyle: const StrutStyle(forceStrutHeight: false),
+                        contextMenuBuilder: _buildBodyContextMenu,
+                        decoration: InputDecoration(
+                          hintText: l.editorBodyHint,
+                          border: InputBorder.none,
+                          isDense: true,
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 4),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            );
-          },
-        ),
+              );
+            },
+          ),
         const SizedBox(height: 16),
         FilledButton(
           onPressed: _saving ? null : () => _save(categories, repo),
@@ -693,7 +877,8 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
               ? const SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: Colors.white),
                 )
               : Text(l.actionSave),
         ),

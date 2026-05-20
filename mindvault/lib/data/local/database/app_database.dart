@@ -13,7 +13,8 @@ class CategoriesTable extends Table {
   TextColumn get id => text()();
   TextColumn get userId => text().named('user_id')();
   TextColumn get name => text()();
-  IntColumn get sortOrder => integer().named('sort_order').withDefault(const Constant(0))();
+  IntColumn get sortOrder =>
+      integer().named('sort_order').withDefault(const Constant(0))();
   DateTimeColumn get lastUsedAt => dateTime().named('last_used_at')();
   DateTimeColumn get createdAt => dateTime().named('created_at')();
   TextColumn get color => text().named('color').nullable()();
@@ -28,14 +29,38 @@ class NotesTable extends Table {
   TextColumn get categoryId => text().named('category_id')();
   TextColumn get title => text()();
   TextColumn get body => text().withDefault(const Constant(''))();
-  BoolColumn get isPrivate => boolean().named('is_private').withDefault(const Constant(false))();
+  BoolColumn get isPrivate =>
+      boolean().named('is_private').withDefault(const Constant(false))();
   DateTimeColumn get lastUsedAt => dateTime().named('last_used_at')();
   DateTimeColumn get createdAt => dateTime().named('created_at')();
   DateTimeColumn get updatedAt => dateTime().named('updated_at')();
-  DateTimeColumn get lastOpenedAt => dateTime().named('last_opened_at').nullable()();
-  BoolColumn get isPinned => boolean().named('is_pinned').withDefault(const Constant(false))();
+  DateTimeColumn get lastOpenedAt =>
+      dateTime().named('last_opened_at').nullable()();
+  TextColumn get noteType =>
+      text().named('note_type').withDefault(const Constant('text'))();
+  BoolColumn get isPinned =>
+      boolean().named('is_pinned').withDefault(const Constant(false))();
   DateTimeColumn get pinnedAt => dateTime().named('pinned_at').nullable()();
   IntColumn get pinOrder => integer().named('pin_order').nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+class ChecklistItemsTable extends Table {
+  TextColumn get id => text()();
+  TextColumn get noteId => text().named('note_id').customConstraint(
+      'NOT NULL REFERENCES notes_table(id) ON DELETE CASCADE')();
+  TextColumn get userId => text().named('user_id')();
+  TextColumn get itemText => text().named('text')();
+  BoolColumn get isCompleted =>
+      boolean().named('is_completed').withDefault(const Constant(false))();
+  IntColumn get sortOrder =>
+      integer().named('sort_order').withDefault(const Constant(0))();
+  DateTimeColumn get completedAt =>
+      dateTime().named('completed_at').nullable()();
+  DateTimeColumn get createdAt => dateTime().named('created_at')();
+  DateTimeColumn get updatedAt => dateTime().named('updated_at')();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -45,8 +70,10 @@ class AiSearchHistoryTable extends Table {
   TextColumn get queryHash => text().named('query_hash')();
   TextColumn get query => text()();
   TextColumn get answer => text()();
-  TextColumn get citedTitlesJson => text().named('cited_titles_json').withDefault(const Constant('[]'))();
-  TextColumn get citedNoteIdsJson => text().named('cited_note_ids_json').withDefault(const Constant('[]'))();
+  TextColumn get citedTitlesJson =>
+      text().named('cited_titles_json').withDefault(const Constant('[]'))();
+  TextColumn get citedNoteIdsJson =>
+      text().named('cited_note_ids_json').withDefault(const Constant('[]'))();
   DateTimeColumn get createdAt => dateTime().named('created_at')();
 
   @override
@@ -78,14 +105,21 @@ class PendingOpsTable extends Table {
 
 // ── Database ──────────────────────────────────────────────────
 
-@DriftDatabase(tables: [CategoriesTable, NotesTable, AiSearchHistoryTable, AiCacheTable, PendingOpsTable])
+@DriftDatabase(tables: [
+  CategoriesTable,
+  NotesTable,
+  ChecklistItemsTable,
+  AiSearchHistoryTable,
+  AiCacheTable,
+  PendingOpsTable
+])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -110,6 +144,10 @@ class AppDatabase extends _$AppDatabase {
           if (from < 7) {
             // aiCacheTable was created in onCreate but omitted from prior migrations.
             await m.createTable(aiCacheTable);
+          }
+          if (from < 8) {
+            await m.addColumn(notesTable, notesTable.noteType);
+            await m.createTable(checklistItemsTable);
           }
         },
         onCreate: (m) async {
@@ -181,9 +219,11 @@ class AppDatabase extends _$AppDatabase {
     String userId,
   ) {
     return (select(notesTable)
-          ..where((t) => t.categoryId.equals(categoryId) & t.userId.equals(userId))
+          ..where(
+              (t) => t.categoryId.equals(categoryId) & t.userId.equals(userId))
           ..orderBy([
-            (t) => OrderingTerm(expression: t.isPinned, mode: OrderingMode.desc),
+            (t) =>
+                OrderingTerm(expression: t.isPinned, mode: OrderingMode.desc),
             (t) => OrderingTerm(expression: t.pinOrder, mode: OrderingMode.asc),
             (t) => OrderingTerm.desc(t.updatedAt),
           ]))
@@ -194,7 +234,8 @@ class AppDatabase extends _$AppDatabase {
     return (select(notesTable)
           ..where((t) => t.userId.equals(userId))
           ..orderBy([
-            (t) => OrderingTerm(expression: t.isPinned, mode: OrderingMode.desc),
+            (t) =>
+                OrderingTerm(expression: t.isPinned, mode: OrderingMode.desc),
             (t) => OrderingTerm(expression: t.pinOrder, mode: OrderingMode.asc),
             (t) => OrderingTerm.desc(t.updatedAt),
           ]))
@@ -214,6 +255,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<void> deleteNote(String id) async {
+    await deleteChecklistItemsByNoteId(id);
     await (delete(notesTable)..where((t) => t.id.equals(id))).go();
   }
 
@@ -223,24 +265,97 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<void> deleteNotesByCategoryId(String categoryId) async {
-    await (delete(notesTable)..where((t) => t.categoryId.equals(categoryId))).go();
+    final rows = await (select(notesTable)
+          ..where((t) => t.categoryId.equals(categoryId)))
+        .get();
+    for (final row in rows) {
+      await deleteChecklistItemsByNoteId(row.id);
+    }
+    await (delete(notesTable)..where((t) => t.categoryId.equals(categoryId)))
+        .go();
   }
 
   Future<void> deleteAllUserNotes(String userId) async {
+    await (delete(checklistItemsTable)..where((t) => t.userId.equals(userId)))
+        .go();
     await (delete(notesTable)..where((t) => t.userId.equals(userId))).go();
   }
 
   Future<NotesTableData?> getNote(String id) {
-    return (select(notesTable)..where((t) => t.id.equals(id))).getSingleOrNull();
+    return (select(notesTable)..where((t) => t.id.equals(id)))
+        .getSingleOrNull();
   }
 
   Future<List<NotesTableData>> getAllNotes(String userId) {
     return (select(notesTable)..where((t) => t.userId.equals(userId))).get();
   }
 
+  Stream<List<ChecklistItemsTableData>> watchChecklistItems(String noteId) {
+    return (select(checklistItemsTable)
+          ..where((t) => t.noteId.equals(noteId))
+          ..orderBy([
+            (t) =>
+                OrderingTerm(expression: t.isCompleted, mode: OrderingMode.asc),
+            (t) => OrderingTerm.asc(t.sortOrder),
+            (t) => OrderingTerm.asc(t.createdAt),
+          ]))
+        .watch();
+  }
+
+  Future<List<ChecklistItemsTableData>> getChecklistItems(String noteId) {
+    return (select(checklistItemsTable)
+          ..where((t) => t.noteId.equals(noteId))
+          ..orderBy([
+            (t) =>
+                OrderingTerm(expression: t.isCompleted, mode: OrderingMode.asc),
+            (t) => OrderingTerm.asc(t.sortOrder),
+            (t) => OrderingTerm.asc(t.createdAt),
+          ]))
+        .get();
+  }
+
+  Future<List<ChecklistItemsTableData>> getAllChecklistItems(String userId) {
+    return (select(checklistItemsTable)..where((t) => t.userId.equals(userId)))
+        .get();
+  }
+
+  Future<ChecklistItemsTableData?> getChecklistItem(String id) {
+    return (select(checklistItemsTable)..where((t) => t.id.equals(id)))
+        .getSingleOrNull();
+  }
+
+  Future<void> upsertChecklistItem(ChecklistItemsTableCompanion item) async {
+    await into(checklistItemsTable).insertOnConflictUpdate(item);
+  }
+
+  Future<void> upsertChecklistItems(
+      List<ChecklistItemsTableCompanion> items) async {
+    await batch((b) {
+      for (final item in items) {
+        b.insert(checklistItemsTable, item, onConflict: DoUpdate((_) => item));
+      }
+    });
+  }
+
+  Future<void> deleteChecklistItem(String id) async {
+    await (delete(checklistItemsTable)..where((t) => t.id.equals(id))).go();
+  }
+
+  Future<void> deleteChecklistItemsByNoteId(String noteId) async {
+    await (delete(checklistItemsTable)..where((t) => t.noteId.equals(noteId)))
+        .go();
+  }
+
+  Future<void> deleteCompletedChecklistItems(String noteId) async {
+    await (delete(checklistItemsTable)
+          ..where((t) => t.noteId.equals(noteId) & t.isCompleted.equals(true)))
+        .go();
+  }
+
   // ── Pending ops ───────────────────────────────────────────────
 
-  Future<void> upsertPendingOp(String id, String opType, String recordId) async {
+  Future<void> upsertPendingOp(
+      String id, String opType, String recordId) async {
     await into(pendingOpsTable).insertOnConflictUpdate(PendingOpsTableCompanion(
       id: Value(id),
       opType: Value(opType),
@@ -260,8 +375,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<void> removePendingOpsForRecord(String recordId) async {
-    await (delete(pendingOpsTable)
-          ..where((t) => t.recordId.equals(recordId)))
+    await (delete(pendingOpsTable)..where((t) => t.recordId.equals(recordId)))
         .go();
   }
 
@@ -350,8 +464,7 @@ class AppDatabase extends _$AppDatabase {
   // ── AI cache ─────────────────────────────────────────────────
 
   Future<AiCacheTableData?> getCachedResponse(String queryHash) async {
-    return (select(aiCacheTable)
-          ..where((t) => t.queryHash.equals(queryHash)))
+    return (select(aiCacheTable)..where((t) => t.queryHash.equals(queryHash)))
         .getSingleOrNull();
   }
 

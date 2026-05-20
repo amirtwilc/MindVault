@@ -250,6 +250,56 @@ void main() {
     });
   });
 
+  group('checklist items', () {
+    ChecklistItemsTableCompanion item({
+      String id = 'item-1',
+      String noteId = 'note-1',
+      String userId = 'user-1',
+      String text = 'Buy milk',
+      bool isCompleted = false,
+      int sortOrder = 0,
+    }) {
+      final now = DateTime.now().toUtc();
+      return ChecklistItemsTableCompanion(
+        id: Value(id),
+        noteId: Value(noteId),
+        userId: Value(userId),
+        itemText: Value(text),
+        isCompleted: Value(isCompleted),
+        sortOrder: Value(sortOrder),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+    }
+
+    test('notes default to text type', () async {
+      await db.upsertNote(_note());
+      final row = await db.getNote('note-1');
+      expect(row!.noteType, equals('text'));
+    });
+
+    test('inserts and orders checklist items with completed items last', () async {
+      await db.upsertNote(_note());
+      await db.upsertChecklistItems([
+        item(id: 'done', isCompleted: true, sortOrder: 0),
+        item(id: 'todo-b', sortOrder: 1),
+        item(id: 'todo-a', sortOrder: 0),
+      ]);
+
+      final rows = await db.getChecklistItems('note-1');
+      expect(rows.map((r) => r.id), equals(['todo-a', 'todo-b', 'done']));
+    });
+
+    test('deleteNote removes checklist items', () async {
+      await db.upsertNote(_note());
+      await db.upsertChecklistItem(item());
+
+      await db.deleteNote('note-1');
+
+      expect(await db.getChecklistItems('note-1'), isEmpty);
+    });
+  });
+
   // ── Pinned-first ordering ──────────────────────────────────────────────────
 
   group('watchAllNotes pinned ordering', () {
