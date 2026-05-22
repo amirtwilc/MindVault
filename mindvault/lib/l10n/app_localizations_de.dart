@@ -588,6 +588,25 @@ class AppStringsDe extends AppStrings {
   String get aiSearchRateDefault => 'Bitte warte vor der nächsten Suche';
 
   @override
+  String get aiSearchErrorDailyLimit =>
+      'Tägliches KI-Limit erreicht. Versuche es morgen erneut.';
+
+  @override
+  String get aiSearchErrorSessionExpired =>
+      'Sitzung abgelaufen. Bitte melde dich erneut an.';
+
+  @override
+  String get aiSearchErrorUnavailable => 'KI ist derzeit nicht verfügbar.';
+
+  @override
+  String get aiSearchErrorNetwork =>
+      'Keine Verbindung. Prüfe deine Internetverbindung und versuche es erneut.';
+
+  @override
+  String get aiSearchErrorGeneric =>
+      'KI-Anfrage fehlgeschlagen. Bitte versuche es erneut.';
+
+  @override
   String get aiInfoTitle => 'Über die KI-Suche';
 
   @override

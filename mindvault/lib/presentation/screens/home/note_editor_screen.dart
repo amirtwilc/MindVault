@@ -28,8 +28,7 @@ import '_ai_search_widgets.dart' show SttMixin;
 class NoteEditorScreen extends ConsumerStatefulWidget {
   final String categoryId;
   final String? noteId;
-  const NoteEditorScreen(
-      {super.key, required this.categoryId, this.noteId});
+  const NoteEditorScreen({super.key, required this.categoryId, this.noteId});
 
   @override
   ConsumerState<NoteEditorScreen> createState() => _NoteEditorScreenState();
@@ -49,6 +48,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
   bool _isSaving = false;
   bool _isDirty = false;
   bool _saveInProgress = false;
+  int _editRevision = 0;
   DateTime? _lastSaved;
   NoteType _noteType = NoteType.text;
   List<ChecklistRowData> _checklistRows = const [];
@@ -77,19 +77,23 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
   bool _suppressRtlCorrection = false;
 
   List<ChecklistRowData> _rowsFromItemsPreservingDrafts(
-      List<ChecklistItem> items) {
+    List<ChecklistItem> items, {
+    List<ChecklistRowData>? sourceRows,
+  }) {
+    final rows = sourceRows ?? _checklistRows;
     final existingById = {
-      for (final row in _checklistRows)
+      for (final row in rows)
         if (row.id != null) row.id!: row,
     };
-    final draftRows =
-        _checklistRows.where((row) => row.id == null && row.text.trim().isNotEmpty).toList();
-    final blankDrafts =
-        _checklistRows.where((row) => row.text.trim().isEmpty).toList();
+    final draftRows = rows
+        .where((row) => row.id == null && row.text.trim().isNotEmpty)
+        .toList();
+    final blankDrafts = rows.where((row) => row.text.trim().isEmpty).toList();
     final mapped = <ChecklistRowData>[];
     for (var i = 0; i < items.length; i++) {
       final item = items[i];
-      final base = existingById[item.id] ?? (i < draftRows.length ? draftRows[i] : null);
+      final base =
+          existingById[item.id] ?? (i < draftRows.length ? draftRows[i] : null);
       mapped.add(ChecklistRowData(
         id: item.id,
         text: item.text,
@@ -98,6 +102,25 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
       ));
     }
     return [...mapped, ...blankDrafts];
+  }
+
+  List<ChecklistRowData> _mergeSavedChecklistIdsIntoCurrentRows(
+    List<ChecklistRowData> savedSnapshotRows,
+    List<ChecklistItem> savedItems,
+  ) {
+    final snapshotNonEmpty = savedSnapshotRows
+        .where((row) => row.text.trim().isNotEmpty)
+        .toList(growable: false);
+    final savedByLocalId = <String, ChecklistItem>{};
+    for (var i = 0; i < savedItems.length && i < snapshotNonEmpty.length; i++) {
+      savedByLocalId[snapshotNonEmpty[i].localId] = savedItems[i];
+    }
+    return _checklistRows.map((row) {
+      if (row.id != null) return row;
+      final saved = savedByLocalId[row.localId];
+      if (saved == null) return row;
+      return row.copyWith(id: saved.id);
+    }).toList();
   }
 
   @override
@@ -121,8 +144,8 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
     // For new notes (start in edit mode without going through _enterEditMode),
     // initialize the locked body direction from the device locale.
     if (_lockedDir == null && !_isReadMode) {
-      _lockedDir = lockedBodyDirection(
-          _bodyCtrl.text, Directionality.of(context));
+      _lockedDir =
+          lockedBodyDirection(_bodyCtrl.text, Directionality.of(context));
     }
   }
 
@@ -145,7 +168,9 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
     if (_isReadMode) {
       _enterEditMode();
       final existing = _bodyCtrl.text;
-      _bodyCtrl.text = existing.isEmpty ? insertText.trim() : '$existing\n${insertText.trim()}';
+      _bodyCtrl.text = existing.isEmpty
+          ? insertText.trim()
+          : '$existing\n${insertText.trim()}';
       _markDirty();
       return;
     }
@@ -160,7 +185,8 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
       );
       ctrl.value = ctrl.value.copyWith(
         text: newText,
-        selection: TextSelection.collapsed(offset: sel.start + insertText.length),
+        selection:
+            TextSelection.collapsed(offset: sel.start + insertText.length),
       );
     } else {
       ctrl.text = '${ctrl.text}$insertText';
@@ -301,9 +327,13 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
     RenderEditable? re;
     void visit(RenderObject o) {
       if (re != null) return;
-      if (o is RenderEditable) { re = o; return; }
+      if (o is RenderEditable) {
+        re = o;
+        return;
+      }
       o.visitChildren(visit);
     }
+
     final root = ctx.findRenderObject();
     if (root is RenderEditable) {
       re = root;
@@ -329,6 +359,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
   }
 
   void _markDirty() {
+    _editRevision++;
     _isDirty = true;
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 800), _save);
@@ -336,15 +367,18 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
 
   Future<void> _save({bool allowDeleteEmptyUntitled = false}) async {
     if (_saveInProgress) return;
+    final saveRevision = _editRevision;
     final title = _titleCtrl.text.trim();
-    final checklistTexts = _checklistRows
+    final checklistRowsSnapshot = List<ChecklistRowData>.of(_checklistRows);
+    final checklistTexts = checklistRowsSnapshot
         .map((row) => row.text.trim())
         .where((text) => text.isNotEmpty)
         .toList();
-    final rawChecklistTexts = _checklistRows.map((row) => row.text).toList();
+    final rawChecklistTexts =
+        checklistRowsSnapshot.map((row) => row.text).toList();
     final rawChecklistStates =
-        _checklistRows.map((row) => row.isCompleted).toList();
-    final rawChecklistIds = _checklistRows.map((row) => row.id).toList();
+        checklistRowsSnapshot.map((row) => row.isCompleted).toList();
+    final rawChecklistIds = checklistRowsSnapshot.map((row) => row.id).toList();
     final body = _noteType == NoteType.checklist
         ? checklistTexts.join('\n')
         : _bodyCtrl.text.trim();
@@ -390,7 +424,17 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
           completionStates: rawChecklistStates,
           rowIds: rawChecklistIds,
         );
-        _checklistRows = _rowsFromItemsPreservingDrafts(items);
+        if (_editRevision == saveRevision) {
+          _checklistRows = _rowsFromItemsPreservingDrafts(
+            items,
+            sourceRows: checklistRowsSnapshot,
+          );
+        } else {
+          _checklistRows = _mergeSavedChecklistIdsIntoCurrentRows(
+            checklistRowsSnapshot,
+            items,
+          );
+        }
       }
       // Push the new state to the home widget directly. The shared
       // `widgetSyncProvider` only fires while HomeShell is mounted, and the
@@ -403,7 +447,12 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
             .read(widgetDataServiceProvider)
             .patchWithUpsertedNote(note: saved, categories: cats);
       }
-      if (mounted) setState(() { _isDirty = false; _lastSaved = DateTime.now(); });
+      if (mounted) {
+        setState(() {
+          if (_editRevision == saveRevision) _isDirty = false;
+          _lastSaved = DateTime.now();
+        });
+      }
     } finally {
       _saveInProgress = false;
       if (mounted) setState(() => _isSaving = false);
@@ -443,8 +492,8 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
                   Container(
                     width: 14,
                     height: 14,
-                    decoration: BoxDecoration(
-                        color: color, shape: BoxShape.circle),
+                    decoration:
+                        BoxDecoration(color: color, shape: BoxShape.circle),
                   ),
                   const SizedBox(width: 12),
                   Expanded(child: Text(c.name)),
@@ -575,8 +624,8 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
                 final name = controller.text.trim();
                 if (name.isEmpty) return;
                 final cats = ref.read(categoriesProvider).valueOrNull ?? [];
-                if (cats.any(
-                    (c) => c.name.toLowerCase() == name.toLowerCase())) {
+                if (cats
+                    .any((c) => c.name.toLowerCase() == name.toLowerCase())) {
                   setDialogState(() => nameError = l.categoryNameInUse);
                   return;
                 }
@@ -655,9 +704,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
     if (id != null) {
       final repo = ref.read(noteRepositoryProvider);
       await repo?.deleteNote(id);
-      await ref
-          .read(widgetDataServiceProvider)
-          .patchNoteRemoved(noteId: id);
+      await ref.read(widgetDataServiceProvider).patchNoteRemoved(noteId: id);
     }
     if (mounted) {
       if (context.canPop()) {
@@ -712,15 +759,14 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
                   : () => copyNoteBody(context, _bodyCtrl.text),
             ),
             IconButton(
-              tooltip: _isPrivate ? l.editorTooltipPrivate : l.editorTooltipPublic,
-              icon: Icon(
-                  _isPrivate ? Icons.lock : Icons.lock_open_outlined),
+              tooltip:
+                  _isPrivate ? l.editorTooltipPrivate : l.editorTooltipPublic,
+              icon: Icon(_isPrivate ? Icons.lock : Icons.lock_open_outlined),
               onPressed: () {
                 setState(() => _isPrivate = !_isPrivate);
                 _isDirty = true;
                 _debounce?.cancel();
-                _debounce =
-                    Timer(const Duration(milliseconds: 200), _save);
+                _debounce = Timer(const Duration(milliseconds: 200), _save);
               },
             ),
             if (_noteId != null)
@@ -777,8 +823,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
                           ),
                           const SizedBox(width: 2),
                           Icon(Icons.arrow_drop_down,
-                              size: 16,
-                              color: cs.onSurfaceVariant),
+                              size: 16, color: cs.onSurfaceVariant),
                         ],
                       ),
                     ),
@@ -792,8 +837,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
             ),
             if (bodyLen > tier.maxCharsPerNote * 0.8)
               Padding(
-                padding:
-                    const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                 child: Text(
                   '$bodyLen / ${tier.maxCharsPerNote}',
                   style: tt.labelSmall?.copyWith(
@@ -869,8 +913,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Directionality(
-                    textDirection:
-                        firstStrongOf(rawTitle) ?? localeDefault,
+                    textDirection: firstStrongOf(rawTitle) ?? localeDefault,
                     child: Text(
                       rawTitle,
                       style: tt.titleLarge,
@@ -895,7 +938,8 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
                   rows: _checklistRows,
                   isEditing: false,
                   textStyle: tt.bodyLarge,
-                  onRowsChanged: (rows) => setState(() => _checklistRows = rows),
+                  onRowsChanged: (rows) =>
+                      setState(() => _checklistRows = rows),
                   onToggle: (id, done) async {
                     await ref
                         .read(noteRepositoryProvider)
@@ -929,14 +973,14 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
 
   Widget _buildEditMode(TextTheme tt, AppStrings l, ColorScheme cs) {
     final localeDefault = Directionality.of(context);
-    final dir = _lockedDir ?? lockedBodyDirection(_bodyCtrl.text, localeDefault);
+    final dir =
+        _lockedDir ?? lockedBodyDirection(_bodyCtrl.text, localeDefault);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: BidiAwareTextField(
             controller: _titleCtrl,
             focusNode: _titleFocusNode,
@@ -966,14 +1010,17 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
                       setState(() {
                         _checklistRows = rows;
                         _isDirty = true;
+                        _editRevision++;
                       });
                       _debounce?.cancel();
-                      _debounce = Timer(const Duration(milliseconds: 800), _save);
+                      _debounce =
+                          Timer(const Duration(milliseconds: 800), _save);
                     },
                     onToggle: (id, done) async {
                       await ref
                           .read(noteRepositoryProvider)
                           ?.toggleChecklistItem(id: id, isCompleted: done);
+                      _editRevision++;
                       _isDirty = true;
                     },
                     onReorder: (ids) async {
@@ -981,36 +1028,38 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
                       if (noteId != null) {
                         await ref
                             .read(noteRepositoryProvider)
-                            ?.reorderChecklistItems(noteId: noteId, orderedIds: ids);
+                            ?.reorderChecklistItems(
+                                noteId: noteId, orderedIds: ids);
                       }
                     },
                     onRemoveCompleted: _confirmRemoveCompleted,
                   )
                 : Listener(
-              onPointerDown: (e) => _lastBodyTapGlobal = e.position,
-              child: Directionality(
-                textDirection: dir,
-                child: TextField(
-                  controller: _bodyCtrl,
-                  focusNode: _bodyFocusNode,
-                  autofocus: widget.noteId == null,
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
-                  textCapitalization: TextCapitalization.sentences,
-                  textDirection: dir,
-                  textAlign: TextAlign.start,
-                  style: tt.bodyLarge,
-                  strutStyle: const StrutStyle(forceStrutHeight: false),
-                  contextMenuBuilder: _buildBodyContextMenu,
-                  decoration: InputDecoration(
-                    hintText: l.editorBodyHint,
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 4),
+                    onPointerDown: (e) => _lastBodyTapGlobal = e.position,
+                    child: Directionality(
+                      textDirection: dir,
+                      child: TextField(
+                        controller: _bodyCtrl,
+                        focusNode: _bodyFocusNode,
+                        autofocus: widget.noteId == null,
+                        maxLines: null,
+                        keyboardType: TextInputType.multiline,
+                        textCapitalization: TextCapitalization.sentences,
+                        textDirection: dir,
+                        textAlign: TextAlign.start,
+                        style: tt.bodyLarge,
+                        strutStyle: const StrutStyle(forceStrutHeight: false),
+                        contextMenuBuilder: _buildBodyContextMenu,
+                        decoration: InputDecoration(
+                          hintText: l.editorBodyHint,
+                          border: InputBorder.none,
+                          isDense: true,
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 4),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
           ),
         ),
       ],

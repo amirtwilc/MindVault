@@ -1,24 +1,25 @@
 import 'dart:convert';
+import 'dart:ui' show Locale, PlatformDispatcher;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show AuthChangeEvent;
 
 import '../../core/utils/rate_limiter.dart';
 import '../../data/local/database/app_database.dart';
 import '../../domain/entities/tier_limits.dart';
+import '../../l10n/app_localizations.dart';
 import '../../services/ai_search_service.dart';
 import 'auth_provider.dart';
 import 'database_provider.dart';
 import 'error_log_provider.dart';
+import 'locale_provider.dart';
 import 'notes_provider.dart';
+import 'shared_preferences_provider.dart';
 import 'tier_provider.dart';
 
-// ── Infrastructure ────────────────────────────────────────────────────────────
+export 'shared_preferences_provider.dart' show sharedPreferencesProvider;
 
-final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
-  throw UnimplementedError('Override sharedPreferencesProvider in main.dart');
-});
+// ── Infrastructure ────────────────────────────────────────────────────────────
 
 final rateLimiterProvider = Provider<RateLimiter>((ref) {
   return RateLimiter(ref.watch(sharedPreferencesProvider));
@@ -26,14 +27,30 @@ final rateLimiterProvider = Provider<RateLimiter>((ref) {
 
 final aiSearchServiceProvider = Provider<AiSearchService>((ref) {
   final tier = ref.watch(tierProvider).valueOrNull ?? TierLimits.free();
+  final locale =
+      ref.watch(localeProvider) ?? PlatformDispatcher.instance.locale;
+  final strings = lookupAppStrings(_supportedAiSearchLocale(locale));
   return AiSearchService(
     db: ref.watch(appDatabaseProvider),
     rateLimiter: ref.watch(rateLimiterProvider),
     backend: SupabaseAiBackend(ref.watch(supabaseClientProvider)),
+    errorMessages: AiSearchErrorMessages(
+      dailyLimitReached: strings.aiSearchErrorDailyLimit,
+      sessionExpired: strings.aiSearchErrorSessionExpired,
+      aiUnavailable: strings.aiSearchErrorUnavailable,
+      network: strings.aiSearchErrorNetwork,
+      generic: strings.aiSearchErrorGeneric,
+    ),
     dailySearchLimit: tier.aiSearchesPerDay,
     errorLogger: ref.watch(errorLoggerProvider),
   );
 });
+
+Locale _supportedAiSearchLocale(Locale locale) {
+  final supported = AppStrings.supportedLocales
+      .any((supported) => supported.languageCode == locale.languageCode);
+  return supported ? Locale(locale.languageCode) : const Locale('en');
+}
 
 // ── AI history entry ──────────────────────────────────────────────────────────
 
@@ -145,7 +162,12 @@ class AiSearchNotifier extends StateNotifier<AiSearchState> {
           state = AiSearchRateLimited(query: trimmed, resetAt: resetAt);
         case AiLoadingEvent():
           state = AiSearchLoading(trimmed);
-        case AiDoneEvent(:final answer, :final citedTitles, :final citedNoteIds, :final fromCache):
+        case AiDoneEvent(
+            :final answer,
+            :final citedTitles,
+            :final citedNoteIds,
+            :final fromCache
+          ):
           state = AiSearchSuccess(
             query: trimmed,
             answer: answer,
@@ -155,7 +177,8 @@ class AiSearchNotifier extends StateNotifier<AiSearchState> {
           );
           if (!fromCache) _ref.invalidate(aiSearchesTodayProvider);
           // Write to history only when AI found relevant results
-          if (citedTitles.isNotEmpty && answer != AiSearchService.noResultAnswer) {
+          if (citedTitles.isNotEmpty &&
+              answer != AiSearchService.noResultAnswer) {
             await _ref.read(appDatabaseProvider).insertHistory(
                   queryHash: AiSearchService.hashQuery(trimmed.toLowerCase()),
                   query: trimmed,

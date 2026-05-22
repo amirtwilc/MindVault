@@ -594,6 +594,26 @@ class AppStringsFr extends AppStrings {
       'Veuillez patienter avant de relancer une recherche';
 
   @override
+  String get aiSearchErrorDailyLimit =>
+      'Limite quotidienne d\'IA atteinte. Réessayez demain.';
+
+  @override
+  String get aiSearchErrorSessionExpired =>
+      'Session expirée. Veuillez vous reconnecter.';
+
+  @override
+  String get aiSearchErrorUnavailable =>
+      'L\'IA n\'est pas disponible pour le moment.';
+
+  @override
+  String get aiSearchErrorNetwork =>
+      'Aucune connexion. Vérifiez votre connexion internet et réessayez.';
+
+  @override
+  String get aiSearchErrorGeneric =>
+      'La requête IA a échoué. Veuillez réessayer.';
+
+  @override
   String get aiInfoTitle => 'À propos de la recherche IA';
 
   @override

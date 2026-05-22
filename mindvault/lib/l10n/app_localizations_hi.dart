@@ -580,6 +580,25 @@ class AppStringsHi extends AppStrings {
   String get aiSearchRateDefault => 'कृपया फिर से खोजने से पहले प्रतीक्षा करें';
 
   @override
+  String get aiSearchErrorDailyLimit =>
+      'दैनिक AI सीमा पूरी हो गई है। कल फिर प्रयास करें।';
+
+  @override
+  String get aiSearchErrorSessionExpired =>
+      'सत्र समाप्त हो गया है। कृपया फिर से साइन इन करें।';
+
+  @override
+  String get aiSearchErrorUnavailable => 'AI अभी उपलब्ध नहीं है।';
+
+  @override
+  String get aiSearchErrorNetwork =>
+      'कोई कनेक्शन नहीं है। अपना इंटरनेट कनेक्शन जांचें और फिर प्रयास करें।';
+
+  @override
+  String get aiSearchErrorGeneric =>
+      'AI अनुरोध विफल रहा। कृपया फिर से प्रयास करें।';
+
+  @override
   String get aiInfoTitle => 'AI खोज के बारे में';
 
   @override

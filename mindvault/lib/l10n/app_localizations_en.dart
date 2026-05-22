@@ -575,6 +575,24 @@ class AppStringsEn extends AppStrings {
   String get aiSearchRateDefault => 'Please wait before searching again';
 
   @override
+  String get aiSearchErrorDailyLimit =>
+      'Daily AI limit reached. Try again tomorrow.';
+
+  @override
+  String get aiSearchErrorSessionExpired =>
+      'Session expired. Please sign in again.';
+
+  @override
+  String get aiSearchErrorUnavailable => 'AI is not available right now.';
+
+  @override
+  String get aiSearchErrorNetwork =>
+      'No connection. Check your internet and try again.';
+
+  @override
+  String get aiSearchErrorGeneric => 'AI request failed. Please try again.';
+
+  @override
   String get aiInfoTitle => 'About AI Search';
 
   @override
