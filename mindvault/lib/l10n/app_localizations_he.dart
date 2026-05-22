@@ -565,6 +565,22 @@ class AppStringsHe extends AppStrings {
   String get aiSearchRateDefault => 'אנא המתן לפני חיפוש נוסף';
 
   @override
+  String get aiSearchErrorDailyLimit => 'הגעת למגבלת ה-AI היומית. נסה שוב מחר.';
+
+  @override
+  String get aiSearchErrorSessionExpired => 'פג תוקף ההתחברות. התחבר שוב.';
+
+  @override
+  String get aiSearchErrorUnavailable => 'ה-AI אינו זמין כרגע.';
+
+  @override
+  String get aiSearchErrorNetwork =>
+      'אין חיבור. בדוק את חיבור האינטרנט ונסה שוב.';
+
+  @override
+  String get aiSearchErrorGeneric => 'בקשת ה-AI נכשלה. נסה שוב.';
+
+  @override
   String get aiInfoTitle => 'על חיפוש AI';
 
   @override

@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindvault/core/constants/ai_constants.dart';
@@ -31,6 +32,14 @@ class _FakeBackend implements AiBackend {
   }
 }
 
+const _testErrorMessages = AiSearchErrorMessages(
+  dailyLimitReached: 'daily-limit-localized',
+  sessionExpired: 'session-expired-localized',
+  aiUnavailable: 'ai-unavailable-localized',
+  network: 'network-localized',
+  generic: 'generic-localized',
+);
+
 // ── Helper ────────────────────────────────────────────────────────────────────
 
 Note _note({
@@ -38,6 +47,7 @@ Note _note({
   String title = 'My Note',
   String body = 'Note body content',
   bool isPrivate = false,
+  NoteType noteType = NoteType.text,
 }) {
   return Note(
     id: id,
@@ -49,7 +59,42 @@ Note _note({
     lastUsedAt: DateTime(2024),
     createdAt: DateTime(2024),
     updatedAt: DateTime(2024),
+    noteType: noteType,
   );
+}
+
+Future<void> _seedChecklist({
+  required AppDatabase db,
+  required String noteId,
+  required List<({String text, bool done})> items,
+}) async {
+  final now = DateTime(2024).toUtc();
+  await db.upsertNote(NotesTableCompanion(
+    id: Value(noteId),
+    userId: const Value('user1'),
+    categoryId: const Value('cat1'),
+    title: const Value('Checklist'),
+    body: Value(items.map((item) => item.text).join('\n')),
+    isPrivate: const Value(false),
+    lastUsedAt: Value(now),
+    createdAt: Value(now),
+    updatedAt: Value(now),
+    noteType: const Value('checklist'),
+  ));
+  await db.upsertChecklistItems([
+    for (var i = 0; i < items.length; i++)
+      ChecklistItemsTableCompanion(
+        id: Value('item-$noteId-$i'),
+        noteId: Value(noteId),
+        userId: const Value('user1'),
+        itemText: Value(items[i].text),
+        isCompleted: Value(items[i].done),
+        sortOrder: Value(i),
+        completedAt: Value(items[i].done ? now : null),
+        createdAt: Value(now.add(Duration(seconds: i))),
+        updatedAt: Value(now.add(Duration(seconds: i))),
+      ),
+  ]);
 }
 
 void main() {
@@ -61,6 +106,7 @@ void main() {
         db: db,
         rateLimiter: rateLimiter,
         backend: fakeBackend,
+        errorMessages: _testErrorMessages,
         dailySearchLimit: dailyLimit,
       );
 
@@ -223,6 +269,74 @@ void main() {
 
   // ── Caching ───────────────────────────────────────────────────────────────
 
+  group('checklist context', () {
+    test('sends only unchecked checklist items as newline text', () async {
+      await _seedChecklist(
+        db: db,
+        noteId: 'movies',
+        items: [
+          (text: 'The Matrix', done: false),
+          (text: 'Badass', done: false),
+          (text: 'Alien', done: true),
+        ],
+      );
+
+      await makeService().search(
+        query: 'alien',
+        notes: [
+          _note(
+            id: 'movies',
+            title: 'Movies To Watch',
+            body: 'The Matrix\nBadass\nAlien',
+            noteType: NoteType.checklist,
+          ),
+        ],
+      ).drain<void>();
+
+      expect(fakeBackend.lastNotes.single.title, equals('Movies To Watch'));
+      expect(fakeBackend.lastNotes.single.body, equals('The Matrix\nBadass'));
+      expect(fakeBackend.lastNotes.single.body, isNot(contains('Alien')));
+      expect(fakeBackend.lastNotes.single.body, isNot(contains('- ')));
+    });
+
+    test('all-completed checklist sends an empty body', () async {
+      await _seedChecklist(
+        db: db,
+        noteId: 'done-movies',
+        items: [
+          (text: 'Alien', done: true),
+          (text: 'Blade Runner', done: true),
+        ],
+      );
+
+      await makeService().search(
+        query: 'alien',
+        notes: [
+          _note(
+            id: 'done-movies',
+            title: 'Movies To Watch',
+            body: 'Alien\nBlade Runner',
+            noteType: NoteType.checklist,
+          ),
+        ],
+      ).drain<void>();
+
+      expect(fakeBackend.lastNotes.single.body, isEmpty);
+    });
+
+    test('text notes keep their body unchanged', () async {
+      await makeService().search(
+        query: 'riverpod',
+        notes: [
+          _note(title: 'Flutter Tips', body: 'Use Riverpod\nKeep it simple'),
+        ],
+      ).drain<void>();
+
+      expect(fakeBackend.lastNotes.single.body,
+          equals('Use Riverpod\nKeep it simple'));
+    });
+  });
+
   group('caching', () {
     test('second identical query returns fromCache=true', () async {
       final note = _note(title: 'Cache Test', body: 'cache test content');
@@ -352,7 +466,8 @@ void main() {
       final svc = AiSearchService(
         db: db,
         rateLimiter: rateLimiter,
-        backend: _ThrowingBackend(),
+        backend: const _ThrowingBackend(),
+        errorMessages: _testErrorMessages,
       );
       final events = await svc
           .search(query: 'test', notes: [_note(body: 'test content')]).toList();
@@ -365,7 +480,8 @@ void main() {
       final svc = AiSearchService(
         db: db,
         rateLimiter: rateLimiter,
-        backend: _ThrowingBackend(),
+        backend: const _ThrowingBackend(),
+        errorMessages: _testErrorMessages,
         errorLogger: logger,
       );
       await svc.search(
@@ -384,6 +500,7 @@ void main() {
         db: db,
         rateLimiter: rateLimiter,
         backend: fakeBackend,
+        errorMessages: _testErrorMessages,
         errorLogger: logger,
       );
       await svc.search(
@@ -398,39 +515,125 @@ void main() {
       final svc = AiSearchService(
         db: db,
         rateLimiter: rateLimiter,
-        backend: _AiBackendExceptionBackend(status: 502),
+        backend: const _AiBackendExceptionBackend(status: 502),
+        errorMessages: _testErrorMessages,
         errorLogger: logger,
       );
-      await svc
-          .search(query: 'test', notes: [_note(body: 'test content')])
-          .drain<void>();
+      await svc.search(
+          query: 'test', notes: [_note(body: 'test content')]).drain<void>();
       await Future<void>.delayed(Duration.zero);
       expect(logger.entries, hasLength(1));
       expect(logger.entries.first.context, containsPair('http_status', 502));
+    });
+
+    test('uses localized daily limit error message', () async {
+      final events = await AiSearchService(
+        db: db,
+        rateLimiter: rateLimiter,
+        backend: const _AiBackendExceptionBackend(
+          message: 'quota_exceeded',
+          status: 429,
+        ),
+        errorMessages: _testErrorMessages,
+      ).search(query: 'test', notes: [_note(body: 'test content')]).toList();
+
+      expect(
+        events.whereType<AiErrorEvent>().single.message,
+        equals('daily-limit-localized'),
+      );
+    });
+
+    test('uses localized session expired error message', () async {
+      final events = await AiSearchService(
+        db: db,
+        rateLimiter: rateLimiter,
+        backend: const _AiBackendExceptionBackend(
+          message: 'Unauthorized',
+          status: 401,
+        ),
+        errorMessages: _testErrorMessages,
+      ).search(query: 'test', notes: [_note(body: 'test content')]).toList();
+
+      expect(
+        events.whereType<AiErrorEvent>().single.message,
+        equals('session-expired-localized'),
+      );
+    });
+
+    test('uses localized AI unavailable error message', () async {
+      final events = await AiSearchService(
+        db: db,
+        rateLimiter: rateLimiter,
+        backend: const _AiBackendExceptionBackend(
+          message: 'AI not configured',
+          status: 500,
+        ),
+        errorMessages: _testErrorMessages,
+      ).search(query: 'test', notes: [_note(body: 'test content')]).toList();
+
+      expect(
+        events.whereType<AiErrorEvent>().single.message,
+        equals('ai-unavailable-localized'),
+      );
+    });
+
+    test('uses localized network error message', () async {
+      final events = await AiSearchService(
+        db: db,
+        rateLimiter: rateLimiter,
+        backend: const _ThrowingBackend(message: 'SocketException: offline'),
+        errorMessages: _testErrorMessages,
+      ).search(query: 'test', notes: [_note(body: 'test content')]).toList();
+
+      expect(
+        events.whereType<AiErrorEvent>().single.message,
+        equals('network-localized'),
+      );
+    });
+
+    test('uses localized generic error message', () async {
+      final events = await AiSearchService(
+        db: db,
+        rateLimiter: rateLimiter,
+        backend: const _ThrowingBackend(message: 'unexpected backend failure'),
+        errorMessages: _testErrorMessages,
+      ).search(query: 'test', notes: [_note(body: 'test content')]).toList();
+
+      expect(
+        events.whereType<AiErrorEvent>().single.message,
+        equals('generic-localized'),
+      );
     });
   });
 }
 
 class _ThrowingBackend implements AiBackend {
+  final String message;
+  const _ThrowingBackend({this.message = 'simulated network error'});
+
   @override
   Future<String> call({
     required String query,
     required List<({String title, String body})> notes,
   }) async {
-    throw Exception('simulated network error');
+    throw Exception(message);
   }
 }
 
 class _AiBackendExceptionBackend implements AiBackend {
+  final String message;
   final int status;
-  const _AiBackendExceptionBackend({required this.status});
+  const _AiBackendExceptionBackend({
+    this.message = 'AI error: Bad Gateway',
+    required this.status,
+  });
 
   @override
   Future<String> call({
     required String query,
     required List<({String title, String body})> notes,
   }) async {
-    throw AiBackendException('AI error: Bad Gateway', httpStatus: status);
+    throw AiBackendException(message, httpStatus: status);
   }
 }
 

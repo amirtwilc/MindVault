@@ -1150,6 +1150,36 @@ abstract class AppStrings {
   /// **'Please wait before searching again'**
   String get aiSearchRateDefault;
 
+  /// No description provided for @aiSearchErrorDailyLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily AI limit reached. Try again tomorrow.'**
+  String get aiSearchErrorDailyLimit;
+
+  /// No description provided for @aiSearchErrorSessionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Session expired. Please sign in again.'**
+  String get aiSearchErrorSessionExpired;
+
+  /// No description provided for @aiSearchErrorUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'AI is not available right now.'**
+  String get aiSearchErrorUnavailable;
+
+  /// No description provided for @aiSearchErrorNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'No connection. Check your internet and try again.'**
+  String get aiSearchErrorNetwork;
+
+  /// No description provided for @aiSearchErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'AI request failed. Please try again.'**
+  String get aiSearchErrorGeneric;
+
   /// No description provided for @aiInfoTitle.
   ///
   /// In en, this message translates to:

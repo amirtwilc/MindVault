@@ -53,7 +53,7 @@ class SupabaseAiBackend implements AiBackend {
     final msg = (res.data as Map?)?.containsKey('error') == true
         ? res.data['error'] as String
         : 'Request failed (${res.status})';
-    throw AiBackendException(msg, httpStatus: res.status ?? 0);
+    throw AiBackendException(msg, httpStatus: res.status);
   }
 }
 
@@ -90,6 +90,22 @@ class AiErrorEvent extends AiSearchEvent {
   const AiErrorEvent(this.message);
 }
 
+class AiSearchErrorMessages {
+  final String dailyLimitReached;
+  final String sessionExpired;
+  final String aiUnavailable;
+  final String network;
+  final String generic;
+
+  const AiSearchErrorMessages({
+    required this.dailyLimitReached,
+    required this.sessionExpired,
+    required this.aiUnavailable,
+    required this.network,
+    required this.generic,
+  });
+}
+
 // ── Rate limit info ───────────────────────────────────────────────────────────
 
 enum RateLimitStatus { ok, minuteExceeded, dayExceeded }
@@ -103,7 +119,8 @@ class RateLimitInfo {
 // ── Service ───────────────────────────────────────────────────────────────────
 
 class AiSearchService {
-  static const String noResultAnswer = 'No relevant notes found for your query.';
+  static const String noResultAnswer =
+      'No relevant notes found for your query.';
 
   final AppDatabase _db;
   final RateLimiter _rateLimiter;
@@ -111,18 +128,21 @@ class AiSearchService {
   // Daily limit is tier-specific; injected at construction time.
   final int _dailySearchLimit;
   final ErrorLogger _errorLogger;
+  final AiSearchErrorMessages _errorMessages;
 
   AiSearchService({
     required AppDatabase db,
     required RateLimiter rateLimiter,
     required AiBackend backend,
+    required AiSearchErrorMessages errorMessages,
     int dailySearchLimit = 5, // TierLimits.free().aiSearchesPerDay
     ErrorLogger errorLogger = const NoopErrorLogger(),
   })  : _db = db,
         _rateLimiter = rateLimiter,
         _backend = backend,
         _dailySearchLimit = dailySearchLimit,
-        _errorLogger = errorLogger;
+        _errorLogger = errorLogger,
+        _errorMessages = errorMessages;
 
   Future<RateLimitInfo> checkRateLimit() async {
     final minute = await _rateLimiter.getMinuteUsage();
@@ -193,7 +213,7 @@ class AiSearchService {
       return;
     }
 
-    final context = _buildContext(relevant);
+    final context = await _buildContext(relevant);
 
     try {
       final answer = await _backend.call(query: normalized, notes: context);
@@ -257,18 +277,30 @@ class AiSearchService {
     return fallback.take(AiConstants.ftsTopK).toList();
   }
 
-  List<({String title, String body})> _buildContext(List<Note> notes) {
+  Future<List<({String title, String body})>> _buildContext(
+      List<Note> notes) async {
     final context = <({String title, String body})>[];
     int charCount = 0;
     for (final note in notes) {
       if (charCount >= AiConstants.tokenBudget) break;
-      final body = note.body.length > AiConstants.noteBodyMaxChars
-          ? '${note.body.substring(0, AiConstants.noteBodyMaxChars)}…'
-          : note.body;
+      final rawBody = await _bodyForAiContext(note);
+      final body = rawBody.length > AiConstants.noteBodyMaxChars
+          ? '${rawBody.substring(0, AiConstants.noteBodyMaxChars)}…'
+          : rawBody;
       context.add((title: note.title, body: body));
       charCount += note.title.length + body.length;
     }
     return context;
+  }
+
+  Future<String> _bodyForAiContext(Note note) async {
+    if (note.noteType != NoteType.checklist) return note.body;
+    final items = await _db.getChecklistItems(note.id);
+    return items
+        .where((item) => !item.isCompleted)
+        .map((item) => item.itemText.trim())
+        .where((text) => text.isNotEmpty)
+        .join('\n');
   }
 
   ({String answer, List<String> citedTitles}) _parseResponse(String response) {
@@ -303,17 +335,17 @@ class AiSearchService {
 
   String _friendlyError(String raw) {
     if (raw.contains('quota_exceeded')) {
-      return 'Daily AI limit reached. Try again tomorrow.';
+      return _errorMessages.dailyLimitReached;
     }
     if (raw.contains('Unauthorized')) {
-      return 'Session expired. Please sign in again.';
+      return _errorMessages.sessionExpired;
     }
     if (raw.contains('AI not configured')) {
-      return 'AI is not available right now.';
+      return _errorMessages.aiUnavailable;
     }
     if (raw.contains('SocketException') || raw.contains('network')) {
-      return 'No connection. Check your internet and try again.';
+      return _errorMessages.network;
     }
-    return 'AI request failed. Please try again.';
+    return _errorMessages.generic;
   }
 }

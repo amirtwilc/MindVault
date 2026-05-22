@@ -588,6 +588,26 @@ class AppStringsEs extends AppStrings {
   String get aiSearchRateDefault => 'Por favor espera antes de buscar de nuevo';
 
   @override
+  String get aiSearchErrorDailyLimit =>
+      'Límite diario de IA alcanzado. Inténtalo de nuevo mañana.';
+
+  @override
+  String get aiSearchErrorSessionExpired =>
+      'La sesión ha caducado. Inicia sesión de nuevo.';
+
+  @override
+  String get aiSearchErrorUnavailable =>
+      'La IA no está disponible ahora mismo.';
+
+  @override
+  String get aiSearchErrorNetwork =>
+      'Sin conexión. Revisa tu conexión a internet e inténtalo de nuevo.';
+
+  @override
+  String get aiSearchErrorGeneric =>
+      'La solicitud de IA falló. Inténtalo de nuevo.';
+
+  @override
   String get aiInfoTitle => 'Acerca de la búsqueda IA';
 
   @override

@@ -24,9 +24,18 @@ class _FixedBackend implements AiBackend {
       response;
 }
 
+const _testErrorMessages = AiSearchErrorMessages(
+  dailyLimitReached: 'daily-limit-localized',
+  sessionExpired: 'session-expired-localized',
+  aiUnavailable: 'ai-unavailable-localized',
+  network: 'network-localized',
+  generic: 'generic-localized',
+);
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-Note _note({String id = 'n1', String title = 'My Note', String body = 'note body'}) {
+Note _note(
+    {String id = 'n1', String title = 'My Note', String body = 'note body'}) {
   final now = DateTime(2025);
   return Note(
     id: id,
@@ -71,6 +80,7 @@ void main() {
       db: db,
       rateLimiter: RateLimiter(prefs),
       backend: backend,
+      errorMessages: _testErrorMessages,
       dailySearchLimit: 100,
     );
   }
@@ -83,7 +93,8 @@ void main() {
 
   test('writes history when AI returns cited titles', () async {
     final note = _note(id: 'n1', title: 'My Note', body: 'test content');
-    final svc = await _makeService(const _FixedBackend('The answer.\nSources: My Note'));
+    final svc = await _makeService(
+        const _FixedBackend('The answer.\nSources: My Note'));
     final container = _makeContainer(db: db, service: svc, notes: [note]);
     addTearDown(container.dispose);
 
@@ -113,7 +124,8 @@ void main() {
 
   test('skips history write when response has no cited titles', () async {
     final note = _note(body: 'content about topic');
-    final svc = await _makeService(const _FixedBackend('Answer with no sources.'));
+    final svc =
+        await _makeService(const _FixedBackend('Answer with no sources.'));
     final container = _makeContainer(db: db, service: svc, notes: [note]);
     addTearDown(container.dispose);
 
