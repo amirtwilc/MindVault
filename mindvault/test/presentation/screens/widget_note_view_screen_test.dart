@@ -14,15 +14,28 @@ import 'package:mindvault/presentation/providers/categories_provider.dart';
 import 'package:mindvault/presentation/providers/database_provider.dart';
 import 'package:mindvault/presentation/providers/encryption_provider.dart';
 import 'package:mindvault/presentation/providers/notes_provider.dart';
+import 'package:mindvault/presentation/providers/reminder_provider.dart';
 import 'package:mindvault/presentation/providers/widget_sync_provider.dart';
 import 'package:mindvault/presentation/screens/widget/widget_note_view_screen.dart';
 import 'package:mindvault/services/encryption_service.dart';
+import 'package:mindvault/services/reminder_scheduler_service.dart';
 import 'package:mindvault/services/widget_data_service.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../helpers/fake_secure_storage.dart';
 
 class _MockNoteRepository extends Mock implements NoteRepository {}
+
+class _FakeReminderScheduler extends ReminderSchedulerService {
+  String? cancelledNoteId;
+
+  _FakeReminderScheduler() : super();
+
+  @override
+  Future<void> cancel(String noteId) async {
+    cancelledNoteId = noteId;
+  }
+}
 
 class _FakeWidgetDataService extends WidgetDataService {
   String? removedNoteId;
@@ -62,6 +75,7 @@ Widget _harness({
   required AppDatabase db,
   required NoteRepository repo,
   required WidgetDataService widgetDataService,
+  required ReminderSchedulerService reminderScheduler,
   required VoidCallback onClose,
 }) {
   final encryption = EncryptionService(FakeSecureStorage());
@@ -69,6 +83,8 @@ Widget _harness({
     overrides: [
       appDatabaseProvider.overrideWithValue(db),
       noteRepositoryProvider.overrideWithValue(repo),
+      reminderRepositoryProvider.overrideWithValue(null),
+      reminderSchedulerProvider.overrideWithValue(reminderScheduler),
       widgetDataServiceProvider.overrideWithValue(widgetDataService),
       secureStorageProvider.overrideWithValue(FakeSecureStorage()),
       encryptionServiceProvider.overrideWithValue(encryption),
@@ -89,11 +105,13 @@ void main() {
   late AppDatabase db;
   late _MockNoteRepository repo;
   late _FakeWidgetDataService widgetDataService;
+  late _FakeReminderScheduler reminderScheduler;
 
   setUp(() {
     db = AppDatabase.forTesting(NativeDatabase.memory());
     repo = _MockNoteRepository();
     widgetDataService = _FakeWidgetDataService();
+    reminderScheduler = _FakeReminderScheduler();
   });
 
   tearDown(() async {
@@ -143,6 +161,7 @@ void main() {
         db: db,
         repo: repo,
         widgetDataService: widgetDataService,
+        reminderScheduler: reminderScheduler,
         onClose: () => closed = true,
       ));
       await tester.pumpAndSettle();

@@ -270,4 +270,7 @@
   "widgetViewDiscardTitle": "Änderungen verwerfen?",
   "widgetViewDiscardBody": "Deine Änderungen werden nicht gespeichert.",
   "widgetViewKeepEditing": "Weiter bearbeiten"
+  ,
+  "reminderNotificationBody": "Tippen, um diese Notiz zu öffnen",
+  "reminderNotificationsRequired": "Die Benachrichtigungsberechtigung muss für Erinnerungen erteilt werden."
 }

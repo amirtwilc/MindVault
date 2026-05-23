@@ -964,6 +964,78 @@ abstract class AppStrings {
   /// **'Copy note'**
   String get editorTooltipCopy;
 
+  /// No description provided for @reminderTooltipSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Set reminder'**
+  String get reminderTooltipSet;
+
+  /// No description provided for @reminderTooltipActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder set'**
+  String get reminderTooltipActive;
+
+  /// No description provided for @reminderDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder'**
+  String get reminderDialogTitle;
+
+  /// No description provided for @reminderScheduledFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled for {time}'**
+  String reminderScheduledFor(Object time);
+
+  /// No description provided for @reminderEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get reminderEdit;
+
+  /// No description provided for @reminderRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get reminderRemove;
+
+  /// No description provided for @reminderSaveNoteFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a title or note body before setting a reminder.'**
+  String get reminderSaveNoteFirst;
+
+  /// No description provided for @reminderNotificationsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification permission must be granted for reminders.'**
+  String get reminderNotificationsRequired;
+
+  /// No description provided for @reminderMayBeDelayed.
+  ///
+  /// In en, this message translates to:
+  /// **'Exact alarms are not enabled. This reminder may be delayed.'**
+  String get reminderMayBeDelayed;
+
+  /// No description provided for @reminderMustBeFuture.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a future date and time.'**
+  String get reminderMustBeFuture;
+
+  /// No description provided for @reminderNoteNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'That reminder note could not be found.'**
+  String get reminderNoteNotFound;
+
+  /// No description provided for @reminderNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to open this note'**
+  String get reminderNotificationBody;
+
   /// No description provided for @editorCopyMenuItem.
   ///
   /// In en, this message translates to:

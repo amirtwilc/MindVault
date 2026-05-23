@@ -270,4 +270,7 @@
   "widgetViewDiscardTitle": "परिवर्तन त्यागें?",
   "widgetViewDiscardBody": "आपके संपादन सहेजे नहीं जाएंगे।",
   "widgetViewKeepEditing": "संपादन जारी रखें"
+  ,
+  "reminderNotificationBody": "इस नोट को खोलने के लिए टैप करें",
+  "reminderNotificationsRequired": "रिमाइंडर के लिए नोटिफिकेशन अनुमति देना आवश्यक है."
 }

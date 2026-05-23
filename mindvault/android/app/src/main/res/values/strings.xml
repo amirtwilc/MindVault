@@ -5,4 +5,6 @@
     <string name="widget_categories_description">Quick access to your categories</string>
     <string name="widget_notes_label">Notes</string>
     <string name="widget_categories_label">Categories</string>
+    <string name="reminder_notification_channel">Note reminders</string>
+    <string name="reminder_notification_body">Tap to open this note</string>
 </resources>

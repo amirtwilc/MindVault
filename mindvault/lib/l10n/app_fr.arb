@@ -270,4 +270,7 @@
   "widgetViewDiscardTitle": "Ignorer les modifications ?",
   "widgetViewDiscardBody": "Vos modifications ne seront pas enregistrées.",
   "widgetViewKeepEditing": "Continuer à modifier"
+  ,
+  "reminderNotificationBody": "Touchez pour ouvrir cette note",
+  "reminderNotificationsRequired": "L’autorisation des notifications doit être accordée pour les rappels."
 }

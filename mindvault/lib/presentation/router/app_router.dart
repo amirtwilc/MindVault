@@ -10,6 +10,7 @@ import '../providers/categories_provider.dart';
 import '../providers/connectivity_provider.dart';
 import '../providers/encryption_provider.dart';
 import '../providers/notes_provider.dart';
+import '../providers/reminder_provider.dart';
 import '../providers/ai_search_provider.dart'
     show aiHistoryIsolationProvider, aiSearchHistoryProvider;
 import '../providers/widget_sync_provider.dart';
@@ -28,6 +29,7 @@ import '../screens/widget/widget_category_notes_screen.dart';
 import '../screens/widget/widget_compose_screen.dart';
 import '../screens/widget/widget_note_view_screen.dart';
 import '../screens/widget/widget_search_screen.dart';
+import '../screens/home/reminder_note_resolver_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final authNotifier = _AuthListenable(ref);
@@ -36,6 +38,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: '/splash',
     refreshListenable: authNotifier,
     redirect: (context, state) {
+      if (state.uri.scheme == 'mindvault' &&
+          state.uri.host == 'reminder' &&
+          state.uri.path == '/note') {
+        final noteId = state.uri.queryParameters['id'];
+        if (noteId != null && noteId.isNotEmpty) {
+          return Uri(
+            path: '/reminder-note',
+            queryParameters: {'id': noteId},
+          ).toString();
+        }
+      }
+
       final authState = ref.read(authStateProvider).valueOrNull;
       final isLoggedIn = authState?.session != null ||
           Supabase.instance.client.auth.currentSession != null;
@@ -47,6 +61,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       if (location == '/splash') return null;
 
       if (!isLoggedIn) {
+        if (location == '/reminder-note') return null;
         if (location != '/auth') return '/auth';
         return null;
       }
@@ -61,6 +76,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final encryptionReady = encryptionState.valueOrNull ?? false;
 
       if (!encryptionReady && location != '/pin-setup') {
+        if (location == '/reminder-note') return null;
         return '/pin-setup';
       }
 
@@ -116,11 +132,19 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/widget-search',
         builder: (_, __) => const WidgetSearchScreen(),
       ),
+      GoRoute(
+        path: '/reminder-note',
+        builder: (_, state) => ReminderNoteResolverScreen(
+          noteId: state.uri.queryParameters['id'] ?? '',
+        ),
+      ),
       // Note editor — outside shell so bottom nav is hidden while editing
       GoRoute(
         path: '/home/categories/:categoryId/edit',
         builder: (_, state) => NoteEditorScreen(
           categoryId: state.pathParameters['categoryId']!,
+          returnToAllNotesOnBack:
+              state.uri.queryParameters['fromReminder'] == 'true',
         ),
       ),
       GoRoute(
@@ -128,6 +152,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (_, state) => NoteEditorScreen(
           categoryId: state.pathParameters['categoryId']!,
           noteId: state.pathParameters['noteId'],
+          returnToAllNotesOnBack:
+              state.uri.queryParameters['fromReminder'] == 'true',
         ),
       ),
       ShellRoute(
@@ -194,6 +220,7 @@ class _HomeShellState extends ConsumerState<HomeShell>
   Future<void> _syncPendingOps() async {
     await ref.read(categoriesProvider.notifier).syncPendingCategoryOps();
     await ref.read(noteRepositoryProvider)?.syncPendingOps();
+    await ref.read(reminderRepositoryProvider)?.syncPendingOps();
   }
 
   void _refreshOnResume() {
@@ -262,17 +289,18 @@ class _HomeShellState extends ConsumerState<HomeShell>
 
   @override
   Widget build(BuildContext context) {
+    final l = AppStrings.of(context);
+
     ref.listen<AsyncValue<bool>>(connectivityProvider, (prev, next) {
       final wasOnline = prev?.valueOrNull ?? true;
       final isOnline = next.valueOrNull ?? true;
       if (isOnline && !wasOnline) _syncPendingOps();
     });
-
     ref.watch(widgetSyncProvider);
     ref.watch(aiHistoryIsolationProvider);
+    ref.watch(reminderStartupProvider);
 
     final location = GoRouterState.of(context).uri.path;
-    final l = AppStrings.of(context);
     return Scaffold(
       body: PageView(
         controller: _pageController,
