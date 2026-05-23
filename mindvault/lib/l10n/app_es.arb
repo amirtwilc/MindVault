@@ -270,4 +270,7 @@
   "widgetViewDiscardTitle": "¿Descartar cambios?",
   "widgetViewDiscardBody": "Tus ediciones no se guardarán.",
   "widgetViewKeepEditing": "Seguir editando"
+  ,
+  "reminderNotificationBody": "Toca para abrir esta nota",
+  "reminderNotificationsRequired": "Debes conceder el permiso de notificaciones para los recordatorios."
 }

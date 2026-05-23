@@ -21,3 +21,11 @@
 -keep class com.mindvault.app.HomeWidgetProvider { *; }
 -keep class com.mindvault.app.TransparentActivity { *; }
 -keep class es.antonborri.home_widget.** { *; }
+
+# Reminder receivers are launched by Android alarms while Flutter is not running.
+-keep class app.amir.mindvault.ReminderAlarmReceiver { *; }
+-keep class app.amir.mindvault.ReminderAlarmActivity { *; }
+-keep class app.amir.mindvault.ReminderAlarmService { *; }
+-keep class app.amir.mindvault.ReminderBootReceiver { *; }
+-keep class app.amir.mindvault.ReminderReconcileReceiver { *; }
+-keep class app.amir.mindvault.ReminderPlugin { *; }

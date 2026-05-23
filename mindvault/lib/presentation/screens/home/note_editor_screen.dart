@@ -18,17 +18,26 @@ import '../../../domain/entities/tier_limits.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../providers/categories_provider.dart';
 import '../../providers/notes_provider.dart';
+import '../../providers/reminder_provider.dart';
 import '../../providers/tier_provider.dart';
 import '../../providers/widget_sync_provider.dart';
 import '../../widgets/bidi_aware_text_field.dart';
 import '../../widgets/category_color_picker.dart';
 import '../../widgets/checklist_note_view.dart';
+import '../../widgets/reminder_button.dart';
 import '_ai_search_widgets.dart' show SttMixin;
 
 class NoteEditorScreen extends ConsumerStatefulWidget {
   final String categoryId;
   final String? noteId;
-  const NoteEditorScreen({super.key, required this.categoryId, this.noteId});
+  final bool returnToAllNotesOnBack;
+
+  const NoteEditorScreen({
+    super.key,
+    required this.categoryId,
+    this.noteId,
+    this.returnToAllNotesOnBack = false,
+  });
 
   @override
   ConsumerState<NoteEditorScreen> createState() => _NoteEditorScreenState();
@@ -674,6 +683,16 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
     return true;
   }
 
+  Future<void> _finishAndLeaveEditor() async {
+    await _onPop();
+    if (!mounted) return;
+    if (widget.returnToAllNotesOnBack || !context.canPop()) {
+      context.go('/home/all-notes');
+    } else {
+      context.pop();
+    }
+  }
+
   Future<void> _confirmDelete(BuildContext context) async {
     final l = AppStrings.of(context);
     final confirmed = await showDialog<bool>(
@@ -703,16 +722,37 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
     final id = _noteId;
     if (id != null) {
       final repo = ref.read(noteRepositoryProvider);
+      await ref.read(reminderRepositoryProvider)?.removeReminder(id);
+      await ref.read(reminderSchedulerProvider).cancel(id);
       await repo?.deleteNote(id);
       await ref.read(widgetDataServiceProvider).patchNoteRemoved(noteId: id);
     }
     if (mounted) {
-      if (context.canPop()) {
+      if (widget.returnToAllNotesOnBack) {
+        context.go('/home/all-notes');
+      } else if (context.canPop()) {
         context.pop();
       } else {
-        context.go('/home/categories/${widget.categoryId}');
+        context.go('/home/all-notes');
       }
     }
+  }
+
+  Future<Note?> _loadOrCreateNoteForReminder() async {
+    _debounce?.cancel();
+    final existingId = _noteId;
+    final repo = ref.read(noteRepositoryProvider);
+    if (repo == null) return null;
+    if (existingId != null) return repo.getNoteById(existingId);
+
+    final hasContent = _titleCtrl.text.trim().isNotEmpty ||
+        (_noteType == NoteType.checklist
+            ? _checklistRows.any((row) => row.text.trim().isNotEmpty)
+            : _bodyCtrl.text.trim().isNotEmpty);
+    if (!hasContent) return null;
+    await _save();
+    final id = _noteId;
+    return id == null ? null : repo.getNoteById(id);
   }
 
   @override
@@ -732,11 +772,17 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
         if (didPop) return;
-        await _onPop();
-        if (mounted) Navigator.of(context).pop();
+        await _finishAndLeaveEditor();
       },
       child: Scaffold(
         appBar: AppBar(
+          leading: widget.returnToAllNotesOnBack
+              ? IconButton(
+                  tooltip: l.navAllNotes,
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: _finishAndLeaveEditor,
+                )
+              : null,
           actions: [
             if (_isReadMode)
               IconButton(
@@ -757,6 +803,10 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
               onPressed: _bodyCtrl.text.isEmpty
                   ? null
                   : () => copyNoteBody(context, _bodyCtrl.text),
+            ),
+            ReminderButton(
+              noteId: _noteId,
+              loadOrCreateNote: _loadOrCreateNoteForReminder,
             ),
             IconButton(
               tooltip:

@@ -22,12 +22,14 @@ class SupabaseConstants {
   static const String tierLimitsTable = 'tier_limits';
   static const String categoriesTable = 'categories';
   static const String notesTable = 'notes';
+  static const String noteRemindersTable = 'note_reminders';
   static const String checklistItemsTable = 'checklist_items';
   static const String userKeysTable = 'user_keys';
   static const String analyticsEventsTable = 'analytics_events';
 
   // Realtime channels
   static const String notesChannel = 'notes_realtime';
+  static const String noteRemindersChannel = 'note_reminders_realtime';
   static const String checklistItemsChannel = 'checklist_items_realtime';
   static const String categoriesChannel = 'categories_realtime';
 }

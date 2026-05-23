@@ -15,9 +15,11 @@ import '../../../presentation/providers/categories_provider.dart';
 import '../../../presentation/providers/database_provider.dart';
 import '../../../presentation/providers/encryption_provider.dart';
 import '../../../presentation/providers/notes_provider.dart';
+import '../../../presentation/providers/reminder_provider.dart';
 import '../../../presentation/providers/widget_sync_provider.dart';
 import '../../../presentation/widgets/bidi_aware_text_field.dart';
 import '../../../presentation/widgets/checklist_note_view.dart';
+import '../../../presentation/widgets/reminder_button.dart';
 import '../../../data/local/database/app_database.dart';
 import '../home/_ai_search_widgets.dart' show SttMixin;
 
@@ -349,6 +351,8 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
       await ref
           .read(widgetDataServiceProvider)
           .patchNoteRemoved(noteId: _note!.id);
+      await ref.read(reminderRepositoryProvider)?.removeReminder(_note!.id);
+      await ref.read(reminderSchedulerProvider).cancel(_note!.id);
       await repo.deleteNote(_note!.id);
       if (mounted) SystemNavigator.pop();
       return;
@@ -407,11 +411,36 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
     await ref
         .read(widgetDataServiceProvider)
         .patchNoteRemoved(noteId: _note!.id);
+    await ref.read(reminderRepositoryProvider)?.removeReminder(_note!.id);
+    await ref.read(reminderSchedulerProvider).cancel(_note!.id);
     await repo.deleteNote(_note!.id);
     // After a successful delete the note is gone; if we're hosted by the
     // categories floating window, dropping back to the list lets the user see
     // the updated count without reopening the widget.
     if (mounted) _closeFromView();
+  }
+
+  Future<Note?> _loadNoteForReminder() async {
+    final note = _note;
+    if (note != null) return note;
+    final row = await ref.read(appDatabaseProvider).getNote(widget.noteId);
+    if (row == null) return null;
+    return Note(
+      id: row.id,
+      userId: row.userId,
+      categoryId: row.categoryId,
+      title: row.title,
+      body: row.body,
+      isPrivate: row.isPrivate,
+      lastUsedAt: row.lastUsedAt,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+      lastOpenedAt: row.lastOpenedAt,
+      noteType: NoteType.fromStorage(row.noteType),
+      isPinned: row.isPinned,
+      pinnedAt: row.pinnedAt,
+      pinOrder: row.pinOrder,
+    );
   }
 
   Future<void> _confirmRemoveCompleted(NoteRepository repo) async {
@@ -441,6 +470,8 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
       await ref
           .read(widgetDataServiceProvider)
           .patchNoteRemoved(noteId: _note!.id);
+      await ref.read(reminderRepositoryProvider)?.removeReminder(_note!.id);
+      await ref.read(reminderSchedulerProvider).cancel(_note!.id);
       await repo.deleteNote(_note!.id);
       if (mounted) _closeFromView();
       return;
@@ -610,6 +641,11 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
                   ? null
                   : () => copyNoteBody(context, _note!.body),
             ),
+            ReminderButton(
+              noteId: _note!.id,
+              loadOrCreateNote: _loadNoteForReminder,
+              visualDensity: VisualDensity.compact,
+            ),
             IconButton(
               icon: const Icon(Icons.edit_outlined),
               tooltip: canEdit ? l.widgetViewEdit : l.widgetViewUnlocking,
@@ -707,6 +743,11 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
               onPressed: _saving || _bodyCtrl.text.isEmpty
                   ? null
                   : () => copyNoteBody(context, _bodyCtrl.text),
+            ),
+            ReminderButton(
+              noteId: _note?.id,
+              loadOrCreateNote: _loadNoteForReminder,
+              visualDensity: VisualDensity.compact,
             ),
             IconButton(
               icon: const Icon(Icons.delete_outline),

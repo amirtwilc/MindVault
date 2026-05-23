@@ -270,4 +270,7 @@
   "widgetViewDiscardTitle": "להתעלם מהשינויים?",
   "widgetViewDiscardBody": "העריכות שלך לא יישמרו.",
   "widgetViewKeepEditing": "המשך לערוך"
+  ,
+  "reminderNotificationBody": "הקש כדי לפתוח את הפתק הזה",
+  "reminderNotificationsRequired": "יש לאשר הרשאת התראות כדי להשתמש בתזכורות."
 }

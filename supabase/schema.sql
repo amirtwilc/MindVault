@@ -123,6 +123,27 @@ DROP POLICY IF EXISTS "Users manage own notes" ON notes;
 CREATE POLICY "Users manage own notes" ON notes
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
+-- Note reminders are metadata used to schedule local device notifications.
+-- Reminder title/body are not stored here; devices resolve note content locally
+-- when scheduling and when opening a fired notification.
+CREATE TABLE IF NOT EXISTS note_reminders (
+  note_id    UUID PRIMARY KEY REFERENCES notes(id) ON DELETE CASCADE,
+  user_id    UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  remind_at  TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+CREATE INDEX IF NOT EXISTS idx_note_reminders_user_time
+  ON note_reminders (user_id, remind_at);
+
+ALTER TABLE note_reminders ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users manage own note reminders" ON note_reminders;
+CREATE POLICY "Users manage own note reminders" ON note_reminders
+  FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
 -- Checklist item text is AES-256-GCM ciphertext (Base64), matching notes.body.
 CREATE TABLE IF NOT EXISTS checklist_items (
   id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -341,5 +362,11 @@ DO $$ BEGIN
     WHERE pubname = 'supabase_realtime' AND tablename = 'checklist_items'
   ) THEN
     ALTER PUBLICATION supabase_realtime ADD TABLE checklist_items;
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime' AND tablename = 'note_reminders'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE note_reminders;
   END IF;
 END $$;

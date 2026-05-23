@@ -99,6 +99,30 @@ class PendingOpsTable extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+class NoteRemindersTable extends Table {
+  TextColumn get noteId => text().named('note_id')();
+  TextColumn get userId => text().named('user_id')();
+  DateTimeColumn get remindAt => dateTime().named('remind_at')();
+  DateTimeColumn get createdAt => dateTime().named('created_at')();
+  DateTimeColumn get updatedAt => dateTime().named('updated_at')();
+  DateTimeColumn get deletedAt => dateTime().named('deleted_at').nullable()();
+
+  @override
+  Set<Column> get primaryKey => {noteId};
+}
+
+class ReminderDeviceStateTable extends Table {
+  TextColumn get noteId => text().named('note_id')();
+  TextColumn get reminderVersion => text().named('reminder_version')();
+  IntColumn get notificationId => integer().named('notification_id')();
+  DateTimeColumn get scheduledAt =>
+      dateTime().named('scheduled_at').nullable()();
+  DateTimeColumn get firedAt => dateTime().named('fired_at').nullable()();
+
+  @override
+  Set<Column> get primaryKey => {noteId};
+}
+
 // ── FTS5 virtual table (defined via raw SQL in migration) ─────
 // notes_fts: content table pointing at NotesTable
 // Created in migration, not as a Drift table class.
@@ -111,7 +135,9 @@ class PendingOpsTable extends Table {
   ChecklistItemsTable,
   AiSearchHistoryTable,
   AiCacheTable,
-  PendingOpsTable
+  PendingOpsTable,
+  NoteRemindersTable,
+  ReminderDeviceStateTable
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -119,7 +145,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -148,6 +174,10 @@ class AppDatabase extends _$AppDatabase {
           if (from < 8) {
             await m.addColumn(notesTable, notesTable.noteType);
             await m.createTable(checklistItemsTable);
+          }
+          if (from < 9) {
+            await m.createTable(noteRemindersTable);
+            await m.createTable(reminderDeviceStateTable);
           }
         },
         onCreate: (m) async {
@@ -255,6 +285,8 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<void> deleteNote(String id) async {
+    await deleteReminder(id);
+    await deleteReminderDeviceState(id);
     await deleteChecklistItemsByNoteId(id);
     await (delete(notesTable)..where((t) => t.id.equals(id))).go();
   }
@@ -288,6 +320,75 @@ class AppDatabase extends _$AppDatabase {
 
   Future<List<NotesTableData>> getAllNotes(String userId) {
     return (select(notesTable)..where((t) => t.userId.equals(userId))).get();
+  }
+
+  Stream<NoteRemindersTableData?> watchReminderForNote(String noteId) {
+    return (select(noteRemindersTable)..where((t) => t.noteId.equals(noteId)))
+        .watchSingleOrNull();
+  }
+
+  Future<NoteRemindersTableData?> getReminder(String noteId) {
+    return (select(noteRemindersTable)..where((t) => t.noteId.equals(noteId)))
+        .getSingleOrNull();
+  }
+
+  Future<List<NoteRemindersTableData>> getAllReminders(String userId) {
+    return (select(noteRemindersTable)..where((t) => t.userId.equals(userId)))
+        .get();
+  }
+
+  Stream<List<NoteRemindersTableData>> watchAllReminders(String userId) {
+    return (select(noteRemindersTable)..where((t) => t.userId.equals(userId)))
+        .watch();
+  }
+
+  Future<void> upsertReminder(NoteRemindersTableCompanion reminder) async {
+    await into(noteRemindersTable).insertOnConflictUpdate(reminder);
+  }
+
+  Future<void> upsertReminders(
+      List<NoteRemindersTableCompanion> reminders) async {
+    await batch((b) {
+      for (final reminder in reminders) {
+        b.insert(noteRemindersTable, reminder,
+            onConflict: DoUpdate((_) => reminder));
+      }
+    });
+  }
+
+  Future<void> deleteReminder(String noteId) async {
+    await (delete(noteRemindersTable)..where((t) => t.noteId.equals(noteId)))
+        .go();
+  }
+
+  Future<void> upsertReminderDeviceState({
+    required String noteId,
+    required String reminderVersion,
+    required int notificationId,
+    DateTime? scheduledAt,
+    DateTime? firedAt,
+  }) async {
+    await into(reminderDeviceStateTable).insertOnConflictUpdate(
+      ReminderDeviceStateTableCompanion(
+        noteId: Value(noteId),
+        reminderVersion: Value(reminderVersion),
+        notificationId: Value(notificationId),
+        scheduledAt: Value(scheduledAt),
+        firedAt: Value(firedAt),
+      ),
+    );
+  }
+
+  Future<ReminderDeviceStateTableData?> getReminderDeviceState(String noteId) {
+    return (select(reminderDeviceStateTable)
+          ..where((t) => t.noteId.equals(noteId)))
+        .getSingleOrNull();
+  }
+
+  Future<void> deleteReminderDeviceState(String noteId) async {
+    await (delete(reminderDeviceStateTable)
+          ..where((t) => t.noteId.equals(noteId)))
+        .go();
   }
 
   Stream<List<ChecklistItemsTableData>> watchChecklistItems(String noteId) {

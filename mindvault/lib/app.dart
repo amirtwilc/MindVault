@@ -9,6 +9,8 @@ import 'core/theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'presentation/providers/locale_provider.dart';
+import 'presentation/providers/notes_provider.dart';
+import 'presentation/providers/reminder_provider.dart';
 import 'presentation/router/app_router.dart';
 
 class MindVaultApp extends ConsumerStatefulWidget {
@@ -29,7 +31,10 @@ class _MindVaultAppState extends ConsumerState<MindVaultApp> {
 
   Future<void> _initDeepLinks() async {
     final appLinks = AppLinks();
+    final initial = await appLinks.getInitialLink();
+    if (initial != null) _handleDeepLink(initial);
     _linkSub = appLinks.uriLinkStream.listen((uri) async {
+      if (_handleDeepLink(uri)) return;
       try {
         // Complete Supabase auth flow using redirect URL from login
         await Supabase.instance.client.auth.getSessionFromUrl(uri);
@@ -39,6 +44,22 @@ class _MindVaultAppState extends ConsumerState<MindVaultApp> {
         ref.read(deepLinkErrorProvider.notifier).state = e.toString();
       }
     });
+  }
+
+  bool _handleDeepLink(Uri uri) {
+    if (uri.scheme == 'mindvault' &&
+        uri.host == 'reminder' &&
+        uri.path == '/note') {
+      final noteId = uri.queryParameters['id'];
+      if (noteId != null && noteId.isNotEmpty && mounted) {
+        ref.read(appRouterProvider).go(Uri(
+              path: '/reminder-note',
+              queryParameters: {'id': noteId},
+            ).toString());
+      }
+      return true;
+    }
+    return false;
   }
 
   @override
@@ -51,6 +72,20 @@ class _MindVaultAppState extends ConsumerState<MindVaultApp> {
   Widget build(BuildContext context) {
     final router = ref.watch(appRouterProvider);
     final locale = ref.watch(localeProvider);
+    ref.listen(activeRemindersProvider, (_, next) async {
+      if (!next.hasValue) return;
+      final reminders = next.value ?? const [];
+      final noteRepo = ref.read(noteRepositoryProvider);
+      if (noteRepo == null) return;
+      await ref.read(reminderSchedulerProvider).reconcileAll(
+            reminders: reminders,
+            loadNote: noteRepo.getNoteById,
+            untitledFallback: '(untitled)',
+            notificationBody: reminderStringsFor(ref.read(localeProvider))
+                .reminderNotificationBody,
+          );
+    });
+    ref.watch(reminderStartupProvider);
 
     return MaterialApp.router(
       title: 'MindVault',

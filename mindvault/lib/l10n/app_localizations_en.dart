@@ -469,6 +469,47 @@ class AppStringsEn extends AppStrings {
   String get editorTooltipCopy => 'Copy note';
 
   @override
+  String get reminderTooltipSet => 'Set reminder';
+
+  @override
+  String get reminderTooltipActive => 'Reminder set';
+
+  @override
+  String get reminderDialogTitle => 'Reminder';
+
+  @override
+  String reminderScheduledFor(Object time) {
+    return 'Scheduled for $time';
+  }
+
+  @override
+  String get reminderEdit => 'Edit';
+
+  @override
+  String get reminderRemove => 'Remove';
+
+  @override
+  String get reminderSaveNoteFirst =>
+      'Add a title or note body before setting a reminder.';
+
+  @override
+  String get reminderNotificationsRequired =>
+      'Notification permission must be granted for reminders.';
+
+  @override
+  String get reminderMayBeDelayed =>
+      'Exact alarms are not enabled. This reminder may be delayed.';
+
+  @override
+  String get reminderMustBeFuture => 'Choose a future date and time.';
+
+  @override
+  String get reminderNoteNotFound => 'That reminder note could not be found.';
+
+  @override
+  String get reminderNotificationBody => 'Tap to open this note';
+
+  @override
   String get editorCopyMenuItem => 'Copy note';
 
   @override

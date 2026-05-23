@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/constants/supabase_constants.dart';
 import '../../models/checklist_item_model.dart';
+import '../../models/note_reminder_model.dart';
 import '../../models/note_model.dart';
 
 class SupabaseNotesDatasource {
@@ -10,7 +11,8 @@ class SupabaseNotesDatasource {
 
   String get _userId {
     final id = _client.auth.currentUser?.id;
-    if (id == null) throw StateError('SupabaseNotesDatasource: no authenticated user');
+    if (id == null)
+      throw StateError('SupabaseNotesDatasource: no authenticated user');
     return id;
   }
 
@@ -37,7 +39,8 @@ class SupabaseNotesDatasource {
   Future<NoteModel> updateNote(String id, Map<String, dynamic> data) async {
     final response = await _client
         .from(SupabaseConstants.notesTable)
-        .update({...data, 'updated_at': DateTime.now().toUtc().toIso8601String()})
+        .update(
+            {...data, 'updated_at': DateTime.now().toUtc().toIso8601String()})
         .eq('id', id)
         .eq('user_id', _userId)
         .select()
@@ -63,6 +66,7 @@ class SupabaseNotesDatasource {
 
   RealtimeChannel? _notesChannel;
   RealtimeChannel? _checklistItemsChannel;
+  RealtimeChannel? _remindersChannel;
 
   Future<void> upsertNote(Map<String, dynamic> data) async {
     await _client
@@ -85,8 +89,7 @@ class SupabaseNotesDatasource {
           ),
           callback: (payload) {
             final isDelete = payload.eventType == PostgresChangeEvent.delete;
-            onEvent(isDelete,
-                isDelete ? payload.oldRecord : payload.newRecord);
+            onEvent(isDelete, isDelete ? payload.oldRecord : payload.newRecord);
           },
         )
         .subscribe();
@@ -97,6 +100,63 @@ class SupabaseNotesDatasource {
     _notesChannel = null;
     _checklistItemsChannel?.unsubscribe();
     _checklistItemsChannel = null;
+  }
+
+  void unsubscribeReminders() {
+    _remindersChannel?.unsubscribe();
+    _remindersChannel = null;
+  }
+
+  Future<List<NoteReminderModel>> fetchAllReminders() async {
+    final response = await _client
+        .from(SupabaseConstants.noteRemindersTable)
+        .select()
+        .eq('user_id', _userId)
+        .order('updated_at', ascending: false);
+    return (response as List)
+        .map((e) => NoteReminderModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<NoteReminderModel?> fetchReminderByNoteId(String noteId) async {
+    final response = await _client
+        .from(SupabaseConstants.noteRemindersTable)
+        .select()
+        .eq('note_id', noteId)
+        .eq('user_id', _userId)
+        .maybeSingle();
+    if (response == null) return null;
+    return NoteReminderModel.fromJson(response);
+  }
+
+  Future<NoteReminderModel> upsertReminder(Map<String, dynamic> data) async {
+    final response = await _client
+        .from(SupabaseConstants.noteRemindersTable)
+        .upsert({...data, 'user_id': _userId})
+        .select()
+        .single();
+    return NoteReminderModel.fromJson(response);
+  }
+
+  void subscribeToReminders(
+      void Function(bool isDelete, Map<String, dynamic> record) onEvent) {
+    _remindersChannel = _client
+        .channel(SupabaseConstants.noteRemindersChannel)
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: SupabaseConstants.noteRemindersTable,
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'user_id',
+            value: _userId,
+          ),
+          callback: (payload) {
+            final isDelete = payload.eventType == PostgresChangeEvent.delete;
+            onEvent(isDelete, isDelete ? payload.oldRecord : payload.newRecord);
+          },
+        )
+        .subscribe();
   }
 
   Future<NoteModel?> fetchNoteById(String id) async {
@@ -153,7 +213,8 @@ class SupabaseNotesDatasource {
     return ChecklistItemModel.fromJson(response);
   }
 
-  Future<ChecklistItemModel> upsertChecklistItem(Map<String, dynamic> data) async {
+  Future<ChecklistItemModel> upsertChecklistItem(
+      Map<String, dynamic> data) async {
     final response = await _client
         .from(SupabaseConstants.checklistItemsTable)
         .upsert({...data, 'user_id': _userId})
@@ -200,8 +261,7 @@ class SupabaseNotesDatasource {
           ),
           callback: (payload) {
             final isDelete = payload.eventType == PostgresChangeEvent.delete;
-            onEvent(isDelete,
-                isDelete ? payload.oldRecord : payload.newRecord);
+            onEvent(isDelete, isDelete ? payload.oldRecord : payload.newRecord);
           },
         )
         .subscribe();

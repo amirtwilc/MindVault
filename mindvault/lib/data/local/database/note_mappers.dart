@@ -1,5 +1,6 @@
 import '../../../domain/entities/note.dart';
 import '../../../domain/entities/checklist_item.dart';
+import '../../../domain/entities/note_reminder.dart';
 import 'app_database.dart';
 
 Note rowToNote(NotesTableData r) => Note(
@@ -29,4 +30,13 @@ ChecklistItem rowToChecklistItem(ChecklistItemsTableData r) => ChecklistItem(
       completedAt: r.completedAt,
       createdAt: r.createdAt,
       updatedAt: r.updatedAt,
+    );
+
+NoteReminder rowToReminder(NoteRemindersTableData r) => NoteReminder(
+      noteId: r.noteId,
+      userId: r.userId,
+      remindAt: r.remindAt,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+      deletedAt: r.deletedAt,
     );

@@ -474,6 +474,47 @@ class AppStringsHi extends AppStrings {
   String get editorTooltipCopy => 'नोट कॉपी करें';
 
   @override
+  String get reminderTooltipSet => 'Set reminder';
+
+  @override
+  String get reminderTooltipActive => 'Reminder set';
+
+  @override
+  String get reminderDialogTitle => 'Reminder';
+
+  @override
+  String reminderScheduledFor(Object time) {
+    return 'Scheduled for $time';
+  }
+
+  @override
+  String get reminderEdit => 'Edit';
+
+  @override
+  String get reminderRemove => 'Remove';
+
+  @override
+  String get reminderSaveNoteFirst =>
+      'Add a title or note body before setting a reminder.';
+
+  @override
+  String get reminderNotificationsRequired =>
+      'रिमाइंडर के लिए नोटिफिकेशन अनुमति देना आवश्यक है.';
+
+  @override
+  String get reminderMayBeDelayed =>
+      'Exact alarms are not enabled. This reminder may be delayed.';
+
+  @override
+  String get reminderMustBeFuture => 'Choose a future date and time.';
+
+  @override
+  String get reminderNoteNotFound => 'That reminder note could not be found.';
+
+  @override
+  String get reminderNotificationBody => 'इस नोट को खोलने के लिए टैप करें';
+
+  @override
   String get editorCopyMenuItem => 'नोट कॉपी करें';
 
   @override
