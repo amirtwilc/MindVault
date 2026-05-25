@@ -9,7 +9,7 @@ import android.net.Uri
 import android.widget.RemoteViews
 
 // Request codes for PendingIntents (must be unique per widget action):
-// 0 = open app, 1 = new note, 2 = note row template, 4 = search
+// 0 = open app, 1 = new note, 2 = note row template, 4 = search, 5 = new jot
 
 class HomeWidgetProvider : AppWidgetProvider() {
 
@@ -84,6 +84,17 @@ class HomeWidgetProvider : AppWidgetProvider() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         views.setOnClickPendingIntent(R.id.widget_new_note_btn, newNotePi)
+
+        val newJotIntent = Intent(context, TransparentActivity::class.java).apply {
+            action = Intent.ACTION_VIEW
+            data = Uri.parse("mindvault://widget/new-jot")
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        val newJotPi = PendingIntent.getActivity(
+            context, 5, newJotIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        views.setOnClickPendingIntent(R.id.widget_new_jot_btn, newJotPi)
 
         // ── Search button → TransparentActivity with widget-search deep link ──
         val searchIntent = Intent(context, TransparentActivity::class.java).apply {

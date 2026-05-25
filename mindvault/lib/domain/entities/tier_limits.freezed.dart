@@ -21,6 +21,7 @@ mixin _$TierLimits {
   int get maxCategories => throw _privateConstructorUsedError;
   int get maxCharsPerNote => throw _privateConstructorUsedError;
   int get aiSearchesPerDay => throw _privateConstructorUsedError;
+  int get jotAiOrganizesPerDay => throw _privateConstructorUsedError;
 
   /// Create a copy of TierLimits
   /// with the given fields replaced by the non-null parameter values.
@@ -40,7 +41,8 @@ abstract class $TierLimitsCopyWith<$Res> {
       int maxNotes,
       int maxCategories,
       int maxCharsPerNote,
-      int aiSearchesPerDay});
+      int aiSearchesPerDay,
+      int jotAiOrganizesPerDay});
 }
 
 /// @nodoc
@@ -63,6 +65,7 @@ class _$TierLimitsCopyWithImpl<$Res, $Val extends TierLimits>
     Object? maxCategories = null,
     Object? maxCharsPerNote = null,
     Object? aiSearchesPerDay = null,
+    Object? jotAiOrganizesPerDay = null,
   }) {
     return _then(_value.copyWith(
       tier: null == tier
@@ -85,6 +88,10 @@ class _$TierLimitsCopyWithImpl<$Res, $Val extends TierLimits>
           ? _value.aiSearchesPerDay
           : aiSearchesPerDay // ignore: cast_nullable_to_non_nullable
               as int,
+      jotAiOrganizesPerDay: null == jotAiOrganizesPerDay
+          ? _value.jotAiOrganizesPerDay
+          : jotAiOrganizesPerDay // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -102,7 +109,8 @@ abstract class _$$TierLimitsImplCopyWith<$Res>
       int maxNotes,
       int maxCategories,
       int maxCharsPerNote,
-      int aiSearchesPerDay});
+      int aiSearchesPerDay,
+      int jotAiOrganizesPerDay});
 }
 
 /// @nodoc
@@ -123,6 +131,7 @@ class __$$TierLimitsImplCopyWithImpl<$Res>
     Object? maxCategories = null,
     Object? maxCharsPerNote = null,
     Object? aiSearchesPerDay = null,
+    Object? jotAiOrganizesPerDay = null,
   }) {
     return _then(_$TierLimitsImpl(
       tier: null == tier
@@ -145,6 +154,10 @@ class __$$TierLimitsImplCopyWithImpl<$Res>
           ? _value.aiSearchesPerDay
           : aiSearchesPerDay // ignore: cast_nullable_to_non_nullable
               as int,
+      jotAiOrganizesPerDay: null == jotAiOrganizesPerDay
+          ? _value.jotAiOrganizesPerDay
+          : jotAiOrganizesPerDay // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -157,7 +170,8 @@ class _$TierLimitsImpl implements _TierLimits {
       required this.maxNotes,
       required this.maxCategories,
       required this.maxCharsPerNote,
-      required this.aiSearchesPerDay});
+      required this.aiSearchesPerDay,
+      required this.jotAiOrganizesPerDay});
 
   @override
   final String tier;
@@ -169,10 +183,12 @@ class _$TierLimitsImpl implements _TierLimits {
   final int maxCharsPerNote;
   @override
   final int aiSearchesPerDay;
+  @override
+  final int jotAiOrganizesPerDay;
 
   @override
   String toString() {
-    return 'TierLimits(tier: $tier, maxNotes: $maxNotes, maxCategories: $maxCategories, maxCharsPerNote: $maxCharsPerNote, aiSearchesPerDay: $aiSearchesPerDay)';
+    return 'TierLimits(tier: $tier, maxNotes: $maxNotes, maxCategories: $maxCategories, maxCharsPerNote: $maxCharsPerNote, aiSearchesPerDay: $aiSearchesPerDay, jotAiOrganizesPerDay: $jotAiOrganizesPerDay)';
   }
 
   @override
@@ -188,12 +204,14 @@ class _$TierLimitsImpl implements _TierLimits {
             (identical(other.maxCharsPerNote, maxCharsPerNote) ||
                 other.maxCharsPerNote == maxCharsPerNote) &&
             (identical(other.aiSearchesPerDay, aiSearchesPerDay) ||
-                other.aiSearchesPerDay == aiSearchesPerDay));
+                other.aiSearchesPerDay == aiSearchesPerDay) &&
+            (identical(other.jotAiOrganizesPerDay, jotAiOrganizesPerDay) ||
+                other.jotAiOrganizesPerDay == jotAiOrganizesPerDay));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, tier, maxNotes, maxCategories,
-      maxCharsPerNote, aiSearchesPerDay);
+      maxCharsPerNote, aiSearchesPerDay, jotAiOrganizesPerDay);
 
   /// Create a copy of TierLimits
   /// with the given fields replaced by the non-null parameter values.
@@ -210,7 +228,8 @@ abstract class _TierLimits implements TierLimits {
       required final int maxNotes,
       required final int maxCategories,
       required final int maxCharsPerNote,
-      required final int aiSearchesPerDay}) = _$TierLimitsImpl;
+      required final int aiSearchesPerDay,
+      required final int jotAiOrganizesPerDay}) = _$TierLimitsImpl;
 
   @override
   String get tier;
@@ -222,6 +241,8 @@ abstract class _TierLimits implements TierLimits {
   int get maxCharsPerNote;
   @override
   int get aiSearchesPerDay;
+  @override
+  int get jotAiOrganizesPerDay;
 
   /// Create a copy of TierLimits
   /// with the given fields replaced by the non-null parameter values.

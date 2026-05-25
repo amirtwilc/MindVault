@@ -11,6 +11,7 @@ import '../providers/connectivity_provider.dart';
 import '../providers/encryption_provider.dart';
 import '../providers/notes_provider.dart';
 import '../providers/reminder_provider.dart';
+import '../providers/jots_provider.dart';
 import '../providers/ai_search_provider.dart'
     show aiHistoryIsolationProvider, aiSearchHistoryProvider;
 import '../providers/widget_sync_provider.dart';
@@ -20,6 +21,8 @@ import '../screens/auth/pin_setup_screen.dart';
 import '../screens/auth/pin_entry_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/home/all_notes_screen.dart';
+import '../screens/home/jots_screen.dart';
+import '../screens/home/jot_reminder_resolver_screen.dart';
 import '../screens/home/notes_list_screen.dart';
 import '../screens/home/note_editor_screen.dart';
 import '../screens/home/search_screen.dart';
@@ -27,6 +30,7 @@ import '../screens/home/ai_search_history_screen.dart';
 import '../screens/home/settings_screen.dart';
 import '../screens/widget/widget_category_notes_screen.dart';
 import '../screens/widget/widget_compose_screen.dart';
+import '../screens/widget/widget_jot_compose_screen.dart';
 import '../screens/widget/widget_note_view_screen.dart';
 import '../screens/widget/widget_search_screen.dart';
 import '../screens/home/reminder_note_resolver_screen.dart';
@@ -49,6 +53,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ).toString();
         }
       }
+      if (state.uri.scheme == 'mindvault' &&
+          state.uri.host == 'jot' &&
+          state.uri.path == '/reminder') {
+        final jotId = state.uri.queryParameters['id'];
+        if (jotId != null && jotId.isNotEmpty) {
+          return Uri(
+            path: '/jot-reminder',
+            queryParameters: {'id': jotId},
+          ).toString();
+        }
+      }
 
       final authState = ref.read(authStateProvider).valueOrNull;
       final isLoggedIn = authState?.session != null ||
@@ -62,6 +77,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       if (!isLoggedIn) {
         if (location == '/reminder-note') return null;
+        if (location == '/jot-reminder') return null;
         if (location != '/auth') return '/auth';
         return null;
       }
@@ -77,6 +93,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       if (!encryptionReady && location != '/pin-setup') {
         if (location == '/reminder-note') return null;
+        if (location == '/jot-reminder') return null;
         return '/pin-setup';
       }
 
@@ -111,6 +128,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           initialCategoryId: state.uri.queryParameters['categoryId'],
         ),
       ),
+      GoRoute(
+        path: '/new-jot',
+        builder: (_, __) => const WidgetJotComposeScreen(),
+      ),
       // Deep link from home widget note row tap
       GoRoute(
         path: '/view-note',
@@ -136,6 +157,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/reminder-note',
         builder: (_, state) => ReminderNoteResolverScreen(
           noteId: state.uri.queryParameters['id'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '/jot-reminder',
+        builder: (_, state) => JotReminderResolverScreen(
+          jotId: state.uri.queryParameters['id'] ?? '',
         ),
       ),
       // Note editor — outside shell so bottom nav is hidden while editing
@@ -174,6 +201,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/home/all-notes',
             builder: (_, __) => const AllNotesScreen(),
+          ),
+          GoRoute(
+            path: '/home/jots',
+            builder: (_, state) => JotsScreen(
+              highlightJotId: state.uri.queryParameters['highlight'],
+            ),
           ),
           GoRoute(
             path: '/home/search',
@@ -221,6 +254,7 @@ class _HomeShellState extends ConsumerState<HomeShell>
     await ref.read(categoriesProvider.notifier).syncPendingCategoryOps();
     await ref.read(noteRepositoryProvider)?.syncPendingOps();
     await ref.read(reminderRepositoryProvider)?.syncPendingOps();
+    await ref.read(jotRepositoryProvider)?.syncPendingOps();
   }
 
   void _refreshOnResume() {
@@ -228,6 +262,7 @@ class _HomeShellState extends ConsumerState<HomeShell>
     ref.invalidate(notesByCategoryProvider);
     ref.invalidate(categoriesProvider);
     ref.invalidate(aiSearchHistoryProvider);
+    ref.invalidate(unhandledJotsProvider);
   }
 
   @override
@@ -284,6 +319,8 @@ class _HomeShellState extends ConsumerState<HomeShell>
   bool _isCategoriesSubPage(String location) =>
       location.startsWith('/home/categories/');
 
+  bool _isJotsPage(String location) => location.startsWith('/home/jots');
+
   bool _isSearchSubPage(String location) =>
       location.startsWith('/home/search/');
 
@@ -314,6 +351,7 @@ class _HomeShellState extends ConsumerState<HomeShell>
         },
         children: [
           const AllNotesScreen(),
+          _isJotsPage(location) ? widget.child : const JotsScreen(),
           _isCategoriesSubPage(location) ? widget.child : const HomeScreen(),
           _isSearchSubPage(location) ? widget.child : const SearchScreen(),
           const SettingsScreen(),
@@ -323,6 +361,8 @@ class _HomeShellState extends ConsumerState<HomeShell>
         destinations: [
           NavigationDestination(
               icon: const Icon(Icons.notes), label: l.navAllNotes),
+          NavigationDestination(
+              icon: const Icon(Icons.bolt_outlined), label: l.navJots),
           NavigationDestination(
               icon: const Icon(Icons.grid_view), label: l.navCategories),
           NavigationDestination(
@@ -351,9 +391,10 @@ class _HomeShellState extends ConsumerState<HomeShell>
 
   int _selectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
-    if (location.startsWith('/home/categories')) return 1;
-    if (location.startsWith('/home/search')) return 2;
-    if (location.startsWith('/home/settings')) return 3;
+    if (location.startsWith('/home/jots')) return 1;
+    if (location.startsWith('/home/categories')) return 2;
+    if (location.startsWith('/home/search')) return 3;
+    if (location.startsWith('/home/settings')) return 4;
     return 0;
   }
 
@@ -362,10 +403,12 @@ class _HomeShellState extends ConsumerState<HomeShell>
       case 0:
         context.go('/home/all-notes');
       case 1:
-        context.go('/home/categories');
+        context.go('/home/jots');
       case 2:
-        context.go('/home/search');
+        context.go('/home/categories');
       case 3:
+        context.go('/home/search');
+      case 4:
         context.go('/home/settings');
     }
   }

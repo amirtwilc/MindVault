@@ -154,6 +154,12 @@ abstract class AppStrings {
   /// **'Close'**
   String get actionClose;
 
+  /// No description provided for @actionNotNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get actionNotNow;
+
   /// No description provided for @actionDiscard.
   ///
   /// In en, this message translates to:
@@ -706,6 +712,12 @@ abstract class AppStrings {
   /// **'All Notes'**
   String get navAllNotes;
 
+  /// No description provided for @navJots.
+  ///
+  /// In en, this message translates to:
+  /// **'Jots'**
+  String get navJots;
+
   /// No description provided for @navCategories.
   ///
   /// In en, this message translates to:
@@ -1017,6 +1029,24 @@ abstract class AppStrings {
   /// In en, this message translates to:
   /// **'Exact alarms are not enabled. This reminder may be delayed.'**
   String get reminderMayBeDelayed;
+
+  /// No description provided for @reminderBackgroundPermissionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow background reminders'**
+  String get reminderBackgroundPermissionTitle;
+
+  /// No description provided for @reminderBackgroundPermissionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Some devices require MindVault to be allowed to work in the background or autostart so exact reminders can fire when the app is closed. If a settings page opens, enable MindVault and return to the app.'**
+  String get reminderBackgroundPermissionBody;
+
+  /// No description provided for @reminderBackgroundPermissionOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get reminderBackgroundPermissionOpenSettings;
 
   /// No description provided for @reminderMustBeFuture.
   ///
@@ -1372,6 +1402,12 @@ abstract class AppStrings {
   /// **'AI searches today'**
   String get settingsUsageAi;
 
+  /// No description provided for @settingsUsageJotsAi.
+  ///
+  /// In en, this message translates to:
+  /// **'Jot AI organizes today'**
+  String get settingsUsageJotsAi;
+
   /// No description provided for @settingsUsageNotes.
   ///
   /// In en, this message translates to:
@@ -1467,6 +1503,276 @@ abstract class AppStrings {
   /// In en, this message translates to:
   /// **'Français'**
   String get settingsLanguageFrench;
+
+  /// No description provided for @jotsAddTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Add jot'**
+  String get jotsAddTooltip;
+
+  /// No description provided for @jotAddDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Jot'**
+  String get jotAddDialogTitle;
+
+  /// No description provided for @jotInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture a quick thought'**
+  String get jotInputHint;
+
+  /// No description provided for @jotSavedSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'Thought saved'**
+  String get jotSavedSnack;
+
+  /// No description provided for @jotSaveUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Thought could not be saved. Please try again.'**
+  String get jotSaveUnavailable;
+
+  /// No description provided for @jotCharCounter.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}/{max} characters'**
+  String jotCharCounter(int count, int max);
+
+  /// No description provided for @jotsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No jots waiting'**
+  String get jotsEmptyTitle;
+
+  /// No description provided for @jotsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap + whenever a thought pops up.'**
+  String get jotsEmptyBody;
+
+  /// No description provided for @jotsSortOldestFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest first'**
+  String get jotsSortOldestFirst;
+
+  /// No description provided for @jotsSortNewestFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest first'**
+  String get jotsSortNewestFirst;
+
+  /// No description provided for @jotsOrganizeAi.
+  ///
+  /// In en, this message translates to:
+  /// **'Organize with AI'**
+  String get jotsOrganizeAi;
+
+  /// No description provided for @jotsAcceptAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept all suggestions'**
+  String get jotsAcceptAll;
+
+  /// No description provided for @jotsAiInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About Jots AI'**
+  String get jotsAiInfoTitle;
+
+  /// No description provided for @jotsAiInfoBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Jots AI suggests how to organize unhandled thoughts. Only unsent jots, category names, and note titles are sent. Note bodies and private notes are not sent, and long lists may be limited.'**
+  String get jotsAiInfoBody;
+
+  /// No description provided for @jotsAiNoNew.
+  ///
+  /// In en, this message translates to:
+  /// **'No new thoughts to organize.'**
+  String get jotsAiNoNew;
+
+  /// No description provided for @jotsAiQuota.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Jots AI limit reached.'**
+  String get jotsAiQuota;
+
+  /// No description provided for @jotsAiFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not organize jots. Try again.'**
+  String get jotsAiFailed;
+
+  /// No description provided for @jotsAiSuggestionsProvided.
+  ///
+  /// In en, this message translates to:
+  /// **'{count,plural, =0{0 suggestions were provided. Try writing more specific thoughts next time.} =1{1 suggestion was provided.} other{{count} suggestions were provided.}}'**
+  String jotsAiSuggestionsProvided(int count);
+
+  /// No description provided for @jotsAiLimitedTo30.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the oldest 30 new jots were sent.'**
+  String get jotsAiLimitedTo30;
+
+  /// No description provided for @jotsSelectedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected'**
+  String jotsSelectedCount(int count);
+
+  /// No description provided for @jotsDeleteSelectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete selected jots?'**
+  String get jotsDeleteSelectedTitle;
+
+  /// No description provided for @jotsDeleteSelectedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected thoughts will be permanently deleted.'**
+  String get jotsDeleteSelectedBody;
+
+  /// No description provided for @jotCreatedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Created {time}'**
+  String jotCreatedAt(Object time);
+
+  /// No description provided for @jotActionsTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Handle jot'**
+  String get jotActionsTooltip;
+
+  /// No description provided for @jotActionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Handle thought'**
+  String get jotActionsTitle;
+
+  /// No description provided for @jotActionCreateNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Create new note'**
+  String get jotActionCreateNote;
+
+  /// No description provided for @jotActionAddToNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to existing note'**
+  String get jotActionAddToNote;
+
+  /// No description provided for @jotActionCreateAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Create alert'**
+  String get jotActionCreateAlert;
+
+  /// No description provided for @jotActionDeleteThought.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete thought'**
+  String get jotActionDeleteThought;
+
+  /// No description provided for @jotActionSuggestedByAi.
+  ///
+  /// In en, this message translates to:
+  /// **'These actions were suggested by AI.'**
+  String get jotActionSuggestedByAi;
+
+  /// No description provided for @jotActionUpdateThought.
+  ///
+  /// In en, this message translates to:
+  /// **'Update thought text'**
+  String get jotActionUpdateThought;
+
+  /// No description provided for @jotActionUpdatedThoughtText.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated thought'**
+  String get jotActionUpdatedThoughtText;
+
+  /// No description provided for @jotActionUpdatedThoughtHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: Lord of the Rings'**
+  String get jotActionUpdatedThoughtHint;
+
+  /// No description provided for @jotActionNewNoteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Note title'**
+  String get jotActionNewNoteTitle;
+
+  /// No description provided for @jotActionCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get jotActionCategory;
+
+  /// No description provided for @jotActionNewCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'New category'**
+  String get jotActionNewCategory;
+
+  /// No description provided for @jotActionNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get jotActionNote;
+
+  /// No description provided for @jotActionNoNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'No notes in this category'**
+  String get jotActionNoNotes;
+
+  /// No description provided for @jotActionLock.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock note'**
+  String get jotActionLock;
+
+  /// No description provided for @jotActionReminderWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert at {time}'**
+  String jotActionReminderWhen(Object time);
+
+  /// No description provided for @jotActionPickReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose date and time'**
+  String get jotActionPickReminder;
+
+  /// No description provided for @jotActionAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get jotActionAccept;
+
+  /// No description provided for @jotActionChooseFuture.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a future date and time.'**
+  String get jotActionChooseFuture;
+
+  /// No description provided for @jotNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to organize this thought'**
+  String get jotNotificationBody;
+
+  /// No description provided for @jotReminderNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'That thought could not be found.'**
+  String get jotReminderNotFound;
 
   /// No description provided for @widgetAddNoteTooltip.
   ///

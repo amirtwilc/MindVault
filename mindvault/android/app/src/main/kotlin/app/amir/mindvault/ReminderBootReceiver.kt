@@ -10,6 +10,7 @@ class ReminderBootReceiver : BroadcastReceiver() {
             intent.action == Intent.ACTION_MY_PACKAGE_REPLACED
         ) {
             ReminderPlugin.rescheduleRemembered(context)
+            ReminderPlugin.rescheduleRememberedJots(context)
             ReminderPlugin.ensureHourlyReconcile(context)
         }
     }

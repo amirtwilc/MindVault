@@ -6,8 +6,12 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
 
     <application
         android:label="MindVault"
@@ -60,6 +64,17 @@
                     android:host="reminder"
                     android:path="/note"/>
             </intent-filter>
+
+            <!-- Deep link for jot reminder notification taps -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="mindvault"
+                    android:host="jot"
+                    android:path="/reminder"/>
+            </intent-filter>
         </activity>
 
         <!-- Transparent Flutter activity launched by the widget "New Note" button -->
@@ -70,6 +85,7 @@
             android:launchMode="singleTop"
             android:excludeFromRecents="true"
             android:taskAffinity=""
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -87,7 +103,6 @@
             android:finishOnTaskLaunch="true"
             android:launchMode="singleTop"
             android:noHistory="true"
-            android:process=":reminder"
             android:taskAffinity=""/>
 
         <!-- Home widget: list data service (feeds the scrollable ListView) -->
@@ -128,15 +143,26 @@
                 android:resource="@xml/categories_widget_info"/>
         </receiver>
 
+        <!-- Jots widget: one-line quick thought entry -->
+        <receiver
+            android:name=".JotWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_jot_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/jot_widget_info"/>
+        </receiver>
+
         <receiver
             android:name=".ReminderAlarmReceiver"
-            android:exported="false"
-            android:process=":reminder"/>
+            android:exported="false"/>
 
         <receiver
             android:name=".ReminderBootReceiver"
-            android:exported="false"
-            android:process=":reminder">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
@@ -145,14 +171,12 @@
 
         <receiver
             android:name=".ReminderReconcileReceiver"
-            android:exported="false"
-            android:process=":reminder"/>
+            android:exported="false"/>
 
         <service
             android:name=".ReminderAlarmService"
             android:exported="false"
-            android:foregroundServiceType="shortService"
-            android:process=":reminder"/>
+            android:foregroundServiceType="shortService"/>
 
         <meta-data
             android:name="flutterEmbedding"

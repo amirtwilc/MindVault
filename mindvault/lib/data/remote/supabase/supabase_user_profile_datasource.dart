@@ -34,6 +34,9 @@ class SupabaseUserProfileDatasource {
       maxCategories: (limits['max_categories'] as num).toInt(),
       maxCharsPerNote: (limits['max_chars_per_note'] as num).toInt(),
       aiSearchesPerDay: (limits['ai_searches_per_day'] as num).toInt(),
+      jotAiOrganizesPerDay:
+          (limits['jot_ai_organizes_per_day'] as num?)?.toInt() ??
+              tierLimitsFromName(tier).jotAiOrganizesPerDay,
     );
   }
 }

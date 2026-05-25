@@ -54,6 +54,31 @@ void main() {
     );
   }
 
+  JotsTableCompanion _jot({
+    String id = 'jot-1',
+    String userId = 'user-1',
+    String text = 'Quick thought',
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    DateTime? handledAt,
+    DateTime? aiProcessedAt,
+    String? aiSuggestionJson,
+    DateTime? reminderAt,
+  }) {
+    final now = DateTime.now().toUtc();
+    return JotsTableCompanion(
+      id: Value(id),
+      userId: Value(userId),
+      jotText: Value(text),
+      createdAt: Value(createdAt ?? now),
+      updatedAt: Value(updatedAt ?? createdAt ?? now),
+      handledAt: Value(handledAt),
+      aiProcessedAt: Value(aiProcessedAt),
+      aiSuggestionJson: Value(aiSuggestionJson),
+      reminderAt: Value(reminderAt),
+    );
+  }
+
   // ── Category tests ─────────────────────────────────────────────────────────
 
   group('upsertCategory', () {
@@ -241,12 +266,66 @@ void main() {
   // ── Pin fields ─────────────────────────────────────────────────────────────
 
   group('pin fields', () {
-    test('new note defaults isPinned to false, pinnedAt null, pinOrder null', () async {
+    test('new note defaults isPinned to false, pinnedAt null, pinOrder null',
+        () async {
       await db.upsertNote(_note());
       final row = await db.getNote('note-1');
       expect(row!.isPinned, isFalse);
       expect(row.pinnedAt, isNull);
       expect(row.pinOrder, isNull);
+    });
+  });
+
+  group('jots', () {
+    test('schema version includes jots migration', () {
+      expect(db.schemaVersion, equals(10));
+    });
+
+    test('upsertJot inserts and updates a jot', () async {
+      await db.upsertJot(_jot(text: 'First'));
+      await db.upsertJot(_jot(text: 'Updated'));
+
+      final row = await db.getJot('jot-1');
+      expect(row, isNotNull);
+      expect(row!.jotText, equals('Updated'));
+    });
+
+    test('watchUnhandledJots filters handled jots and other users', () async {
+      final now = DateTime(2026, 1, 1, 9).toUtc();
+      await db.upsertJot(_jot(id: 'mine-open', createdAt: now));
+      await db.upsertJot(_jot(
+        id: 'mine-handled',
+        createdAt: now.add(const Duration(minutes: 1)),
+        handledAt: now.add(const Duration(minutes: 2)),
+      ));
+      await db.upsertJot(_jot(
+        id: 'theirs-open',
+        userId: 'other',
+        createdAt: now.add(const Duration(minutes: 3)),
+      ));
+
+      final rows = await db.watchUnhandledJots('user-1').first;
+      expect(rows.map((row) => row.id), equals(['mine-open']));
+    });
+
+    test('getUnhandledJots sorts oldest first by default and newest on request',
+        () async {
+      final base = DateTime(2026, 1, 1, 9).toUtc();
+      await db.upsertJot(_jot(id: 'old', createdAt: base));
+      await db.upsertJot(
+          _jot(id: 'new', createdAt: base.add(const Duration(hours: 1))));
+
+      final oldest = await db.getUnhandledJots('user-1');
+      final newest = await db.getUnhandledJots('user-1', newestFirst: true);
+
+      expect(oldest.map((row) => row.id), equals(['old', 'new']));
+      expect(newest.map((row) => row.id), equals(['new', 'old']));
+    });
+
+    test('deleteJot removes a jot', () async {
+      await db.upsertJot(_jot());
+      await db.deleteJot('jot-1');
+      expect(await db.getJot('jot-1'), isNull);
     });
   });
 
@@ -278,7 +357,8 @@ void main() {
       expect(row!.noteType, equals('text'));
     });
 
-    test('inserts and orders checklist items with completed items last', () async {
+    test('inserts and orders checklist items with completed items last',
+        () async {
       await db.upsertNote(_note());
       await db.upsertChecklistItems([
         item(id: 'done', isCompleted: true, sortOrder: 0),
@@ -341,7 +421,8 @@ void main() {
   });
 
   group('watchNotesByCategory pinned ordering', () {
-    test('pinned notes appear before unpinned notes within a category', () async {
+    test('pinned notes appear before unpinned notes within a category',
+        () async {
       final base = DateTime(2025, 1, 1, 12, 0).toUtc();
       await db.upsertNote(_note(id: 'unpinned').copyWith(
         updatedAt: Value(base.add(const Duration(hours: 2))),
@@ -395,15 +476,15 @@ void main() {
       final base = DateTime(2025, 1, 1, 12, 0);
       for (int i = 1; i <= 3; i++) {
         await db.into(db.aiSearchHistoryTable).insert(
-          AiSearchHistoryTableCompanion(
-            queryHash: Value('h$i'),
-            query: Value('query $i'),
-            answer: const Value('answer'),
-            citedTitlesJson: const Value('[]'),
-            citedNoteIdsJson: const Value('[]'),
-            createdAt: Value(base.add(Duration(hours: i))),
-          ),
-        );
+              AiSearchHistoryTableCompanion(
+                queryHash: Value('h$i'),
+                query: Value('query $i'),
+                answer: const Value('answer'),
+                citedTitlesJson: const Value('[]'),
+                citedNoteIdsJson: const Value('[]'),
+                createdAt: Value(base.add(Duration(hours: i))),
+              ),
+            );
       }
       final rows = await db.watchHistory().first;
       expect(rows.first.query, equals('query 3'));
@@ -415,15 +496,15 @@ void main() {
       // Insert 6 rows with distinct timestamps (oldest first)
       for (int i = 1; i <= 6; i++) {
         await db.into(db.aiSearchHistoryTable).insert(
-          AiSearchHistoryTableCompanion(
-            queryHash: Value('h$i'),
-            query: Value('query $i'),
-            answer: const Value('answer'),
-            citedTitlesJson: const Value('[]'),
-            citedNoteIdsJson: const Value('[]'),
-            createdAt: Value(base.add(Duration(hours: i))),
-          ),
-        );
+              AiSearchHistoryTableCompanion(
+                queryHash: Value('h$i'),
+                query: Value('query $i'),
+                answer: const Value('answer'),
+                citedTitlesJson: const Value('[]'),
+                citedNoteIdsJson: const Value('[]'),
+                createdAt: Value(base.add(Duration(hours: i))),
+              ),
+            );
       }
       await db.insertHistory(
         queryHash: 'trigger',
@@ -440,10 +521,16 @@ void main() {
       expect(all.any((r) => r.queryHash == 'h1'), isFalse);
     });
 
-    test('removeHistoryReferencingNoteIds removes intersecting entries', () async {
-      await _history(db, queryHash: 'h1', query: 'about note-a', citedNoteIds: ['note-a']);
-      await _history(db, queryHash: 'h2', query: 'about note-b', citedNoteIds: ['note-b']);
-      await _history(db, queryHash: 'h3', query: 'about both', citedNoteIds: ['note-a', 'note-b']);
+    test('removeHistoryReferencingNoteIds removes intersecting entries',
+        () async {
+      await _history(db,
+          queryHash: 'h1', query: 'about note-a', citedNoteIds: ['note-a']);
+      await _history(db,
+          queryHash: 'h2', query: 'about note-b', citedNoteIds: ['note-b']);
+      await _history(db,
+          queryHash: 'h3',
+          query: 'about both',
+          citedNoteIds: ['note-a', 'note-b']);
       await db.removeHistoryReferencingNoteIds(['note-a']);
       final rows = await db.watchHistory().first;
       // h1 and h3 both cited note-a; only h2 should survive
@@ -451,7 +538,8 @@ void main() {
       expect(rows.first.query, equals('about note-b'));
     });
 
-    test('removeHistoryReferencingNoteIds is no-op when no ids match', () async {
+    test('removeHistoryReferencingNoteIds is no-op when no ids match',
+        () async {
       await _history(db, queryHash: 'h1', query: 'my query');
       await db.removeHistoryReferencingNoteIds(['unknown-id']);
       final rows = await db.watchHistory().first;
@@ -478,7 +566,8 @@ void main() {
 
       // Force the old entry's cachedAt to be in the past via direct update
       final cutoff = DateTime.now().subtract(const Duration(minutes: 15));
-      await (db.update(db.aiCacheTable)..where((t) => t.queryHash.equals('hash-old')))
+      await (db.update(db.aiCacheTable)
+            ..where((t) => t.queryHash.equals('hash-old')))
           .write(AiCacheTableCompanion(cachedAt: Value(cutoff)));
 
       await db.evictExpiredCache(const Duration(minutes: 10));

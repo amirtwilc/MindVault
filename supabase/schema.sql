@@ -16,8 +16,12 @@ CREATE TABLE IF NOT EXISTS tier_limits (
   max_notes           INT  NOT NULL,
   max_categories      INT  NOT NULL,
   max_chars_per_note  INT  NOT NULL,
-  ai_searches_per_day INT  NOT NULL
+  ai_searches_per_day INT  NOT NULL,
+  jot_ai_organizes_per_day INT NOT NULL DEFAULT 1
 );
+
+ALTER TABLE tier_limits
+  ADD COLUMN IF NOT EXISTS jot_ai_organizes_per_day INT NOT NULL DEFAULT 1;
 
 ALTER TABLE tier_limits ENABLE ROW LEVEL SECURITY;
 
@@ -27,10 +31,18 @@ CREATE POLICY "Anyone can read tier limits" ON tier_limits
 
 -- Seed default tiers. ON CONFLICT DO NOTHING so re-running the script
 -- never overwrites manual adjustments made in the dashboard.
-INSERT INTO tier_limits (tier, max_notes, max_categories, max_chars_per_note, ai_searches_per_day) VALUES
-  ('free', 100,  10,  5000,  5),
-  ('pro',  1000, 50, 20000, 50)
+INSERT INTO tier_limits (tier, max_notes, max_categories, max_chars_per_note, ai_searches_per_day, jot_ai_organizes_per_day) VALUES
+  ('free', 100,  10,  5000,  5, 1),
+  ('pro',  1000, 50, 20000, 50, 5)
 ON CONFLICT (tier) DO NOTHING;
+
+UPDATE tier_limits
+SET jot_ai_organizes_per_day = 1
+WHERE tier = 'free' AND jot_ai_organizes_per_day IS NULL;
+
+UPDATE tier_limits
+SET jot_ai_organizes_per_day = 5
+WHERE tier = 'pro' AND jot_ai_organizes_per_day = 1;
 
 -- ── profiles ────────────────────────────────────────────────
 -- One row per auth user. `tier` references tier_limits.tier.
@@ -144,6 +156,42 @@ DROP POLICY IF EXISTS "Users manage own note reminders" ON note_reminders;
 CREATE POLICY "Users manage own note reminders" ON note_reminders
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
+-- ── jots ────────────────────────────────────────────────────
+-- Short unhandled thoughts. `text` and `ai_suggestion_json` are
+-- AES-256-GCM ciphertext (Base64); the server stores only ciphertext.
+CREATE TABLE IF NOT EXISTS jots (
+  id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id              UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  text                 TEXT NOT NULL,
+  created_at           TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at           TIMESTAMPTZ NOT NULL DEFAULT now(),
+  handled_at           TIMESTAMPTZ,
+  ai_processed_at      TIMESTAMPTZ,
+  ai_suggestion_json   TEXT,
+  ai_suggestion_run_id UUID,
+  reminder_at          TIMESTAMPTZ
+);
+
+ALTER TABLE jots
+  ADD COLUMN IF NOT EXISTS handled_at TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS ai_processed_at TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS ai_suggestion_json TEXT,
+  ADD COLUMN IF NOT EXISTS ai_suggestion_run_id UUID,
+  ADD COLUMN IF NOT EXISTS reminder_at TIMESTAMPTZ;
+
+CREATE INDEX IF NOT EXISTS idx_jots_user_unhandled_created
+  ON jots (user_id, handled_at, created_at ASC);
+
+CREATE INDEX IF NOT EXISTS idx_jots_user_reminder
+  ON jots (user_id, reminder_at)
+  WHERE reminder_at IS NOT NULL AND handled_at IS NULL;
+
+ALTER TABLE jots ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users manage own jots" ON jots;
+CREATE POLICY "Users manage own jots" ON jots
+  FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
 -- Checklist item text is AES-256-GCM ciphertext (Base64), matching notes.body.
 CREATE TABLE IF NOT EXISTS checklist_items (
   id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -215,6 +263,97 @@ DROP POLICY IF EXISTS "Users manage own ai_usage" ON ai_usage;
 CREATE POLICY "Users manage own ai_usage" ON ai_usage
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
+-- ── jot_ai_usage ────────────────────────────────────────────
+-- One row per user per day. Consumed atomically by the organize-jots edge
+-- function and refunded if the upstream model request fails.
+CREATE TABLE IF NOT EXISTS jot_ai_usage (
+  user_id        UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  usage_date     DATE NOT NULL DEFAULT CURRENT_DATE,
+  organize_count INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (user_id, usage_date)
+);
+
+ALTER TABLE jot_ai_usage ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users manage own jot_ai_usage" ON jot_ai_usage;
+DROP POLICY IF EXISTS "Users read own jot_ai_usage" ON jot_ai_usage;
+CREATE POLICY "Users read own jot_ai_usage" ON jot_ai_usage
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE OR REPLACE FUNCTION public.consume_jot_ai_usage(
+  p_user_id UUID,
+  p_usage_date DATE DEFAULT CURRENT_DATE
+)
+RETURNS TABLE (
+  allowed BOOLEAN,
+  organize_count INTEGER,
+  daily_limit INTEGER,
+  tier TEXT
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_tier TEXT;
+  v_limit INTEGER;
+  v_count INTEGER;
+  v_allowed BOOLEAN := false;
+BEGIN
+  SELECT p.tier, tl.jot_ai_organizes_per_day
+    INTO v_tier, v_limit
+  FROM profiles p
+  LEFT JOIN tier_limits tl ON tl.tier = p.tier
+  WHERE p.id = p_user_id;
+
+  v_tier := COALESCE(v_tier, 'free');
+  v_limit := COALESCE(v_limit, 1);
+
+  IF v_limit <= 0 THEN
+    RETURN QUERY SELECT false, 0, v_limit, v_tier;
+    RETURN;
+  END IF;
+
+  INSERT INTO jot_ai_usage (user_id, usage_date, organize_count)
+  VALUES (p_user_id, p_usage_date, 1)
+  ON CONFLICT (user_id, usage_date) DO UPDATE
+    SET organize_count = jot_ai_usage.organize_count + 1
+    WHERE jot_ai_usage.organize_count < v_limit
+  RETURNING jot_ai_usage.organize_count INTO v_count;
+
+  IF FOUND THEN
+    v_allowed := true;
+  ELSE
+    SELECT jau.organize_count INTO v_count
+    FROM jot_ai_usage jau
+    WHERE jau.user_id = p_user_id AND jau.usage_date = p_usage_date;
+  END IF;
+
+  RETURN QUERY SELECT v_allowed, COALESCE(v_count, 0), v_limit, v_tier;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.refund_jot_ai_usage(
+  p_user_id UUID,
+  p_usage_date DATE DEFAULT CURRENT_DATE
+)
+RETURNS VOID
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  UPDATE jot_ai_usage
+  SET organize_count = GREATEST(organize_count - 1, 0)
+  WHERE user_id = p_user_id
+    AND usage_date = p_usage_date
+    AND organize_count > 0;
+$$;
+
+REVOKE ALL ON FUNCTION public.consume_jot_ai_usage(UUID, DATE) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.refund_jot_ai_usage(UUID, DATE) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.consume_jot_ai_usage(UUID, DATE) TO service_role;
+GRANT EXECUTE ON FUNCTION public.refund_jot_ai_usage(UUID, DATE) TO service_role;
+
 -- ── error_logs ──────────────────────────────────────────────
 -- Best-effort client-side error reporting. The app fires writes
 -- here from a fire-and-forget logger when something throws (most
@@ -284,6 +423,8 @@ SELECT
   (SELECT COUNT(*) FROM profiles WHERE created_at >= NOW() - INTERVAL '30 days')                         AS signups_30d,
   (SELECT COUNT(*) FROM ai_usage WHERE usage_date = CURRENT_DATE)                                        AS ai_queries_today,
   (SELECT COUNT(*) FROM ai_usage WHERE usage_date >= CURRENT_DATE - INTERVAL '7 days')                  AS ai_queries_7d,
+  (SELECT COUNT(*) FROM jot_ai_usage WHERE usage_date = CURRENT_DATE)                                    AS jot_ai_users_today,
+  (SELECT COALESCE(SUM(organize_count), 0) FROM jot_ai_usage WHERE usage_date = CURRENT_DATE)            AS jot_ai_organizes_today,
   (SELECT COUNT(DISTINCT user_id) FROM analytics_events WHERE created_at::date = CURRENT_DATE)           AS dau_today,
   (SELECT COUNT(*) FROM analytics_events WHERE event_type = 'note_created' AND created_at::date = CURRENT_DATE) AS notes_created_today,
   (SELECT COUNT(*) FROM analytics_events WHERE event_type = 'note_created' AND created_at >= NOW() - INTERVAL '7 days') AS notes_created_7d,
@@ -368,5 +509,11 @@ DO $$ BEGIN
     WHERE pubname = 'supabase_realtime' AND tablename = 'note_reminders'
   ) THEN
     ALTER PUBLICATION supabase_realtime ADD TABLE note_reminders;
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime' AND tablename = 'jots'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE jots;
   END IF;
 END $$;

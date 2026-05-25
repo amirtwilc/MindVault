@@ -10,6 +10,7 @@ class TierLimits with _$TierLimits {
     required int maxCategories,
     required int maxCharsPerNote,
     required int aiSearchesPerDay,
+    required int jotAiOrganizesPerDay,
   }) = _TierLimits;
 
   // ── Offline fallback values ───────────────────────────────────────────────
@@ -22,6 +23,7 @@ class TierLimits with _$TierLimits {
         maxCategories: 10,
         maxCharsPerNote: 5000,
         aiSearchesPerDay: 5,
+        jotAiOrganizesPerDay: 1,
       );
 
   factory TierLimits.pro() => const TierLimits(
@@ -30,6 +32,7 @@ class TierLimits with _$TierLimits {
         maxCategories: 50,
         maxCharsPerNote: 20000,
         aiSearchesPerDay: 50,
+        jotAiOrganizesPerDay: 5,
       );
 }
 

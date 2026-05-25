@@ -123,6 +123,25 @@ class ReminderDeviceStateTable extends Table {
   Set<Column> get primaryKey => {noteId};
 }
 
+class JotsTable extends Table {
+  TextColumn get id => text()();
+  TextColumn get userId => text().named('user_id')();
+  TextColumn get jotText => text().named('text')();
+  DateTimeColumn get createdAt => dateTime().named('created_at')();
+  DateTimeColumn get updatedAt => dateTime().named('updated_at')();
+  DateTimeColumn get handledAt => dateTime().named('handled_at').nullable()();
+  DateTimeColumn get aiProcessedAt =>
+      dateTime().named('ai_processed_at').nullable()();
+  TextColumn get aiSuggestionJson =>
+      text().named('ai_suggestion_json').nullable()();
+  TextColumn get aiSuggestionRunId =>
+      text().named('ai_suggestion_run_id').nullable()();
+  DateTimeColumn get reminderAt => dateTime().named('reminder_at').nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 // ── FTS5 virtual table (defined via raw SQL in migration) ─────
 // notes_fts: content table pointing at NotesTable
 // Created in migration, not as a Drift table class.
@@ -137,7 +156,8 @@ class ReminderDeviceStateTable extends Table {
   AiCacheTable,
   PendingOpsTable,
   NoteRemindersTable,
-  ReminderDeviceStateTable
+  ReminderDeviceStateTable,
+  JotsTable
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -145,7 +165,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 9;
+  int get schemaVersion => 10;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -178,6 +198,9 @@ class AppDatabase extends _$AppDatabase {
           if (from < 9) {
             await m.createTable(noteRemindersTable);
             await m.createTable(reminderDeviceStateTable);
+          }
+          if (from < 10) {
+            await m.createTable(jotsTable);
           }
         },
         onCreate: (m) async {
@@ -389,6 +412,58 @@ class AppDatabase extends _$AppDatabase {
     await (delete(reminderDeviceStateTable)
           ..where((t) => t.noteId.equals(noteId)))
         .go();
+  }
+
+  Stream<List<JotsTableData>> watchUnhandledJots(
+    String userId, {
+    bool newestFirst = false,
+  }) {
+    return (select(jotsTable)
+          ..where((t) => t.userId.equals(userId) & t.handledAt.isNull())
+          ..orderBy([
+            (t) => newestFirst
+                ? OrderingTerm.desc(t.createdAt)
+                : OrderingTerm.asc(t.createdAt),
+          ]))
+        .watch();
+  }
+
+  Future<List<JotsTableData>> getUnhandledJots(
+    String userId, {
+    bool newestFirst = false,
+  }) {
+    return (select(jotsTable)
+          ..where((t) => t.userId.equals(userId) & t.handledAt.isNull())
+          ..orderBy([
+            (t) => newestFirst
+                ? OrderingTerm.desc(t.createdAt)
+                : OrderingTerm.asc(t.createdAt),
+          ]))
+        .get();
+  }
+
+  Future<List<JotsTableData>> getAllJots(String userId) {
+    return (select(jotsTable)..where((t) => t.userId.equals(userId))).get();
+  }
+
+  Future<JotsTableData?> getJot(String id) {
+    return (select(jotsTable)..where((t) => t.id.equals(id))).getSingleOrNull();
+  }
+
+  Future<void> upsertJot(JotsTableCompanion jot) async {
+    await into(jotsTable).insertOnConflictUpdate(jot);
+  }
+
+  Future<void> upsertJots(List<JotsTableCompanion> jots) async {
+    await batch((b) {
+      for (final jot in jots) {
+        b.insert(jotsTable, jot, onConflict: DoUpdate((_) => jot));
+      }
+    });
+  }
+
+  Future<void> deleteJot(String id) async {
+    await (delete(jotsTable)..where((t) => t.id.equals(id))).go();
   }
 
   Stream<List<ChecklistItemsTableData>> watchChecklistItems(String noteId) {

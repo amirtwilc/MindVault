@@ -3095,6 +3095,545 @@ class ReminderDeviceStateTableCompanion
   }
 }
 
+class $JotsTableTable extends JotsTable
+    with TableInfo<$JotsTableTable, JotsTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $JotsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+      'user_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _jotTextMeta =
+      const VerificationMeta('jotText');
+  @override
+  late final GeneratedColumn<String> jotText = GeneratedColumn<String>(
+      'text', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _handledAtMeta =
+      const VerificationMeta('handledAt');
+  @override
+  late final GeneratedColumn<DateTime> handledAt = GeneratedColumn<DateTime>(
+      'handled_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _aiProcessedAtMeta =
+      const VerificationMeta('aiProcessedAt');
+  @override
+  late final GeneratedColumn<DateTime> aiProcessedAt =
+      GeneratedColumn<DateTime>('ai_processed_at', aliasedName, true,
+          type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _aiSuggestionJsonMeta =
+      const VerificationMeta('aiSuggestionJson');
+  @override
+  late final GeneratedColumn<String> aiSuggestionJson = GeneratedColumn<String>(
+      'ai_suggestion_json', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _aiSuggestionRunIdMeta =
+      const VerificationMeta('aiSuggestionRunId');
+  @override
+  late final GeneratedColumn<String> aiSuggestionRunId =
+      GeneratedColumn<String>('ai_suggestion_run_id', aliasedName, true,
+          type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _reminderAtMeta =
+      const VerificationMeta('reminderAt');
+  @override
+  late final GeneratedColumn<DateTime> reminderAt = GeneratedColumn<DateTime>(
+      'reminder_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        userId,
+        jotText,
+        createdAt,
+        updatedAt,
+        handledAt,
+        aiProcessedAt,
+        aiSuggestionJson,
+        aiSuggestionRunId,
+        reminderAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'jots_table';
+  @override
+  VerificationContext validateIntegrity(Insertable<JotsTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(_userIdMeta,
+          userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('text')) {
+      context.handle(_jotTextMeta,
+          jotText.isAcceptableOrUnknown(data['text']!, _jotTextMeta));
+    } else if (isInserting) {
+      context.missing(_jotTextMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('handled_at')) {
+      context.handle(_handledAtMeta,
+          handledAt.isAcceptableOrUnknown(data['handled_at']!, _handledAtMeta));
+    }
+    if (data.containsKey('ai_processed_at')) {
+      context.handle(
+          _aiProcessedAtMeta,
+          aiProcessedAt.isAcceptableOrUnknown(
+              data['ai_processed_at']!, _aiProcessedAtMeta));
+    }
+    if (data.containsKey('ai_suggestion_json')) {
+      context.handle(
+          _aiSuggestionJsonMeta,
+          aiSuggestionJson.isAcceptableOrUnknown(
+              data['ai_suggestion_json']!, _aiSuggestionJsonMeta));
+    }
+    if (data.containsKey('ai_suggestion_run_id')) {
+      context.handle(
+          _aiSuggestionRunIdMeta,
+          aiSuggestionRunId.isAcceptableOrUnknown(
+              data['ai_suggestion_run_id']!, _aiSuggestionRunIdMeta));
+    }
+    if (data.containsKey('reminder_at')) {
+      context.handle(
+          _reminderAtMeta,
+          reminderAt.isAcceptableOrUnknown(
+              data['reminder_at']!, _reminderAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  JotsTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return JotsTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      userId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}user_id'])!,
+      jotText: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}text'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+      handledAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}handled_at']),
+      aiProcessedAt: attachedDatabase.typeMapping.read(
+          DriftSqlType.dateTime, data['${effectivePrefix}ai_processed_at']),
+      aiSuggestionJson: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}ai_suggestion_json']),
+      aiSuggestionRunId: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}ai_suggestion_run_id']),
+      reminderAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}reminder_at']),
+    );
+  }
+
+  @override
+  $JotsTableTable createAlias(String alias) {
+    return $JotsTableTable(attachedDatabase, alias);
+  }
+}
+
+class JotsTableData extends DataClass implements Insertable<JotsTableData> {
+  final String id;
+  final String userId;
+  final String jotText;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? handledAt;
+  final DateTime? aiProcessedAt;
+  final String? aiSuggestionJson;
+  final String? aiSuggestionRunId;
+  final DateTime? reminderAt;
+  const JotsTableData(
+      {required this.id,
+      required this.userId,
+      required this.jotText,
+      required this.createdAt,
+      required this.updatedAt,
+      this.handledAt,
+      this.aiProcessedAt,
+      this.aiSuggestionJson,
+      this.aiSuggestionRunId,
+      this.reminderAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['user_id'] = Variable<String>(userId);
+    map['text'] = Variable<String>(jotText);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || handledAt != null) {
+      map['handled_at'] = Variable<DateTime>(handledAt);
+    }
+    if (!nullToAbsent || aiProcessedAt != null) {
+      map['ai_processed_at'] = Variable<DateTime>(aiProcessedAt);
+    }
+    if (!nullToAbsent || aiSuggestionJson != null) {
+      map['ai_suggestion_json'] = Variable<String>(aiSuggestionJson);
+    }
+    if (!nullToAbsent || aiSuggestionRunId != null) {
+      map['ai_suggestion_run_id'] = Variable<String>(aiSuggestionRunId);
+    }
+    if (!nullToAbsent || reminderAt != null) {
+      map['reminder_at'] = Variable<DateTime>(reminderAt);
+    }
+    return map;
+  }
+
+  JotsTableCompanion toCompanion(bool nullToAbsent) {
+    return JotsTableCompanion(
+      id: Value(id),
+      userId: Value(userId),
+      jotText: Value(jotText),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      handledAt: handledAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(handledAt),
+      aiProcessedAt: aiProcessedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(aiProcessedAt),
+      aiSuggestionJson: aiSuggestionJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(aiSuggestionJson),
+      aiSuggestionRunId: aiSuggestionRunId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(aiSuggestionRunId),
+      reminderAt: reminderAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(reminderAt),
+    );
+  }
+
+  factory JotsTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return JotsTableData(
+      id: serializer.fromJson<String>(json['id']),
+      userId: serializer.fromJson<String>(json['userId']),
+      jotText: serializer.fromJson<String>(json['jotText']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      handledAt: serializer.fromJson<DateTime?>(json['handledAt']),
+      aiProcessedAt: serializer.fromJson<DateTime?>(json['aiProcessedAt']),
+      aiSuggestionJson: serializer.fromJson<String?>(json['aiSuggestionJson']),
+      aiSuggestionRunId:
+          serializer.fromJson<String?>(json['aiSuggestionRunId']),
+      reminderAt: serializer.fromJson<DateTime?>(json['reminderAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'userId': serializer.toJson<String>(userId),
+      'jotText': serializer.toJson<String>(jotText),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'handledAt': serializer.toJson<DateTime?>(handledAt),
+      'aiProcessedAt': serializer.toJson<DateTime?>(aiProcessedAt),
+      'aiSuggestionJson': serializer.toJson<String?>(aiSuggestionJson),
+      'aiSuggestionRunId': serializer.toJson<String?>(aiSuggestionRunId),
+      'reminderAt': serializer.toJson<DateTime?>(reminderAt),
+    };
+  }
+
+  JotsTableData copyWith(
+          {String? id,
+          String? userId,
+          String? jotText,
+          DateTime? createdAt,
+          DateTime? updatedAt,
+          Value<DateTime?> handledAt = const Value.absent(),
+          Value<DateTime?> aiProcessedAt = const Value.absent(),
+          Value<String?> aiSuggestionJson = const Value.absent(),
+          Value<String?> aiSuggestionRunId = const Value.absent(),
+          Value<DateTime?> reminderAt = const Value.absent()}) =>
+      JotsTableData(
+        id: id ?? this.id,
+        userId: userId ?? this.userId,
+        jotText: jotText ?? this.jotText,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        handledAt: handledAt.present ? handledAt.value : this.handledAt,
+        aiProcessedAt:
+            aiProcessedAt.present ? aiProcessedAt.value : this.aiProcessedAt,
+        aiSuggestionJson: aiSuggestionJson.present
+            ? aiSuggestionJson.value
+            : this.aiSuggestionJson,
+        aiSuggestionRunId: aiSuggestionRunId.present
+            ? aiSuggestionRunId.value
+            : this.aiSuggestionRunId,
+        reminderAt: reminderAt.present ? reminderAt.value : this.reminderAt,
+      );
+  JotsTableData copyWithCompanion(JotsTableCompanion data) {
+    return JotsTableData(
+      id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      jotText: data.jotText.present ? data.jotText.value : this.jotText,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      handledAt: data.handledAt.present ? data.handledAt.value : this.handledAt,
+      aiProcessedAt: data.aiProcessedAt.present
+          ? data.aiProcessedAt.value
+          : this.aiProcessedAt,
+      aiSuggestionJson: data.aiSuggestionJson.present
+          ? data.aiSuggestionJson.value
+          : this.aiSuggestionJson,
+      aiSuggestionRunId: data.aiSuggestionRunId.present
+          ? data.aiSuggestionRunId.value
+          : this.aiSuggestionRunId,
+      reminderAt:
+          data.reminderAt.present ? data.reminderAt.value : this.reminderAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('JotsTableData(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('jotText: $jotText, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('handledAt: $handledAt, ')
+          ..write('aiProcessedAt: $aiProcessedAt, ')
+          ..write('aiSuggestionJson: $aiSuggestionJson, ')
+          ..write('aiSuggestionRunId: $aiSuggestionRunId, ')
+          ..write('reminderAt: $reminderAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id,
+      userId,
+      jotText,
+      createdAt,
+      updatedAt,
+      handledAt,
+      aiProcessedAt,
+      aiSuggestionJson,
+      aiSuggestionRunId,
+      reminderAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is JotsTableData &&
+          other.id == this.id &&
+          other.userId == this.userId &&
+          other.jotText == this.jotText &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.handledAt == this.handledAt &&
+          other.aiProcessedAt == this.aiProcessedAt &&
+          other.aiSuggestionJson == this.aiSuggestionJson &&
+          other.aiSuggestionRunId == this.aiSuggestionRunId &&
+          other.reminderAt == this.reminderAt);
+}
+
+class JotsTableCompanion extends UpdateCompanion<JotsTableData> {
+  final Value<String> id;
+  final Value<String> userId;
+  final Value<String> jotText;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> handledAt;
+  final Value<DateTime?> aiProcessedAt;
+  final Value<String?> aiSuggestionJson;
+  final Value<String?> aiSuggestionRunId;
+  final Value<DateTime?> reminderAt;
+  final Value<int> rowid;
+  const JotsTableCompanion({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.jotText = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.handledAt = const Value.absent(),
+    this.aiProcessedAt = const Value.absent(),
+    this.aiSuggestionJson = const Value.absent(),
+    this.aiSuggestionRunId = const Value.absent(),
+    this.reminderAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  JotsTableCompanion.insert({
+    required String id,
+    required String userId,
+    required String jotText,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.handledAt = const Value.absent(),
+    this.aiProcessedAt = const Value.absent(),
+    this.aiSuggestionJson = const Value.absent(),
+    this.aiSuggestionRunId = const Value.absent(),
+    this.reminderAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        userId = Value(userId),
+        jotText = Value(jotText),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<JotsTableData> custom({
+    Expression<String>? id,
+    Expression<String>? userId,
+    Expression<String>? jotText,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? handledAt,
+    Expression<DateTime>? aiProcessedAt,
+    Expression<String>? aiSuggestionJson,
+    Expression<String>? aiSuggestionRunId,
+    Expression<DateTime>? reminderAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
+      if (jotText != null) 'text': jotText,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (handledAt != null) 'handled_at': handledAt,
+      if (aiProcessedAt != null) 'ai_processed_at': aiProcessedAt,
+      if (aiSuggestionJson != null) 'ai_suggestion_json': aiSuggestionJson,
+      if (aiSuggestionRunId != null) 'ai_suggestion_run_id': aiSuggestionRunId,
+      if (reminderAt != null) 'reminder_at': reminderAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  JotsTableCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? userId,
+      Value<String>? jotText,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt,
+      Value<DateTime?>? handledAt,
+      Value<DateTime?>? aiProcessedAt,
+      Value<String?>? aiSuggestionJson,
+      Value<String?>? aiSuggestionRunId,
+      Value<DateTime?>? reminderAt,
+      Value<int>? rowid}) {
+    return JotsTableCompanion(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      jotText: jotText ?? this.jotText,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      handledAt: handledAt ?? this.handledAt,
+      aiProcessedAt: aiProcessedAt ?? this.aiProcessedAt,
+      aiSuggestionJson: aiSuggestionJson ?? this.aiSuggestionJson,
+      aiSuggestionRunId: aiSuggestionRunId ?? this.aiSuggestionRunId,
+      reminderAt: reminderAt ?? this.reminderAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (jotText.present) {
+      map['text'] = Variable<String>(jotText.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (handledAt.present) {
+      map['handled_at'] = Variable<DateTime>(handledAt.value);
+    }
+    if (aiProcessedAt.present) {
+      map['ai_processed_at'] = Variable<DateTime>(aiProcessedAt.value);
+    }
+    if (aiSuggestionJson.present) {
+      map['ai_suggestion_json'] = Variable<String>(aiSuggestionJson.value);
+    }
+    if (aiSuggestionRunId.present) {
+      map['ai_suggestion_run_id'] = Variable<String>(aiSuggestionRunId.value);
+    }
+    if (reminderAt.present) {
+      map['reminder_at'] = Variable<DateTime>(reminderAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('JotsTableCompanion(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('jotText: $jotText, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('handledAt: $handledAt, ')
+          ..write('aiProcessedAt: $aiProcessedAt, ')
+          ..write('aiSuggestionJson: $aiSuggestionJson, ')
+          ..write('aiSuggestionRunId: $aiSuggestionRunId, ')
+          ..write('reminderAt: $reminderAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3112,6 +3651,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $NoteRemindersTableTable(this);
   late final $ReminderDeviceStateTableTable reminderDeviceStateTable =
       $ReminderDeviceStateTableTable(this);
+  late final $JotsTableTable jotsTable = $JotsTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3124,7 +3664,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         aiCacheTable,
         pendingOpsTable,
         noteRemindersTable,
-        reminderDeviceStateTable
+        reminderDeviceStateTable,
+        jotsTable
       ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules(
@@ -4956,6 +5497,257 @@ typedef $$ReminderDeviceStateTableTableProcessedTableManager
         ),
         ReminderDeviceStateTableData,
         PrefetchHooks Function()>;
+typedef $$JotsTableTableCreateCompanionBuilder = JotsTableCompanion Function({
+  required String id,
+  required String userId,
+  required String jotText,
+  required DateTime createdAt,
+  required DateTime updatedAt,
+  Value<DateTime?> handledAt,
+  Value<DateTime?> aiProcessedAt,
+  Value<String?> aiSuggestionJson,
+  Value<String?> aiSuggestionRunId,
+  Value<DateTime?> reminderAt,
+  Value<int> rowid,
+});
+typedef $$JotsTableTableUpdateCompanionBuilder = JotsTableCompanion Function({
+  Value<String> id,
+  Value<String> userId,
+  Value<String> jotText,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<DateTime?> handledAt,
+  Value<DateTime?> aiProcessedAt,
+  Value<String?> aiSuggestionJson,
+  Value<String?> aiSuggestionRunId,
+  Value<DateTime?> reminderAt,
+  Value<int> rowid,
+});
+
+class $$JotsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $JotsTableTable> {
+  $$JotsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get jotText => $composableBuilder(
+      column: $table.jotText, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get handledAt => $composableBuilder(
+      column: $table.handledAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get aiProcessedAt => $composableBuilder(
+      column: $table.aiProcessedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get aiSuggestionJson => $composableBuilder(
+      column: $table.aiSuggestionJson,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get aiSuggestionRunId => $composableBuilder(
+      column: $table.aiSuggestionRunId,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get reminderAt => $composableBuilder(
+      column: $table.reminderAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$JotsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $JotsTableTable> {
+  $$JotsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get jotText => $composableBuilder(
+      column: $table.jotText, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get handledAt => $composableBuilder(
+      column: $table.handledAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get aiProcessedAt => $composableBuilder(
+      column: $table.aiProcessedAt,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get aiSuggestionJson => $composableBuilder(
+      column: $table.aiSuggestionJson,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get aiSuggestionRunId => $composableBuilder(
+      column: $table.aiSuggestionRunId,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get reminderAt => $composableBuilder(
+      column: $table.reminderAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$JotsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $JotsTableTable> {
+  $$JotsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<String> get jotText =>
+      $composableBuilder(column: $table.jotText, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get handledAt =>
+      $composableBuilder(column: $table.handledAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get aiProcessedAt => $composableBuilder(
+      column: $table.aiProcessedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get aiSuggestionJson => $composableBuilder(
+      column: $table.aiSuggestionJson, builder: (column) => column);
+
+  GeneratedColumn<String> get aiSuggestionRunId => $composableBuilder(
+      column: $table.aiSuggestionRunId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get reminderAt => $composableBuilder(
+      column: $table.reminderAt, builder: (column) => column);
+}
+
+class $$JotsTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $JotsTableTable,
+    JotsTableData,
+    $$JotsTableTableFilterComposer,
+    $$JotsTableTableOrderingComposer,
+    $$JotsTableTableAnnotationComposer,
+    $$JotsTableTableCreateCompanionBuilder,
+    $$JotsTableTableUpdateCompanionBuilder,
+    (
+      JotsTableData,
+      BaseReferences<_$AppDatabase, $JotsTableTable, JotsTableData>
+    ),
+    JotsTableData,
+    PrefetchHooks Function()> {
+  $$JotsTableTableTableManager(_$AppDatabase db, $JotsTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$JotsTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$JotsTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$JotsTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> userId = const Value.absent(),
+            Value<String> jotText = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+            Value<DateTime?> handledAt = const Value.absent(),
+            Value<DateTime?> aiProcessedAt = const Value.absent(),
+            Value<String?> aiSuggestionJson = const Value.absent(),
+            Value<String?> aiSuggestionRunId = const Value.absent(),
+            Value<DateTime?> reminderAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              JotsTableCompanion(
+            id: id,
+            userId: userId,
+            jotText: jotText,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            handledAt: handledAt,
+            aiProcessedAt: aiProcessedAt,
+            aiSuggestionJson: aiSuggestionJson,
+            aiSuggestionRunId: aiSuggestionRunId,
+            reminderAt: reminderAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String userId,
+            required String jotText,
+            required DateTime createdAt,
+            required DateTime updatedAt,
+            Value<DateTime?> handledAt = const Value.absent(),
+            Value<DateTime?> aiProcessedAt = const Value.absent(),
+            Value<String?> aiSuggestionJson = const Value.absent(),
+            Value<String?> aiSuggestionRunId = const Value.absent(),
+            Value<DateTime?> reminderAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              JotsTableCompanion.insert(
+            id: id,
+            userId: userId,
+            jotText: jotText,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            handledAt: handledAt,
+            aiProcessedAt: aiProcessedAt,
+            aiSuggestionJson: aiSuggestionJson,
+            aiSuggestionRunId: aiSuggestionRunId,
+            reminderAt: reminderAt,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$JotsTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $JotsTableTable,
+    JotsTableData,
+    $$JotsTableTableFilterComposer,
+    $$JotsTableTableOrderingComposer,
+    $$JotsTableTableAnnotationComposer,
+    $$JotsTableTableCreateCompanionBuilder,
+    $$JotsTableTableUpdateCompanionBuilder,
+    (
+      JotsTableData,
+      BaseReferences<_$AppDatabase, $JotsTableTable, JotsTableData>
+    ),
+    JotsTableData,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4977,4 +5769,6 @@ class $AppDatabaseManager {
   $$ReminderDeviceStateTableTableTableManager get reminderDeviceStateTable =>
       $$ReminderDeviceStateTableTableTableManager(
           _db, _db.reminderDeviceStateTable);
+  $$JotsTableTableTableManager get jotsTable =>
+      $$JotsTableTableTableManager(_db, _db.jotsTable);
 }

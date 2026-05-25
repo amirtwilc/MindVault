@@ -8,6 +8,7 @@ import '../../domain/entities/note.dart';
 import '../../domain/entities/note_reminder.dart';
 import '../../l10n/app_localizations.dart';
 import '../providers/reminder_provider.dart';
+import 'reminder_background_permission_prompt.dart';
 
 class ReminderButton extends ConsumerStatefulWidget {
   final String? noteId;
@@ -195,6 +196,9 @@ class _ReminderButtonState extends ConsumerState<ReminderButton> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l.reminderMayBeDelayed)),
       );
+    }
+    if (context.mounted) {
+      await maybeShowReminderBackgroundPermissionPrompt(context, ref);
     }
   }
 }

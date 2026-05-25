@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../domain/entities/tier_limits.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/categories_provider.dart';
 import '../../providers/encryption_provider.dart';
+import '../../providers/jots_provider.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/notes_provider.dart';
 import '../../providers/tier_provider.dart';
@@ -18,9 +18,11 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
     final tierAsync = ref.watch(tierProvider);
-    final tier = tierAsync.valueOrNull ?? TierLimits.free();
+    final tier = tierAsync.valueOrNull;
     final aiTodayAsync = ref.watch(aiSearchesTodayProvider);
     final aiToday = aiTodayAsync.valueOrNull ?? 0;
+    final jotsAiTodayAsync = ref.watch(jotsAiUsageTodayProvider);
+    final jotsAiToday = jotsAiTodayAsync.valueOrNull ?? 0;
     final allNotes = ref.watch(allNotesProvider).valueOrNull ?? [];
     final categories = ref.watch(categoriesProvider).valueOrNull ?? [];
     final currentLocale = ref.watch(localeProvider);
@@ -38,7 +40,8 @@ class SettingsScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
             child: Text(l.settingsSectionAccount,
-                style: tt.labelSmall?.copyWith(color: cs.primary,
+                style: tt.labelSmall?.copyWith(
+                    color: cs.primary,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.1)),
           ),
@@ -67,7 +70,14 @@ class SettingsScreen extends ConsumerWidget {
                             style: tt.bodyMedium,
                             overflow: TextOverflow.ellipsis),
                         const SizedBox(height: 4),
-                        _TierBadge(tier: tier.tier),
+                        if (tier == null)
+                          const SizedBox(
+                            width: 14,
+                            height: 14,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        else
+                          _TierBadge(tier: tier.tier),
                       ],
                     ),
                   ),
@@ -82,7 +92,8 @@ class SettingsScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
             child: Text(l.settingsSectionUsage,
-                style: tt.labelSmall?.copyWith(color: cs.primary,
+                style: tt.labelSmall?.copyWith(
+                    color: cs.primary,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.1)),
           ),
@@ -96,7 +107,16 @@ class SettingsScreen extends ConsumerWidget {
                     icon: Icons.auto_awesome_rounded,
                     label: l.settingsUsageAi,
                     used: aiToday,
-                    max: tier.aiSearchesPerDay,
+                    max: tier?.aiSearchesPerDay,
+                    cs: cs,
+                    tt: tt,
+                  ),
+                  const SizedBox(height: 14),
+                  _UsageRow(
+                    icon: Icons.bolt_rounded,
+                    label: l.settingsUsageJotsAi,
+                    used: jotsAiToday,
+                    max: tier?.jotAiOrganizesPerDay,
                     cs: cs,
                     tt: tt,
                   ),
@@ -105,7 +125,7 @@ class SettingsScreen extends ConsumerWidget {
                     icon: Icons.notes_rounded,
                     label: l.settingsUsageNotes,
                     used: allNotes.length,
-                    max: tier.maxNotes,
+                    max: tier?.maxNotes,
                     cs: cs,
                     tt: tt,
                   ),
@@ -114,7 +134,7 @@ class SettingsScreen extends ConsumerWidget {
                     icon: Icons.folder_outlined,
                     label: l.settingsUsageCategories,
                     used: categories.length,
-                    max: tier.maxCategories,
+                    max: tier?.maxCategories,
                     cs: cs,
                     tt: tt,
                   ),
@@ -123,20 +143,20 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
 
-          if (tier.tier == 'free') ...[
+          if (tier?.tier == 'free') ...[
             const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
               child: Text(l.settingsSectionUpgrade,
-                  style: tt.labelSmall?.copyWith(color: cs.primary,
+                  style: tt.labelSmall?.copyWith(
+                      color: cs.primary,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.1)),
             ),
             Card(
               margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               child: ListTile(
-                leading: Icon(Icons.rocket_launch_outlined,
-                    color: cs.primary),
+                leading: Icon(Icons.rocket_launch_outlined, color: cs.primary),
                 title: Text(l.settingsUpgradeTitle),
                 subtitle: Text(l.settingsUpgradeSubtitle),
                 trailing: Icon(Icons.chevron_right, color: cs.outline),
@@ -151,7 +171,8 @@ class SettingsScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
             child: Text(l.settingsSectionLanguage,
-                style: tt.labelSmall?.copyWith(color: cs.primary,
+                style: tt.labelSmall?.copyWith(
+                    color: cs.primary,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.1)),
           ),
@@ -171,7 +192,8 @@ class SettingsScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
             child: Text(l.settingsSectionApp,
-                style: tt.labelSmall?.copyWith(color: cs.primary,
+                style: tt.labelSmall?.copyWith(
+                    color: cs.primary,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.1)),
           ),
@@ -179,8 +201,7 @@ class SettingsScreen extends ConsumerWidget {
             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             child: ListTile(
               leading: Icon(Icons.logout, color: cs.error),
-              title: Text(l.settingsSignOut,
-                  style: TextStyle(color: cs.error)),
+              title: Text(l.settingsSignOut, style: TextStyle(color: cs.error)),
               onTap: () async {
                 await ref.read(encryptionServiceProvider).deleteKey();
                 ref.read(aesKeyProvider.notifier).state = null;
@@ -301,9 +322,8 @@ class _TierBadge extends StatelessWidget {
           Text(
             isPro ? l.settingsTierPro : l.settingsTierFree,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: isPro
-                      ? cs.onPrimaryContainer
-                      : cs.onSecondaryContainer,
+                  color:
+                      isPro ? cs.onPrimaryContainer : cs.onSecondaryContainer,
                   fontWeight: FontWeight.w700,
                 ),
           ),
@@ -319,7 +339,7 @@ class _UsageRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final int used;
-  final int max;
+  final int? max;
   final ColorScheme cs;
   final TextTheme tt;
 
@@ -334,6 +354,23 @@ class _UsageRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final max = this.max;
+    if (max == null) {
+      return Row(
+        children: [
+          Icon(icon, size: 16, color: cs.onSurfaceVariant),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(label, style: tt.bodySmall),
+          ),
+          const SizedBox(
+            width: 14,
+            height: 14,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ],
+      );
+    }
     final ratio = (used / max).clamp(0.0, 1.0);
     final isNearLimit = ratio >= 0.8;
     final isAtLimit = ratio >= 1.0;

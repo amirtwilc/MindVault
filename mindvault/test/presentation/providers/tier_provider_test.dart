@@ -11,6 +11,7 @@ void main() {
       expect(t.maxCategories, 10);
       expect(t.maxCharsPerNote, 5000);
       expect(t.aiSearchesPerDay, 5);
+      expect(t.jotAiOrganizesPerDay, 1);
     });
 
     test('pro() returns expected limits', () {
@@ -20,6 +21,7 @@ void main() {
       expect(t.maxCategories, 50);
       expect(t.maxCharsPerNote, 20000);
       expect(t.aiSearchesPerDay, 50);
+      expect(t.jotAiOrganizesPerDay, 5);
     });
 
     test('free limits are strictly less than pro limits', () {
@@ -29,6 +31,7 @@ void main() {
       expect(f.maxCategories, lessThan(p.maxCategories));
       expect(f.maxCharsPerNote, lessThan(p.maxCharsPerNote));
       expect(f.aiSearchesPerDay, lessThan(p.aiSearchesPerDay));
+      expect(f.jotAiOrganizesPerDay, lessThan(p.jotAiOrganizesPerDay));
     });
   });
 
