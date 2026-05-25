@@ -6,11 +6,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/theme/app_theme.dart';
+import 'domain/entities/jot.dart';
 import 'l10n/app_localizations.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'presentation/providers/locale_provider.dart';
 import 'presentation/providers/notes_provider.dart';
 import 'presentation/providers/reminder_provider.dart';
+import 'presentation/providers/jots_provider.dart';
 import 'presentation/router/app_router.dart';
 
 class MindVaultApp extends ConsumerStatefulWidget {
@@ -22,6 +24,7 @@ class MindVaultApp extends ConsumerStatefulWidget {
 
 class _MindVaultAppState extends ConsumerState<MindVaultApp> {
   StreamSubscription<Uri>? _linkSub;
+  Timer? _jotReminderCleanupTimer;
 
   @override
   void initState() {
@@ -59,12 +62,25 @@ class _MindVaultAppState extends ConsumerState<MindVaultApp> {
       }
       return true;
     }
+    if (uri.scheme == 'mindvault' &&
+        uri.host == 'jot' &&
+        uri.path == '/reminder') {
+      final jotId = uri.queryParameters['id'];
+      if (jotId != null && jotId.isNotEmpty && mounted) {
+        ref.read(appRouterProvider).go(Uri(
+              path: '/jot-reminder',
+              queryParameters: {'id': jotId},
+            ).toString());
+      }
+      return true;
+    }
     return false;
   }
 
   @override
   void dispose() {
     _linkSub?.cancel();
+    _jotReminderCleanupTimer?.cancel();
     super.dispose();
   }
 
@@ -84,6 +100,27 @@ class _MindVaultAppState extends ConsumerState<MindVaultApp> {
             notificationBody: reminderStringsFor(ref.read(localeProvider))
                 .reminderNotificationBody,
           );
+    });
+    ref.listen(unhandledJotsProvider, (_, next) async {
+      if (!next.hasValue) return;
+      final now = DateTime.now().toUtc();
+      final jots = next.value ?? const [];
+      await _clearExpiredJotReminders(jots);
+      final active = jots
+          .where(
+              (jot) => jot.reminderAt != null && jot.reminderAt!.isAfter(now))
+          .toList();
+      await ref
+          .read(jotReminderSchedulerProvider)
+          .cancelExcept(active.map((jot) => jot.id));
+      for (final jot in active) {
+        await ref.read(jotReminderSchedulerProvider).schedule(
+              jot: jot,
+              notificationBody: reminderStringsFor(ref.read(localeProvider))
+                  .jotNotificationBody,
+            );
+      }
+      _scheduleNextJotReminderCleanup(jots);
     });
     ref.watch(reminderStartupProvider);
 
@@ -106,5 +143,40 @@ class _MindVaultAppState extends ConsumerState<MindVaultApp> {
       },
       debugShowCheckedModeBanner: false,
     );
+  }
+
+  Future<void> _clearExpiredJotReminders(List<Jot> jots) async {
+    final now = DateTime.now().toUtc();
+    const clearDelay = Duration(seconds: 10);
+    final expired = jots
+        .where(
+          (jot) =>
+              jot.reminderAt != null &&
+              jot.reminderAt!.isBefore(now.subtract(clearDelay)),
+        )
+        .toList();
+    final jotRepo = ref.read(jotRepositoryProvider);
+    for (final jot in expired) {
+      await jotRepo?.clearReminder(jot.id);
+    }
+  }
+
+  void _scheduleNextJotReminderCleanup(List<Jot> jots) {
+    _jotReminderCleanupTimer?.cancel();
+    final now = DateTime.now().toUtc();
+    DateTime? next;
+    for (final jot in jots) {
+      final reminderAt = jot.reminderAt;
+      if (reminderAt == null || !reminderAt.isAfter(now)) continue;
+      if (next == null || reminderAt.isBefore(next)) next = reminderAt;
+    }
+    if (next == null) return;
+    final delay = next.difference(now) + const Duration(seconds: 12);
+    _jotReminderCleanupTimer = Timer(delay, () async {
+      if (!mounted) return;
+      final current = ref.read(unhandledJotsProvider).valueOrNull ?? const [];
+      await _clearExpiredJotReminders(current);
+      if (mounted) _scheduleNextJotReminderCleanup(current);
+    });
   }
 }

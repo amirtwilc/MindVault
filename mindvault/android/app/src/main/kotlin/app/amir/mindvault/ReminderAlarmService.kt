@@ -21,6 +21,8 @@ class ReminderAlarmService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val foregroundId = intent?.getStringExtra("noteId")
             ?.let { ReminderPlugin.notificationIdFor(it) }
+            ?: intent?.getStringExtra("jotId")
+                ?.let { ReminderPlugin.jotNotificationIdFor(it) }
             ?: FALLBACK_NOTIFICATION_ID
         startReminderForeground(foregroundId)
         var keepNotification = false
@@ -36,6 +38,9 @@ class ReminderAlarmService : Service() {
     }
 
     private fun handleAlarm(intent: Intent?, notificationId: Int): Boolean {
+        if (intent?.hasExtra("jotId") == true) {
+            return handleJotAlarm(intent, notificationId)
+        }
         val noteId = intent?.getStringExtra("noteId")
         val title = intent?.getStringExtra("title")
         if (noteId == null || title == null) {
@@ -58,6 +63,32 @@ class ReminderAlarmService : Service() {
         NotificationManagerCompat.from(this).notify(notificationId, notification)
         ReminderPlugin.forgetFired(this, noteId)
         Log.i(TAG, "Posted reminder notification from service noteId=$noteId")
+        return true
+    }
+
+    private fun handleJotAlarm(intent: Intent, notificationId: Int): Boolean {
+        val jotId = intent.getStringExtra("jotId")
+        val title = intent.getStringExtra("title")
+        if (jotId == null || title == null) {
+            Log.w(TAG, "Jot reminder alarm service missing jotId or title")
+            return false
+        }
+
+        val remindAtMillis = intent.getLongExtra("remindAtMillis", 0L)
+        val version = intent.getStringExtra("version")
+        Log.i(TAG, "Received jot reminder alarm service jotId=$jotId remindAtMillis=$remindAtMillis")
+        if (!ReminderPlugin.shouldFireJot(this, jotId, remindAtMillis, version)) return false
+
+        val body = intent.getStringExtra("body")
+            ?: getString(R.string.jot_notification_body)
+        val notification = ReminderPlugin.buildJotNotification(this, jotId, title, body)
+        if (notification == null) {
+            ReminderPlugin.forgetFiredJot(this, jotId)
+            return false
+        }
+        NotificationManagerCompat.from(this).notify(notificationId, notification)
+        ReminderPlugin.forgetFiredJot(this, jotId)
+        Log.i(TAG, "Posted jot reminder notification from service jotId=$jotId")
         return true
     }
 

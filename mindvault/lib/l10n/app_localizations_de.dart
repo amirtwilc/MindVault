@@ -33,6 +33,9 @@ class AppStringsDe extends AppStrings {
   String get actionClose => 'Schließen';
 
   @override
+  String get actionNotNow => 'Nicht jetzt';
+
+  @override
   String get actionDiscard => 'Verwerfen';
 
   @override
@@ -341,6 +344,9 @@ class AppStringsDe extends AppStrings {
   String get navAllNotes => 'Alle Notizen';
 
   @override
+  String get navJots => 'Jots';
+
+  @override
   String get navCategories => 'Kategorien';
 
   @override
@@ -483,28 +489,28 @@ class AppStringsDe extends AppStrings {
   String get editorTooltipCopy => 'Notiz kopieren';
 
   @override
-  String get reminderTooltipSet => 'Set reminder';
+  String get reminderTooltipSet => 'Erinnerung festlegen';
 
   @override
-  String get reminderTooltipActive => 'Reminder set';
+  String get reminderTooltipActive => 'Erinnerung eingestellt';
 
   @override
-  String get reminderDialogTitle => 'Reminder';
+  String get reminderDialogTitle => 'Erinnerung';
 
   @override
   String reminderScheduledFor(Object time) {
-    return 'Scheduled for $time';
+    return 'Geplant für $time';
   }
 
   @override
-  String get reminderEdit => 'Edit';
+  String get reminderEdit => 'Bearbeiten';
 
   @override
-  String get reminderRemove => 'Remove';
+  String get reminderRemove => 'Entfernen';
 
   @override
   String get reminderSaveNoteFirst =>
-      'Add a title or note body before setting a reminder.';
+      'Füge einen Titel oder Notiztext hinzu, bevor du eine Erinnerung festlegst.';
 
   @override
   String get reminderNotificationsRequired =>
@@ -512,13 +518,26 @@ class AppStringsDe extends AppStrings {
 
   @override
   String get reminderMayBeDelayed =>
-      'Exact alarms are not enabled. This reminder may be delayed.';
+      'Exakte Alarme sind nicht aktiviert. Diese Erinnerung kann sich verzögern.';
 
   @override
-  String get reminderMustBeFuture => 'Choose a future date and time.';
+  String get reminderBackgroundPermissionTitle =>
+      'Hintergrund-Erinnerungen erlauben';
 
   @override
-  String get reminderNoteNotFound => 'That reminder note could not be found.';
+  String get reminderBackgroundPermissionBody =>
+      'Einige Geräte erfordern, dass MindVault im Hintergrund arbeiten oder automatisch starten darf, damit genaue Erinnerungen ausgelöst werden, wenn die App geschlossen ist. Falls eine Einstellungsseite geöffnet wird, aktiviere MindVault und kehre zur App zurück.';
+
+  @override
+  String get reminderBackgroundPermissionOpenSettings => 'Einstellungen öffnen';
+
+  @override
+  String get reminderMustBeFuture =>
+      'Wähle ein zukünftiges Datum und eine zukünftige Uhrzeit.';
+
+  @override
+  String get reminderNoteNotFound =>
+      'Diese Erinnerungsnotiz wurde nicht gefunden.';
 
   @override
   String get reminderNotificationBody => 'Tippen, um diese Notiz zu öffnen';
@@ -733,6 +752,9 @@ class AppStringsDe extends AppStrings {
   String get settingsUsageAi => 'KI-Suchen heute';
 
   @override
+  String get settingsUsageJotsAi => 'Jots-KI-Organisationen heute';
+
+  @override
   String get settingsUsageNotes => 'Notizen';
 
   @override
@@ -782,6 +804,167 @@ class AppStringsDe extends AppStrings {
 
   @override
   String get settingsLanguageFrench => 'Français';
+
+  @override
+  String get jotsAddTooltip => 'Jot hinzufügen';
+
+  @override
+  String get jotAddDialogTitle => 'Neuer Jot';
+
+  @override
+  String get jotInputHint => 'Schnellen Gedanken festhalten';
+
+  @override
+  String get jotSavedSnack => 'Gedanke gespeichert';
+
+  @override
+  String get jotSaveUnavailable =>
+      'Gedanke konnte nicht gespeichert werden. Bitte versuche es erneut.';
+
+  @override
+  String jotCharCounter(int count, int max) {
+    return '$count/$max Zeichen';
+  }
+
+  @override
+  String get jotsEmptyTitle => 'Keine Jots in der Warteschlange';
+
+  @override
+  String get jotsEmptyBody => 'Tippe auf +, sobald dir ein Gedanke kommt.';
+
+  @override
+  String get jotsSortOldestFirst => 'Älteste zuerst';
+
+  @override
+  String get jotsSortNewestFirst => 'Neueste zuerst';
+
+  @override
+  String get jotsOrganizeAi => 'Mit KI organisieren';
+
+  @override
+  String get jotsAcceptAll => 'Alle Vorschläge annehmen';
+
+  @override
+  String get jotsAiInfoTitle => 'Über Jots KI';
+
+  @override
+  String get jotsAiInfoBody =>
+      'Jots KI schlägt vor, wie nicht bearbeitete Gedanken organisiert werden können. Es werden nur noch nicht gesendete Jots, Kategorienamen und Notiztitel gesendet. Notiztexte und private Notizen werden nicht gesendet, und lange Listen können begrenzt werden.';
+
+  @override
+  String get jotsAiNoNew => 'Keine neuen Gedanken zum Organisieren.';
+
+  @override
+  String get jotsAiQuota => 'Tägliches Jots-KI-Limit erreicht.';
+
+  @override
+  String get jotsAiFailed =>
+      'Jots konnten nicht organisiert werden. Versuche es erneut.';
+
+  @override
+  String jotsAiSuggestionsProvided(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Vorschläge wurden bereitgestellt.',
+      one: '1 Vorschlag wurde bereitgestellt.',
+      zero:
+          '0 Vorschläge wurden bereitgestellt. Versuche nächstes Mal, konkretere Gedanken zu schreiben.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get jotsAiLimitedTo30 =>
+      'Nur die ältesten 30 neuen Jots wurden gesendet.';
+
+  @override
+  String jotsSelectedCount(int count) {
+    return '$count ausgewählt';
+  }
+
+  @override
+  String get jotsDeleteSelectedTitle => 'Ausgewählte Jots löschen?';
+
+  @override
+  String get jotsDeleteSelectedBody =>
+      'Ausgewählte Gedanken werden dauerhaft gelöscht.';
+
+  @override
+  String jotCreatedAt(Object time) {
+    return 'Erstellt: $time';
+  }
+
+  @override
+  String get jotActionsTooltip => 'Jot bearbeiten';
+
+  @override
+  String get jotActionsTitle => 'Gedanken bearbeiten';
+
+  @override
+  String get jotActionCreateNote => 'Neue Notiz erstellen';
+
+  @override
+  String get jotActionAddToNote => 'Zu bestehender Notiz hinzufügen';
+
+  @override
+  String get jotActionCreateAlert => 'Erinnerung erstellen';
+
+  @override
+  String get jotActionDeleteThought => 'Gedanken löschen';
+
+  @override
+  String get jotActionSuggestedByAi =>
+      'Diese Aktionen wurden von der KI vorgeschlagen.';
+
+  @override
+  String get jotActionUpdateThought => 'Gedankentext aktualisieren';
+
+  @override
+  String get jotActionUpdatedThoughtText => 'Aktualisierter Gedanke';
+
+  @override
+  String get jotActionUpdatedThoughtHint => 'Beispiel: Der Herr der Ringe';
+
+  @override
+  String get jotActionNewNoteTitle => 'Notiztitel';
+
+  @override
+  String get jotActionCategory => 'Kategorie';
+
+  @override
+  String get jotActionNewCategory => 'Neue Kategorie';
+
+  @override
+  String get jotActionNote => 'Notiz';
+
+  @override
+  String get jotActionNoNotes => 'Keine Notizen in dieser Kategorie';
+
+  @override
+  String get jotActionLock => 'Notiz sperren';
+
+  @override
+  String jotActionReminderWhen(Object time) {
+    return 'Erinnerung um $time';
+  }
+
+  @override
+  String get jotActionPickReminder => 'Datum und Uhrzeit auswählen';
+
+  @override
+  String get jotActionAccept => 'Annehmen';
+
+  @override
+  String get jotActionChooseFuture =>
+      'Wähle ein Datum und eine Uhrzeit in der Zukunft.';
+
+  @override
+  String get jotNotificationBody =>
+      'Tippen, um diesen Gedanken zu organisieren';
+
+  @override
+  String get jotReminderNotFound => 'Dieser Jot ist nicht mehr verfügbar.';
 
   @override
   String get widgetAddNoteTooltip => 'Notiz hinzufügen';

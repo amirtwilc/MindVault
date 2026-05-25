@@ -3,8 +3,11 @@
     <string name="app_name">MindVault</string>
     <string name="widget_description">Quick access to your notes</string>
     <string name="widget_categories_description">Quick access to your categories</string>
+    <string name="widget_jot_description">Jot</string>
     <string name="widget_notes_label">Notes</string>
     <string name="widget_categories_label">Categories</string>
+    <string name="widget_jot_label">Jot</string>
     <string name="reminder_notification_channel">Note reminders</string>
     <string name="reminder_notification_body">Tap to open this note</string>
+    <string name="jot_notification_body">Tap to organize this thought</string>
 </resources>

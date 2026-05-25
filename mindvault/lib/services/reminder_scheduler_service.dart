@@ -20,6 +20,8 @@ class ReminderPermissionResult {
 class ReminderSchedulerService {
   static const _channel = MethodChannel('mindvault/reminders');
   static const _initialPromptKey = 'reminders.initial_notification_prompt_done';
+  static const _backgroundPromptKey =
+      'reminders.background_permission_prompt_done';
 
   final SharedPreferences? _prefs;
 
@@ -32,11 +34,28 @@ class ReminderSchedulerService {
       return checkPermissions();
     }
     prefs.setBool(_initialPromptKey, true);
-    return requestPermissions(requestExactAlarm: false);
+    return requestPermissions(requestExactAlarm: true);
   }
 
   Future<ReminderPermissionResult> ensureSchedulingPermissionsForUserAction() {
-    return requestPermissions(requestExactAlarm: false);
+    return requestPermissions(requestExactAlarm: true);
+  }
+
+  Future<bool> shouldPromptBackgroundPermission() async {
+    final prefs = _prefs;
+    if (prefs == null) return false;
+    return prefs.getBool(_backgroundPromptKey) != true;
+  }
+
+  Future<void> markBackgroundPermissionPromptDone() async {
+    await _prefs?.setBool(_backgroundPromptKey, true);
+  }
+
+  Future<bool> openBackgroundPermissionSettings() async {
+    return await _channel.invokeMethod<bool>(
+          'openBackgroundPermissionSettings',
+        ) ??
+        false;
   }
 
   Future<ReminderPermissionResult> checkPermissions() async {

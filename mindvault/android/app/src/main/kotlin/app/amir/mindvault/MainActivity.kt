@@ -16,6 +16,10 @@ class MainActivity : FlutterFragmentActivity() {
             val noteId = data.getQueryParameter("id") ?: return super.getInitialRoute()
             return "/reminder-note?id=${Uri.encode(noteId)}"
         }
+        if (data != null && data.scheme == "mindvault" && data.host == "jot" && data.path == "/reminder") {
+            val jotId = data.getQueryParameter("id") ?: return super.getInitialRoute()
+            return "/jot-reminder?id=${Uri.encode(jotId)}"
+        }
         return super.getInitialRoute()
     }
 

@@ -33,6 +33,9 @@ class AppStringsHi extends AppStrings {
   String get actionClose => 'बंद करें';
 
   @override
+  String get actionNotNow => 'अभी नहीं';
+
+  @override
   String get actionDiscard => 'त्यागें';
 
   @override
@@ -335,6 +338,9 @@ class AppStringsHi extends AppStrings {
   String get navAllNotes => 'सभी नोट्स';
 
   @override
+  String get navJots => 'Jots';
+
+  @override
   String get navCategories => 'श्रेणियाँ';
 
   @override
@@ -474,28 +480,28 @@ class AppStringsHi extends AppStrings {
   String get editorTooltipCopy => 'नोट कॉपी करें';
 
   @override
-  String get reminderTooltipSet => 'Set reminder';
+  String get reminderTooltipSet => 'रिमाइंडर सेट करें';
 
   @override
-  String get reminderTooltipActive => 'Reminder set';
+  String get reminderTooltipActive => 'रिमाइंडर सेट है';
 
   @override
-  String get reminderDialogTitle => 'Reminder';
+  String get reminderDialogTitle => 'रिमाइंडर';
 
   @override
   String reminderScheduledFor(Object time) {
-    return 'Scheduled for $time';
+    return '$time के लिए शेड्यूल';
   }
 
   @override
-  String get reminderEdit => 'Edit';
+  String get reminderEdit => 'संपादित करें';
 
   @override
-  String get reminderRemove => 'Remove';
+  String get reminderRemove => 'हटाएं';
 
   @override
   String get reminderSaveNoteFirst =>
-      'Add a title or note body before setting a reminder.';
+      'रिमाइंडर सेट करने से पहले शीर्षक या नोट का विवरण जोड़ें.';
 
   @override
   String get reminderNotificationsRequired =>
@@ -503,13 +509,24 @@ class AppStringsHi extends AppStrings {
 
   @override
   String get reminderMayBeDelayed =>
-      'Exact alarms are not enabled. This reminder may be delayed.';
+      'सटीक अलार्म सक्षम नहीं हैं. यह रिमाइंडर देर से आ सकता है.';
 
   @override
-  String get reminderMustBeFuture => 'Choose a future date and time.';
+  String get reminderBackgroundPermissionTitle =>
+      'बैकग्राउंड रिमाइंडर की अनुमति दें';
 
   @override
-  String get reminderNoteNotFound => 'That reminder note could not be found.';
+  String get reminderBackgroundPermissionBody =>
+      'कुछ डिवाइस पर ऐप बंद होने पर सटीक रिमाइंडर चलाने के लिए MindVault को बैकग्राउंड में काम करने या अपने-आप शुरू होने की अनुमति चाहिए। अगर सेटिंग्स पेज खुलता है, तो MindVault को सक्षम करें और ऐप पर वापस आएं.';
+
+  @override
+  String get reminderBackgroundPermissionOpenSettings => 'सेटिंग्स खोलें';
+
+  @override
+  String get reminderMustBeFuture => 'भविष्य की तारीख और समय चुनें.';
+
+  @override
+  String get reminderNoteNotFound => 'वह रिमाइंडर नोट नहीं मिला.';
 
   @override
   String get reminderNotificationBody => 'इस नोट को खोलने के लिए टैप करें';
@@ -725,6 +742,9 @@ class AppStringsHi extends AppStrings {
   String get settingsUsageAi => 'आज की AI खोजें';
 
   @override
+  String get settingsUsageJotsAi => 'आज के Jots AI संगठन';
+
+  @override
   String get settingsUsageNotes => 'नोट्स';
 
   @override
@@ -774,6 +794,162 @@ class AppStringsHi extends AppStrings {
 
   @override
   String get settingsLanguageFrench => 'Français';
+
+  @override
+  String get jotsAddTooltip => 'Jot जोड़ें';
+
+  @override
+  String get jotAddDialogTitle => 'नया jot';
+
+  @override
+  String get jotInputHint => 'एक त्वरित विचार लिखें';
+
+  @override
+  String get jotSavedSnack => 'विचार सहेजा गया';
+
+  @override
+  String get jotSaveUnavailable =>
+      'विचार सहेजा नहीं जा सका। कृपया फिर से प्रयास करें।';
+
+  @override
+  String jotCharCounter(int count, int max) {
+    return '$count/$max वर्ण';
+  }
+
+  @override
+  String get jotsEmptyTitle => 'कोई jot लंबित नहीं';
+
+  @override
+  String get jotsEmptyBody => '+ पर टैप करें जब कोई विचार आए।';
+
+  @override
+  String get jotsSortOldestFirst => 'सबसे पुराने पहले';
+
+  @override
+  String get jotsSortNewestFirst => 'सबसे नए पहले';
+
+  @override
+  String get jotsOrganizeAi => 'AI से व्यवस्थित करें';
+
+  @override
+  String get jotsAcceptAll => 'सभी सुझाव स्वीकार करें';
+
+  @override
+  String get jotsAiInfoTitle => 'Jots AI के बारे में';
+
+  @override
+  String get jotsAiInfoBody =>
+      'Jots AI बताता है कि अधूरे विचारों को कैसे व्यवस्थित करें। केवल न भेजे गए jots, श्रेणी नाम और नोट शीर्षक भेजे जाते हैं। नोट की सामग्री और निजी नोट नहीं भेजे जाते, और लंबी सूचियाँ सीमित की जा सकती हैं।';
+
+  @override
+  String get jotsAiNoNew => 'व्यवस्थित करने के लिए कोई नया विचार नहीं है।';
+
+  @override
+  String get jotsAiQuota => 'दैनिक Jots AI सीमा पूरी हो गई।';
+
+  @override
+  String get jotsAiFailed => 'Jots व्यवस्थित नहीं हो सके। फिर से कोशिश करें।';
+
+  @override
+  String jotsAiSuggestionsProvided(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count सुझाव दिए गए।',
+      one: '1 सुझाव दिया गया।',
+      zero: '0 सुझाव दिए गए। अगली बार अधिक स्पष्ट विचार लिखने की कोशिश करें।',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get jotsAiLimitedTo30 => 'केवल सबसे पुराने 30 नए jots भेजे गए।';
+
+  @override
+  String jotsSelectedCount(int count) {
+    return '$count चुने गए';
+  }
+
+  @override
+  String get jotsDeleteSelectedTitle => 'चुने गए jots हटाएँ?';
+
+  @override
+  String get jotsDeleteSelectedBody =>
+      'चुने गए विचार स्थायी रूप से हटाए जाएँगे।';
+
+  @override
+  String jotCreatedAt(Object time) {
+    return 'बनाया गया: $time';
+  }
+
+  @override
+  String get jotActionsTooltip => 'Jot संभालें';
+
+  @override
+  String get jotActionsTitle => 'विचार संभालें';
+
+  @override
+  String get jotActionCreateNote => 'नया नोट बनाएँ';
+
+  @override
+  String get jotActionAddToNote => 'मौजूदा नोट में जोड़ें';
+
+  @override
+  String get jotActionCreateAlert => 'अलर्ट बनाएँ';
+
+  @override
+  String get jotActionDeleteThought => 'विचार हटाएँ';
+
+  @override
+  String get jotActionSuggestedByAi => 'ये क्रियाएँ AI ने सुझाई हैं।';
+
+  @override
+  String get jotActionUpdateThought => 'विचार का टेक्स्ट अपडेट करें';
+
+  @override
+  String get jotActionUpdatedThoughtText => 'अपडेट किया गया विचार';
+
+  @override
+  String get jotActionUpdatedThoughtHint => 'उदाहरण: Lord of the Rings';
+
+  @override
+  String get jotActionNewNoteTitle => 'नोट शीर्षक';
+
+  @override
+  String get jotActionCategory => 'श्रेणी';
+
+  @override
+  String get jotActionNewCategory => 'नई श्रेणी';
+
+  @override
+  String get jotActionNote => 'नोट';
+
+  @override
+  String get jotActionNoNotes => 'इस श्रेणी में कोई नोट नहीं';
+
+  @override
+  String get jotActionLock => 'नोट लॉक करें';
+
+  @override
+  String jotActionReminderWhen(Object time) {
+    return '$time पर अलर्ट';
+  }
+
+  @override
+  String get jotActionPickReminder => 'दिनांक और समय चुनें';
+
+  @override
+  String get jotActionAccept => 'स्वीकार करें';
+
+  @override
+  String get jotActionChooseFuture => 'भविष्य का दिनांक और समय चुनें।';
+
+  @override
+  String get jotNotificationBody =>
+      'इस विचार को व्यवस्थित करने के लिए टैप करें';
+
+  @override
+  String get jotReminderNotFound => 'यह jot अब उपलब्ध नहीं है।';
 
   @override
   String get widgetAddNoteTooltip => 'नोट जोड़ें';

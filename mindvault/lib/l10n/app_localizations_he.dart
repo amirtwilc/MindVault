@@ -33,6 +33,9 @@ class AppStringsHe extends AppStrings {
   String get actionClose => 'סגירה';
 
   @override
+  String get actionNotNow => 'לא עכשיו';
+
+  @override
   String get actionDiscard => 'התעלם';
 
   @override
@@ -324,6 +327,9 @@ class AppStringsHe extends AppStrings {
   String get navAllNotes => 'כל הפתקים';
 
   @override
+  String get navJots => 'Jots';
+
+  @override
   String get navCategories => 'קטגוריות';
 
   @override
@@ -461,28 +467,28 @@ class AppStringsHe extends AppStrings {
   String get editorTooltipCopy => 'העתק פתק';
 
   @override
-  String get reminderTooltipSet => 'Set reminder';
+  String get reminderTooltipSet => 'הגדר תזכורת';
 
   @override
-  String get reminderTooltipActive => 'Reminder set';
+  String get reminderTooltipActive => 'הוגדרה תזכורת';
 
   @override
-  String get reminderDialogTitle => 'Reminder';
+  String get reminderDialogTitle => 'תזכורת';
 
   @override
   String reminderScheduledFor(Object time) {
-    return 'Scheduled for $time';
+    return 'מתוזמן ל-$time';
   }
 
   @override
-  String get reminderEdit => 'Edit';
+  String get reminderEdit => 'עריכה';
 
   @override
-  String get reminderRemove => 'Remove';
+  String get reminderRemove => 'הסרה';
 
   @override
   String get reminderSaveNoteFirst =>
-      'Add a title or note body before setting a reminder.';
+      'הוסף כותרת או גוף פתק לפני הגדרת תזכורת.';
 
   @override
   String get reminderNotificationsRequired =>
@@ -490,13 +496,23 @@ class AppStringsHe extends AppStrings {
 
   @override
   String get reminderMayBeDelayed =>
-      'Exact alarms are not enabled. This reminder may be delayed.';
+      'התראות מדויקות אינן מופעלות. התזכורת הזו עשויה להתעכב.';
 
   @override
-  String get reminderMustBeFuture => 'Choose a future date and time.';
+  String get reminderBackgroundPermissionTitle => 'אישור תזכורות ברקע';
 
   @override
-  String get reminderNoteNotFound => 'That reminder note could not be found.';
+  String get reminderBackgroundPermissionBody =>
+      'בחלק מהמכשירים צריך לאפשר ל-MindVault לפעול ברקע או להתחיל אוטומטית כדי שתזכורות מדויקות יפעלו כשהאפליקציה סגורה. אם נפתח מסך הגדרות, הפעילו את MindVault וחזרו לאפליקציה.';
+
+  @override
+  String get reminderBackgroundPermissionOpenSettings => 'פתיחת הגדרות';
+
+  @override
+  String get reminderMustBeFuture => 'בחר תאריך ושעה עתידיים.';
+
+  @override
+  String get reminderNoteNotFound => 'פתק התזכורת הזה לא נמצא.';
 
   @override
   String get reminderNotificationBody => 'הקש כדי לפתוח את הפתק הזה';
@@ -707,6 +723,9 @@ class AppStringsHe extends AppStrings {
   String get settingsUsageAi => 'חיפושי AI היום';
 
   @override
+  String get settingsUsageJotsAi => 'ארגוני Jots AI היום';
+
+  @override
   String get settingsUsageNotes => 'פתקים';
 
   @override
@@ -756,6 +775,159 @@ class AppStringsHe extends AppStrings {
 
   @override
   String get settingsLanguageFrench => 'Français';
+
+  @override
+  String get jotsAddTooltip => 'הוסף jot';
+
+  @override
+  String get jotAddDialogTitle => 'Jot חדש';
+
+  @override
+  String get jotInputHint => 'רשום מחשבה מהירה';
+
+  @override
+  String get jotSavedSnack => 'המחשבה נשמרה';
+
+  @override
+  String get jotSaveUnavailable => 'לא ניתן היה לשמור את המחשבה. נסה שוב.';
+
+  @override
+  String jotCharCounter(int count, int max) {
+    return '$count/$max תווים';
+  }
+
+  @override
+  String get jotsEmptyTitle => 'אין jots שממתינים';
+
+  @override
+  String get jotsEmptyBody => 'הקש על + כשעולה מחשבה.';
+
+  @override
+  String get jotsSortOldestFirst => 'הישנים קודם';
+
+  @override
+  String get jotsSortNewestFirst => 'החדשים קודם';
+
+  @override
+  String get jotsOrganizeAi => 'ארגון עם AI';
+
+  @override
+  String get jotsAcceptAll => 'קבל את כל ההצעות';
+
+  @override
+  String get jotsAiInfoTitle => 'על Jots AI';
+
+  @override
+  String get jotsAiInfoBody =>
+      'Jots AI מציע איך לארגן מחשבות שלא טופלו. נשלחים רק jots שטרם נשלחו, שמות קטגוריות וכותרות של הערות. תוכן הערות והערות פרטיות לא נשלחים, ורשימות ארוכות עשויות להיות מוגבלות.';
+
+  @override
+  String get jotsAiNoNew => 'אין מחשבות חדשות לארגון.';
+
+  @override
+  String get jotsAiQuota => 'הגעת למגבלת Jots AI היומית.';
+
+  @override
+  String get jotsAiFailed => 'לא ניתן היה לארגן את ה-jots. נסה שוב.';
+
+  @override
+  String jotsAiSuggestionsProvided(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'סופקו $count הצעות.',
+      one: 'סופקה הצעה אחת.',
+      zero: 'לא סופקו הצעות. נסה לכתוב מחשבות ספציפיות יותר בפעם הבאה.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get jotsAiLimitedTo30 => 'נשלחו רק 30 ה-jots החדשים הישנים ביותר.';
+
+  @override
+  String jotsSelectedCount(int count) {
+    return '$count נבחרו';
+  }
+
+  @override
+  String get jotsDeleteSelectedTitle => 'למחוק את ה-jots שנבחרו?';
+
+  @override
+  String get jotsDeleteSelectedBody => 'המחשבות שנבחרו יימחקו לצמיתות.';
+
+  @override
+  String jotCreatedAt(Object time) {
+    return 'נוצר: $time';
+  }
+
+  @override
+  String get jotActionsTooltip => 'טפל ב-jot';
+
+  @override
+  String get jotActionsTitle => 'טיפול במחשבה';
+
+  @override
+  String get jotActionCreateNote => 'צור הערה חדשה';
+
+  @override
+  String get jotActionAddToNote => 'הוסף להערה קיימת';
+
+  @override
+  String get jotActionCreateAlert => 'צור התראה';
+
+  @override
+  String get jotActionDeleteThought => 'מחק מחשבה';
+
+  @override
+  String get jotActionSuggestedByAi => 'הפעולות האלה הוצעו על ידי AI.';
+
+  @override
+  String get jotActionUpdateThought => 'עדכן טקסט מחשבה';
+
+  @override
+  String get jotActionUpdatedThoughtText => 'מחשבה מעודכנת';
+
+  @override
+  String get jotActionUpdatedThoughtHint => 'לדוגמה: שר הטבעות';
+
+  @override
+  String get jotActionNewNoteTitle => 'כותרת הערה';
+
+  @override
+  String get jotActionCategory => 'קטגוריה';
+
+  @override
+  String get jotActionNewCategory => 'קטגוריה חדשה';
+
+  @override
+  String get jotActionNote => 'הערה';
+
+  @override
+  String get jotActionNoNotes => 'אין הערות בקטגוריה זו';
+
+  @override
+  String get jotActionLock => 'נעל הערה';
+
+  @override
+  String jotActionReminderWhen(Object time) {
+    return 'התראה ב-$time';
+  }
+
+  @override
+  String get jotActionPickReminder => 'בחר תאריך ושעה';
+
+  @override
+  String get jotActionAccept => 'קבל';
+
+  @override
+  String get jotActionChooseFuture => 'בחר תאריך ושעה בעתיד.';
+
+  @override
+  String get jotNotificationBody => 'הקש כדי לארגן את המחשבה הזו';
+
+  @override
+  String get jotReminderNotFound => 'ה-jot הזה כבר לא זמין.';
 
   @override
   String get widgetAddNoteTooltip => 'הוסף פתק';

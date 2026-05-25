@@ -11,7 +11,7 @@ import android.widget.RemoteViews
 // Request codes for PendingIntents (must be unique per widget action and disjoint
 // from HomeWidgetProvider's set 0/1/2/4 — Android keys PendingIntents by
 // (requestCode, intent), so a shared code across providers can hijack each other.
-// 10 = open app, 11 = new note, 12 = row template, 14 = search.
+// 10 = open app, 11 = new note, 12 = row template, 14 = search, 15 = new jot.
 class CategoriesWidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(
@@ -80,6 +80,17 @@ class CategoriesWidgetProvider : AppWidgetProvider() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         views.setOnClickPendingIntent(R.id.widget_new_note_btn, newNotePi)
+
+        val newJotIntent = Intent(context, TransparentActivity::class.java).apply {
+            action = Intent.ACTION_VIEW
+            data = Uri.parse("mindvault://widget/new-jot")
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        val newJotPi = PendingIntent.getActivity(
+            context, 15, newJotIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        views.setOnClickPendingIntent(R.id.widget_new_jot_btn, newJotPi)
 
         // ── Search button → TransparentActivity with widget-search deep link ──
         val searchIntent = Intent(context, TransparentActivity::class.java).apply {
