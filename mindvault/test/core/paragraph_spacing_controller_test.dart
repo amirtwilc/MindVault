@@ -62,14 +62,15 @@ void main() {
       final ctrl = ParagraphSpacingController(text: 'first\nsecond');
       final flat = _flatten(_buildSpan(ctrl));
       // Find the span whose text starts the second paragraph ("s" of "second").
-      final paraStartSpan =
-          flat.firstWhere((e) => e.text == 's', orElse: () => (text: '', height: null));
+      final paraStartSpan = flat.firstWhere((e) => e.text == 's',
+          orElse: () => (text: '', height: null));
       expect(paraStartSpan.height, isNotNull);
       expect(paraStartSpan.height! > 1.0, isTrue,
           reason: 'first char of new paragraph should be elevated');
     });
 
-    test('trailing \\n produces a span with elevated height (empty cursor line)',
+    test(
+        'trailing \\n produces a span with elevated height (empty cursor line)',
         () {
       final ctrl = ParagraphSpacingController(text: 'hello\n');
       final flat = _flatten(_buildSpan(ctrl));
@@ -105,8 +106,8 @@ void main() {
       final ctrl = ParagraphSpacingController(text: 'foo\n\nbar');
       final flat = _flatten(_buildSpan(ctrl));
       // "b" of "bar" should be elevated.
-      final bSpan =
-          flat.firstWhere((e) => e.text == 'b', orElse: () => (text: '', height: null));
+      final bSpan = flat.firstWhere((e) => e.text == 'b',
+          orElse: () => (text: '', height: null));
       expect(bSpan.height, isNotNull);
       expect(bSpan.height! > 1.0, isTrue);
       // At least one elevated `\n` should exist (the empty paragraph's own).

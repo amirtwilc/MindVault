@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show SelectedContent;
 import 'package:flutter/services.dart';
 
@@ -59,8 +59,8 @@ class ParagraphSpacingController extends TextEditingController {
     } else {
       final composingBase =
           base.merge(const TextStyle(decoration: TextDecoration.underline));
-      final composingStart =
-          paraStart.merge(const TextStyle(decoration: TextDecoration.underline));
+      final composingStart = paraStart
+          .merge(const TextStyle(decoration: TextDecoration.underline));
       final composing = value.composing;
       body = TextSpan(
         style: style,
@@ -253,8 +253,7 @@ class _BidiAwareViewState extends State<_BidiAwareView> {
     return children;
   }
 
-  Widget _buildContextMenu(
-      BuildContext context, SelectableRegionState state) {
+  Widget _buildContextMenu(BuildContext context, SelectableRegionState state) {
     final items = state.contextMenuButtonItems.map((item) {
       if (item.type == ContextMenuButtonType.copy) {
         return ContextMenuButtonItem(

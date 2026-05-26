@@ -45,7 +45,7 @@ class JotActionRequest {
           createAlert: wantsReminder,
           newNoteTitle: suggestion.title,
           newNoteCategoryId: suggestion.categoryId ?? fallbackCategoryId,
-          newNoteType: NoteType.fromStorage(suggestion.noteType ?? 'text'),
+          newNoteType: NoteType.fromStorage(suggestion.noteType ?? 'record'),
           newNoteLocked: suggestion.isPrivate ?? false,
           reminderAt: suggestion.reminderAt,
           updatedText: suggestion.updatedText,

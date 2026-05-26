@@ -59,7 +59,8 @@ void main() {
       c.dispose();
     });
 
-    testWidgets('Hebrew first-strong char locks the field to RTL on an LTR device',
+    testWidgets(
+        'Hebrew first-strong char locks the field to RTL on an LTR device',
         (tester) async {
       final c = ParagraphSpacingController(text: 'שלום עולם\nhello');
       await tester.pumpWidget(_harness(controller: c));
@@ -68,11 +69,12 @@ void main() {
       c.dispose();
     });
 
-    testWidgets('English first-strong char locks the field to LTR on an RTL device',
+    testWidgets(
+        'English first-strong char locks the field to LTR on an RTL device',
         (tester) async {
       final c = ParagraphSpacingController(text: 'hello\nשלום');
-      await tester.pumpWidget(
-          _harness(controller: c, ambient: TextDirection.rtl));
+      await tester
+          .pumpWidget(_harness(controller: c, ambient: TextDirection.rtl));
       final field = tester.widget<TextField>(find.byType(TextField));
       expect(field.textDirection, TextDirection.ltr);
       c.dispose();
@@ -81,8 +83,8 @@ void main() {
     testWidgets('empty body falls back to ambient locale direction',
         (tester) async {
       final c = ParagraphSpacingController(text: '');
-      await tester.pumpWidget(
-          _harness(controller: c, ambient: TextDirection.rtl));
+      await tester
+          .pumpWidget(_harness(controller: c, ambient: TextDirection.rtl));
       final field = tester.widget<TextField>(find.byType(TextField));
       expect(field.textDirection, TextDirection.rtl);
       c.dispose();
@@ -91,8 +93,8 @@ void main() {
     testWidgets('digits-only body falls back to ambient locale direction',
         (tester) async {
       final c = ParagraphSpacingController(text: '123\n456');
-      await tester.pumpWidget(
-          _harness(controller: c, ambient: TextDirection.rtl));
+      await tester
+          .pumpWidget(_harness(controller: c, ambient: TextDirection.rtl));
       final field = tester.widget<TextField>(find.byType(TextField));
       expect(field.textDirection, TextDirection.rtl);
       c.dispose();

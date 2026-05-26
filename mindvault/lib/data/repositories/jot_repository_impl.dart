@@ -106,7 +106,7 @@ class JotRepositoryImpl implements JotRepository {
       await _local.upsertJot(_jotToCompanion(synced));
       return synced;
     } catch (_) {
-      await _local.upsertPendingOp(jot.id, 'create_jot', jot.id);
+      await _local.upsertPendingOp(jot.id, 'create_spark', jot.id);
       return jot;
     }
   }
@@ -141,7 +141,7 @@ class JotRepositoryImpl implements JotRepository {
       await _local.deletePendingOp(id);
       return synced;
     } catch (_) {
-      await _local.upsertPendingOp(id, 'update_jot', id);
+      await _local.upsertPendingOp(id, 'update_spark', id);
       return updated;
     }
   }
@@ -163,7 +163,7 @@ class JotRepositoryImpl implements JotRepository {
       await _local.deletePendingOp(id);
       return synced;
     } catch (_) {
-      await _local.upsertPendingOp(id, 'update_jot', id);
+      await _local.upsertPendingOp(id, 'update_spark', id);
       return updated;
     }
   }
@@ -180,7 +180,7 @@ class JotRepositoryImpl implements JotRepository {
     try {
       await _remote.deleteJot(id);
     } catch (_) {
-      await _local.upsertPendingOp('del_jot_$id', 'delete_jot', id);
+      await _local.upsertPendingOp('del_jot_$id', 'delete_spark', id);
     }
   }
 
@@ -195,11 +195,11 @@ class JotRepositoryImpl implements JotRepository {
   Future<void> syncPendingOps() async {
     final ops = await _local.getPendingOps();
     for (final op in ops.where((o) =>
-        o.opType == 'create_jot' ||
-        o.opType == 'update_jot' ||
-        o.opType == 'delete_jot')) {
+        o.opType == 'create_spark' ||
+        o.opType == 'update_spark' ||
+        o.opType == 'delete_spark')) {
       try {
-        if (op.opType == 'delete_jot') {
+        if (op.opType == 'delete_spark') {
           await _remote.deleteJot(op.recordId);
           await _local.deleteJot(op.recordId);
         } else {
@@ -209,7 +209,7 @@ class JotRepositoryImpl implements JotRepository {
             continue;
           }
           final jot = rowToJot(row);
-          if (op.opType == 'update_jot') {
+          if (op.opType == 'update_spark') {
             try {
               final remote = await _remote.fetchJotById(jot.id);
               if (remote != null &&
@@ -245,7 +245,8 @@ class JotRepositoryImpl implements JotRepository {
       }
 
       final pendingUpsertIds = (await _local.getPendingOps())
-          .where((o) => o.opType == 'create_jot' || o.opType == 'update_jot')
+          .where(
+              (o) => o.opType == 'create_spark' || o.opType == 'update_spark')
           .map((o) => o.recordId)
           .toSet();
       final localJots = await _local.getAllJots(_userId);
@@ -263,9 +264,9 @@ class JotRepositoryImpl implements JotRepository {
     final ops = await _local.getPendingOps();
     return ops.any((op) =>
         op.recordId == jotId &&
-        (op.opType == 'create_jot' ||
-            op.opType == 'update_jot' ||
-            op.opType == 'delete_jot'));
+        (op.opType == 'create_spark' ||
+            op.opType == 'update_spark' ||
+            op.opType == 'delete_spark'));
   }
 
   Future<void> _mergeRemoteJot(Jot remote) async {

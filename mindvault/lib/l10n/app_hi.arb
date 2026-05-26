@@ -1,12 +1,10 @@
-{
+﻿{
   "@@locale": "hi",
   "actionNotNow": "अभी नहीं",
   "reminderBackgroundPermissionTitle": "बैकग्राउंड रिमाइंडर की अनुमति दें",
   "reminderBackgroundPermissionBody": "कुछ डिवाइस पर ऐप बंद होने पर सटीक रिमाइंडर चलाने के लिए MindVault को बैकग्राउंड में काम करने या अपने-आप शुरू होने की अनुमति चाहिए। अगर सेटिंग्स पेज खुलता है, तो MindVault को सक्षम करें और ऐप पर वापस आएं.",
   "reminderBackgroundPermissionOpenSettings": "सेटिंग्स खोलें",
-
   "appBrand": "MindVault",
-
   "actionCancel": "रद्द करें",
   "actionSave": "सहेजें",
   "actionDelete": "हटाएं",
@@ -22,10 +20,8 @@
   "actionStartFresh": "नए सिरे से शुरू करें",
   "actionContactUs": "संपर्क करें",
   "actionOk": "ठीक है",
-
   "splashTagline": "आपके विचार, सुरक्षित रूप से एन्क्रिप्टेड।",
   "splashLoading": "आपका वॉल्ट सुरक्षित हो रहा है…",
-
   "authSubtitle": "आपके एन्क्रिप्टेड AI-संचालित नोट्स",
   "authEmailLabel": "ईमेल",
   "authPasswordLabel": "पासवर्ड",
@@ -81,7 +77,6 @@
   "authSignInGoogle": "Google से साइन इन करें",
   "authSigningIn": "साइन इन हो रहा है...",
   "authDisclaimer": "आपके नोट्स एंड-टू-एंड एन्क्रिप्टेड हैं।\nकेवल आप उन्हें पढ़ सकते हैं।",
-
   "pinSetupAppBar": "एन्क्रिप्शन सेट अप करें",
   "pinRecoveryAppBar": "एन्क्रिप्शन कुंजी पुनर्प्राप्त करें",
   "pinSetupHeading": "एक पुनर्प्राप्ति PIN बनाएं",
@@ -98,7 +93,11 @@
   "pinMismatch": "PINs मेल नहीं खाते।",
   "pinRecoverError": "गलत PIN। एन्क्रिप्शन कुंजी पुनर्प्राप्त नहीं हो सकी।",
   "pinServerError": "सर्वर त्रुटि: {message}",
-  "@pinServerError": { "placeholders": { "message": {} } },
+  "@pinServerError": {
+    "placeholders": {
+      "message": {}
+    }
+  },
   "pinStartFreshTitle": "नए सिरे से शुरू करें?",
   "pinStartFreshBody": "इससे एक नई एन्क्रिप्शन कुंजी बनेगी। आपके मौजूदा नोट्स खो जाएंगे।\n\nयह क्रिया पूर्ववत नहीं हो सकती।",
   "pinEntryAppBar": "पुनर्प्राप्ति PIN दर्ज करें",
@@ -108,16 +107,26 @@
   "pinEntryIncorrect": "गलत PIN। कृपया पुनः प्रयास करें।",
   "pinSetupError": "एन्क्रिप्शन सेट अप विफल। कृपया पुनः प्रयास करें।",
   "pinLockedSeconds": "बहुत अधिक विफल प्रयास। {seconds}s में पुनः प्रयास करें।",
-  "@pinLockedSeconds": { "placeholders": { "seconds": { "type": "int" } } },
+  "@pinLockedSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "pinLockedMinutes": "बहुत अधिक विफल प्रयास। {minutes}m में पुनः प्रयास करें।",
-  "@pinLockedMinutes": { "placeholders": { "minutes": { "type": "int" } } },
-
-  "navAllNotes": "सभी नोट्स",
-  "navJots": "Jots",
-  "navCategories": "श्रेणियाँ",
-  "navSearch": "खोजें",
+  "@pinLockedMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "navAllNotes": "संग्रह",
+  "navJotsJotsNote": "??????????????????????????",
+  "navCategories": "समूह",
+  "navSearch": "स्मरण",
   "navSettings": "सेटिंग्स",
-
   "homeNoCategoriesTitle": "अभी कोई श्रेणी नहीं।\nबनाने के लिए + टैप करें।",
   "newCategoryDialogTitle": "नई श्रेणी",
   "categoryNameHint": "श्रेणी का नाम",
@@ -125,15 +134,24 @@
   "categoryNameInUse": "नाम पहले से उपयोग में है",
   "categoryLimitReached": "श्रेणी सीमा ({max}) पूरी हो गई। {upgradeHint}",
   "@categoryLimitReached": {
-    "placeholders": { "max": { "type": "int" }, "upgradeHint": {} }
+    "placeholders": {
+      "max": {
+        "type": "int"
+      },
+      "upgradeHint": {}
+    }
   },
   "noteLimitReached": "नोट सीमा ({max}) पूरी हो गई। {upgradeHint}",
   "@noteLimitReached": {
-    "placeholders": { "max": { "type": "int" }, "upgradeHint": {} }
+    "placeholders": {
+      "max": {
+        "type": "int"
+      },
+      "upgradeHint": {}
+    }
   },
   "upgradeHintFree": "अधिक के लिए Pro में अपग्रेड करें।",
   "upgradeHintNone": "",
-
   "notesListTitleFallback": "नोट्स",
   "notesListEmptyTitle": "अभी कोई नोट नहीं",
   "notesListEmptyBody": "अपना पहला नोट बनाने के लिए + टैप करें",
@@ -148,18 +166,24 @@
   "renameCategoryDialog": "श्रेणी का नाम बदलें",
   "categoryColorDialog": "श्रेणी का रंग",
   "deleteCategoryConfirmTitle": "\"{name}\" हटाएं?",
-  "@deleteCategoryConfirmTitle": { "placeholders": { "name": {} } },
+  "@deleteCategoryConfirmTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
   "deleteCategoryConfirmBody": "इस श्रेणी के सभी नोट्स भी हटा दिए जाएंगे।",
-
   "allNotesEmptyTitle": "अभी कोई नोट नहीं",
   "allNotesEmptyBody": "एक श्रेणी बनाएं और अपना पहला नोट जोड़ें",
   "allNotesCreateFirst": "पहले एक श्रेणी बनाएं",
-
   "editorNewTitle": "नया नोट",
   "editorEditTitle": "नोट संपादित करें",
   "editorSaving": "सहेजा जा रहा है…",
   "editorSavedAt": "{time} को सहेजा गया",
-  "@editorSavedAt": { "placeholders": { "time": {} } },
+  "@editorSavedAt": {
+    "placeholders": {
+      "time": {}
+    }
+  },
   "editorTitleHint": "शीर्षक",
   "editorBodyHint": "लिखना शुरू करें…",
   "editorChangeCategory": "श्रेणी बदलें",
@@ -171,24 +195,31 @@
   "editorTooltipCopy": "नोट कॉपी करें",
   "editorCopyMenuItem": "नोट कॉपी करें",
   "editorCopiedSnack": "नोट कॉपी किया गया",
-  "editorSttRecord": "आवाज़ रिकॉर्ड करें",
   "editorSttStop": "रिकॉर्डिंग बंद करें",
-
-  "searchHint": "नोट्स खोजें…",
-  "searchIdleTitle": "अपने नोट्स खोजें",
+  "searchHint": "स्मृतियाँ खोजें…",
+  "searchIdleTitle": "अपनी स्मृतियाँ खोजें",
   "searchIdleBody": "कीवर्ड टाइप करें या प्रश्न पूछें। \nनिजी नोट्स अनदेखे किए जाते हैं।",
   "searchNoResults": "\"{query}\" के लिए कोई परिणाम नहीं",
-  "@searchNoResults": { "placeholders": { "query": {} } },
+  "@searchNoResults": {
+    "placeholders": {
+      "query": {}
+    }
+  },
   "searchTryDifferent": "अलग कीवर्ड आज़माएं",
   "searchMoreLines": "+{count} और पंक्तियाँ",
-  "@searchMoreLines": { "placeholders": { "count": { "type": "int" } } },
+  "@searchMoreLines": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "searchTryAiHint": "जो ढूंढ रहे थे वह नहीं मिला? AI खोज आज़माएं",
   "searchNoResultsAiCta": "कोई परिणाम नहीं मिला। AI खोज करने के लिए क्लिक करें",
   "searchHistoryButtonTooltip": "AI खोज इतिहास",
   "searchBackToResults": "परिणामों पर वापस जाएं",
   "widgetSearchTitle": "अपने नोट्स खोजें",
-
-  "aiSearchTitle": "AI खोज",
+  "aiSearchTitle": "AI स्मरण",
   "aiSearchHint": "अपने नोट्स के बारे में पूछें…",
   "aiSearchLoading": "आपके नोट्स खोजे जा रहे हैं…",
   "aiSearchIdleTitle": "अपने नोट्स के बारे में कुछ भी पूछें",
@@ -201,11 +232,27 @@
   "aiSearchFromCache": "कैश से",
   "aiSearchRateTitle": "दर सीमा पूरी हो गई",
   "aiSearchRateSeconds": "{seconds}s में पुनः प्रयास करें",
-  "@aiSearchRateSeconds": { "placeholders": { "seconds": { "type": "int" } } },
+  "@aiSearchRateSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "aiSearchRateMinutes": "{minutes}m में पुनः प्रयास करें",
-  "@aiSearchRateMinutes": { "placeholders": { "minutes": { "type": "int" } } },
+  "@aiSearchRateMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "aiSearchRateResetsAt": "{time} पर रीसेट होगा",
-  "@aiSearchRateResetsAt": { "placeholders": { "time": {} } },
+  "@aiSearchRateResetsAt": {
+    "placeholders": {
+      "time": {}
+    }
+  },
   "aiSearchRateDefault": "कृपया फिर से खोजने से पहले प्रतीक्षा करें",
   "aiSearchErrorDailyLimit": "दैनिक AI सीमा पूरी हो गई है। कल फिर प्रयास करें।",
   "aiSearchErrorSessionExpired": "सत्र समाप्त हो गया है। कृपया फिर से साइन इन करें।",
@@ -216,17 +263,33 @@
   "aiInfoBody": "AI खोज आपके नोट्स पढ़कर आपके सवाल का जवाब देती है।\n\n🔒 निजी नोट्स कभी AI को नहीं भेजे जाते।\n\n📄 बहुत लंबे नोट्स भेजने से पहले छोटे कर दिए जाते हैं।",
   "aiInfoDismiss": "समझ गया",
   "aiAnswerCopied": "क्लिपबोर्ड पर कॉपी किया गया",
-
   "aiHistoryTitle": "AI खोज इतिहास",
   "aiHistoryEmpty": "अभी कोई खोज इतिहास नहीं",
   "aiHistoryRelativeNow": "अभी-अभी",
   "aiHistoryRelativeMinutes": "{count,plural, =1{1 मिनट पहले} other{{count} मिनट पहले}}",
-  "@aiHistoryRelativeMinutes": { "placeholders": { "count": { "type": "int" } } },
+  "@aiHistoryRelativeMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "aiHistoryRelativeHours": "{count,plural, =1{1 घंटे पहले} other{{count} घंटे पहले}}",
-  "@aiHistoryRelativeHours": { "placeholders": { "count": { "type": "int" } } },
+  "@aiHistoryRelativeHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "aiHistoryRelativeDays": "{count,plural, =1{1 दिन पहले} other{{count} दिन पहले}}",
-  "@aiHistoryRelativeDays": { "placeholders": { "count": { "type": "int" } } },
-
+  "@aiHistoryRelativeDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "settingsTitle": "सेटिंग्स",
   "settingsSectionAccount": "खाता",
   "settingsSectionUsage": "उपयोग",
@@ -237,12 +300,12 @@
   "settingsTierFree": "निःशुल्क",
   "settingsTierPro": "Pro",
   "settingsUsageAi": "आज की AI खोजें",
-  "settingsUsageJotsAi": "आज के Jots AI संगठन",
-  "settingsUsageNotes": "नोट्स",
-  "settingsUsageCategories": "श्रेणियाँ",
+  "settingsUsageJotsJotsNoteAi": "आज के ?????????????????????????? AI संगठन",
+  "settingsUsageNotes": "स्मृतियाँ",
+  "settingsUsageCategories": "समूह",
   "settingsUpgradeTitle": "Pro में अपग्रेड करें",
-  "settingsUpgradeSubtitle": "50 AI खोजें/दिन · 1000 नोट्स · 50 श्रेणियाँ",
-  "settingsUpgradeDialogBody": "Pro आपको 50 AI खोजें/दिन, 1000 नोट्स, 50 श्रेणियाँ और प्रति नोट 20,000 अक्षर देता है।",
+  "settingsUpgradeSubtitle": "30 AI खोजें/दिन · 1000 नोट्स · 50 श्रेणियाँ",
+  "settingsUpgradeDialogBody": "Pro आपको 30 AI खोजें/दिन, 1000 नोट्स, 50 श्रेणियाँ और प्रति नोट 20,000 अक्षर देता है।",
   "contactUsMessageHint": "आपका संदेश (वैकल्पिक)…",
   "contactUsNoEmailApp": "कोई ईमेल ऐप नहीं मिला। कृपया हमें ईमेल करें:",
   "contactUsCopied": "ईमेल पता कॉपी किया गया",
@@ -254,35 +317,173 @@
   "settingsLanguageHindi": "हिन्दी",
   "settingsLanguageSpanish": "Español",
   "settingsLanguageFrench": "Français",
-
-  "jotsAddTooltip": "Jot जोड़ें",
-  "jotAddDialogTitle": "नया jot",
+  "jotsJotsNoteAddTooltip": "?????????????????????????? जोड़ें",
+  "jotsJotsNoteAddDialogTitle": "नया ??????????????????????????",
+  "jotsJotsNoteInputHint": "एक त्वरित विचार लिखें",
+  "jotsJotsNoteSavedSnack": "विचार सहेजा गया",
+  "jotsJotsNoteSaveUnavailable": "विचार सहेजा नहीं जा सका। कृपया फिर से प्रयास करें।",
+  "jotsJotsNoteCharCounter": "{count}/{max} वर्ण",
+  "@jotsJotsNoteCharCounter": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "jotsJotsNoteEmptyTitle": "कोई ?????????????????????????? लंबित नहीं",
+  "jotsJotsNoteEmptyBody": "+ पर टैप करें जब कोई विचार आए।",
+  "jotsJotsNoteSortOldestFirst": "सबसे पुराने पहले",
+  "jotsJotsNoteSortNewestFirst": "सबसे नए पहले",
+  "jotsJotsNoteOrganizeAi": "AI से व्यवस्थित करें",
+  "jotsJotsNoteAcceptAll": "सभी सुझाव स्वीकार करें",
+  "jotsJotsNoteAiInfoTitle": "?????????????????????????? AI के बारे में",
+  "jotsJotsNoteAiInfoBody": "?????????????????????????? AI बताता है कि अधूरे विचारों को कैसे व्यवस्थित करें। केवल न भेजे गए ??????????????????????????, श्रेणी नाम और नोट शीर्षक भेजे जाते हैं। नोट की सामग्री और निजी नोट नहीं भेजे जाते, और लंबी सूचियाँ सीमित की जा सकती हैं।",
+  "jotsJotsNoteAiNoNew": "व्यवस्थित करने के लिए कोई नया विचार नहीं है।",
+  "jotsJotsNoteAiQuota": "दैनिक ?????????????????????????? AI सीमा पूरी हो गई।",
+  "jotsJotsNoteAiFailed": "?????????????????????????? व्यवस्थित नहीं हो सके। फिर से कोशिश करें।",
+  "jotsJotsNoteAiSuggestionsProvided": "{count,plural, =0{0 सुझाव दिए गए। अगली बार अधिक स्पष्ट विचार लिखने की कोशिश करें।} =1{1 सुझाव दिया गया।} other{{count} सुझाव दिए गए।}}",
+  "@jotsJotsNoteAiSuggestionsProvided": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jotsJotsNoteAiLimitedTo30": "केवल सबसे पुराने 30 नए ?????????????????????????? भेजे गए।",
+  "jotsJotsNoteSelectedCount": "{count} चुने गए",
+  "@jotsJotsNoteSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jotsJotsNoteDeleteSelectedTitle": "चुने गए ?????????????????????????? हटाएँ?",
+  "jotsJotsNoteDeleteSelectedBody": "चुने गए विचार स्थायी रूप से हटाए जाएँगे।",
+  "jotsJotsNoteCreatedAt": "बनाया गया: {time}",
+  "@jotsJotsNoteCreatedAt": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "jotsJotsNoteActionsTooltip": "?????????????????????????? संभालें",
+  "jotsJotsNoteActionsTitle": "विचार संभालें",
+  "jotsJotsNoteActionCreateNote": "नया नोट बनाएँ",
+  "jotsJotsNoteActionAddToNote": "मौजूदा नोट में जोड़ें",
+  "jotsJotsNoteActionCreateAlert": "अलर्ट बनाएँ",
+  "jotsJotsNoteActionDeleteThought": "विचार हटाएँ",
+  "jotsJotsNoteActionSuggestedByAi": "ये क्रियाएँ AI ने सुझाई हैं।",
+  "jotsJotsNoteActionUpdateThought": "विचार का टेक्स्ट अपडेट करें",
+  "jotsJotsNoteActionUpdatedThoughtText": "अपडेट किया गया विचार",
+  "jotsJotsNoteActionUpdatedThoughtHint": "उदाहरण: Lord of the Rings",
+  "jotsJotsNoteActionNewNoteTitle": "नोट शीर्षक",
+  "jotsJotsNoteActionCategory": "श्रेणी",
+  "jotsJotsNoteActionNewCategory": "नई श्रेणी",
+  "jotsJotsNoteActionNote": "नोट",
+  "jotsJotsNoteActionNoNotes": "इस श्रेणी में कोई नोट नहीं",
+  "jotsJotsNoteActionLock": "नोट लॉक करें",
+  "jotsJotsNoteActionReminderWhen": "{time} पर अलर्ट",
+  "@jotsJotsNoteActionReminderWhen": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "jotsJotsNoteActionPickReminder": "दिनांक और समय चुनें",
+  "jotsJotsNoteActionAccept": "स्वीकार करें",
+  "jotsJotsNoteActionChooseFuture": "भविष्य का दिनांक और समय चुनें।",
+  "jotsJotsNoteNotificationBody": "इस विचार को व्यवस्थित करने के लिए टैप करें",
+  "jotsJotsNoteReminderNotFound": "यह ?????????????????????????? अब उपलब्ध नहीं है।",
+  "widgetAddNoteTooltip": "स्मृति जोड़ें",
+  "widgetComposeTitle": "नई स्मृति",
+  "widgetComposeDiscardTitle": "स्मृति छोड़ें?",
+  "widgetComposeDiscardBody": "आपकी स्मृति सहेजी नहीं जाएगी।",
+  "widgetComposeNoCategories": "कोई समूह नहीं मिला।\\nपहले एक बनाने के लिए MindVault खोलें।",
+  "widgetComposeCategoryLabel": "समूह",
+  "noteTypeLabel": "प्रकार",
+  "noteTypeText": "अभिलेख",
+  "noteTypeChecklist": "योजना",
+  "reminderTooltipSet": "रिमाइंडर सेट करें",
+  "reminderTooltipActive": "रिमाइंडर सेट है",
+  "reminderDialogTitle": "रिमाइंडर",
+  "reminderScheduledFor": "{time} के लिए शेड्यूल",
+  "reminderEdit": "संपादित करें",
+  "reminderRemove": "हटाएं",
+  "reminderSaveNoteFirst": "रिमाइंडर सेट करने से पहले शीर्षक या नोट का विवरण जोड़ें.",
+  "reminderMayBeDelayed": "सटीक अलार्म सक्षम नहीं हैं. यह रिमाइंडर देर से आ सकता है.",
+  "reminderMustBeFuture": "भविष्य की तारीख और समय चुनें.",
+  "reminderNoteNotFound": "वह रिमाइंडर नोट नहीं मिला.",
+  "removeDoneTasksLabel": "पूर्ण कार्य हटाएं",
+  "removeDoneTasksTitle": "पूर्ण कार्य हटाएं?",
+  "removeDoneTasksBody": "पूर्ण किए गए कार्य स्थायी रूप से हटा दिए जाएंगे।",
+  "widgetViewEditTitle": "स्मृति संपादित करें",
+  "widgetViewEdit": "संपादित करें",
+  "widgetViewDelete": "हटाएं",
+  "widgetViewUnlocking": "अनलॉक हो रहा है…",
+  "widgetViewNoContent": "कोई सामग्री नहीं",
+  "widgetViewNotFound": "स्मृति नहीं मिली",
+  "widgetViewDiscardTitle": "परिवर्तन त्यागें?",
+  "widgetViewDiscardBody": "आपके संपादन सहेजे नहीं जाएंगे।",
+  "widgetViewKeepEditing": "संपादन जारी रखें",
+  "reminderNotificationBody": "इस नोट को खोलने के लिए टैप करें",
+  "reminderNotificationsRequired": "रिमाइंडर के लिए नोटिफिकेशन अनुमति देना आवश्यक है.",
+  "navJots": "चिंगारियाँ",
+  "settingsUsageJotsAi": "आज के चिंगारियाँ AI आयोजन",
+  "jotsAddTooltip": "चिंगारी जोड़ें",
+  "jotAddDialogTitle": "नई चिंगारी",
+  "jotsEmptyTitle": "कोई चिंगारी लंबित नहीं",
+  "jotsAiInfoTitle": "चिंगारियाँ AI के बारे में",
+  "jotsAiQuota": "दैनिक चिंगारियाँ AI सीमा पूरी हो गई।",
+  "jotsAiFailed": "चिंगारियाँ व्यवस्थित नहीं हो सकीं।",
   "jotInputHint": "एक त्वरित विचार लिखें",
   "jotSavedSnack": "विचार सहेजा गया",
   "jotSaveUnavailable": "विचार सहेजा नहीं जा सका। कृपया फिर से प्रयास करें।",
   "jotCharCounter": "{count}/{max} वर्ण",
-  "@jotCharCounter": {"placeholders":{"count":{"type":"int"},"max":{"type":"int"}}},
-  "jotsEmptyTitle": "कोई jot लंबित नहीं",
-  "jotsEmptyBody": "+ पर टैप करें जब कोई विचार आए।",
+  "@jotCharCounter": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "jotsEmptyBody": "अपना पहला नोट बनाने के लिए + टैप करें",
   "jotsSortOldestFirst": "सबसे पुराने पहले",
   "jotsSortNewestFirst": "सबसे नए पहले",
   "jotsOrganizeAi": "AI से व्यवस्थित करें",
   "jotsAcceptAll": "सभी सुझाव स्वीकार करें",
-  "jotsAiInfoTitle": "Jots AI के बारे में",
-  "jotsAiInfoBody": "Jots AI बताता है कि अधूरे विचारों को कैसे व्यवस्थित करें। केवल न भेजे गए jots, श्रेणी नाम और नोट शीर्षक भेजे जाते हैं। नोट की सामग्री और निजी नोट नहीं भेजे जाते, और लंबी सूचियाँ सीमित की जा सकती हैं।",
+  "jotsAiInfoBody": "?????????????????????????? AI बताता है कि अधूरे विचारों को कैसे व्यवस्थित करें। केवल न भेजे गए ??????????????????????????, श्रेणी नाम और नोट शीर्षक भेजे जाते हैं। नोट की सामग्री और निजी नोट नहीं भेजे जाते, और लंबी सूचियाँ सीमित की जा सकती हैं।",
   "jotsAiNoNew": "व्यवस्थित करने के लिए कोई नया विचार नहीं है।",
-  "jotsAiQuota": "दैनिक Jots AI सीमा पूरी हो गई।",
-  "jotsAiFailed": "Jots व्यवस्थित नहीं हो सके। फिर से कोशिश करें।",
   "jotsAiSuggestionsProvided": "{count,plural, =0{0 सुझाव दिए गए। अगली बार अधिक स्पष्ट विचार लिखने की कोशिश करें।} =1{1 सुझाव दिया गया।} other{{count} सुझाव दिए गए।}}",
-  "@jotsAiSuggestionsProvided": {"placeholders":{"count":{"type":"int"}}},
-  "jotsAiLimitedTo30": "केवल सबसे पुराने 30 नए jots भेजे गए।",
+  "@jotsAiSuggestionsProvided": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jotsAiLimitedTo30": "केवल सबसे पुराने 30 नए ?????????????????????????? भेजे गए।",
   "jotsSelectedCount": "{count} चुने गए",
-  "@jotsSelectedCount": {"placeholders":{"count":{"type":"int"}}},
-  "jotsDeleteSelectedTitle": "चुने गए jots हटाएँ?",
+  "@jotsSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jotsDeleteSelectedTitle": "चुने गए ?????????????????????????? हटाएँ?",
   "jotsDeleteSelectedBody": "चुने गए विचार स्थायी रूप से हटाए जाएँगे।",
   "jotCreatedAt": "बनाया गया: {time}",
-  "@jotCreatedAt": {"placeholders":{"time":{}}},
-  "jotActionsTooltip": "Jot संभालें",
+  "@jotCreatedAt": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "jotActionsTooltip": "?????????????????????????? संभालें",
   "jotActionsTitle": "विचार संभालें",
   "jotActionCreateNote": "नया नोट बनाएँ",
   "jotActionAddToNote": "मौजूदा नोट में जोड़ें",
@@ -299,44 +500,15 @@
   "jotActionNoNotes": "इस श्रेणी में कोई नोट नहीं",
   "jotActionLock": "नोट लॉक करें",
   "jotActionReminderWhen": "{time} पर अलर्ट",
-  "@jotActionReminderWhen": {"placeholders":{"time":{}}},
+  "@jotActionReminderWhen": {
+    "placeholders": {
+      "time": {}
+    }
+  },
   "jotActionPickReminder": "दिनांक और समय चुनें",
   "jotActionAccept": "स्वीकार करें",
   "jotActionChooseFuture": "भविष्य का दिनांक और समय चुनें।",
   "jotNotificationBody": "इस विचार को व्यवस्थित करने के लिए टैप करें",
-  "jotReminderNotFound": "यह jot अब उपलब्ध नहीं है।",
-  "widgetAddNoteTooltip": "नोट जोड़ें",
-  "widgetComposeTitle": "नया नोट",
-  "widgetComposeDiscardTitle": "नोट त्यागें?",
-  "widgetComposeDiscardBody": "आपका नोट सहेजा नहीं जाएगा।",
-  "widgetComposeNoCategories": "कोई श्रेणी नहीं मिली।\nपहले एक बनाने के लिए MindVault खोलें।",
-  "widgetComposeCategoryLabel": "श्रेणी",
-  "noteTypeLabel": "प्रकार",
-  "noteTypeText": "पाठ",
-  "noteTypeChecklist": "चेकलिस्ट",
-  "reminderTooltipSet": "रिमाइंडर सेट करें",
-  "reminderTooltipActive": "रिमाइंडर सेट है",
-  "reminderDialogTitle": "रिमाइंडर",
-  "reminderScheduledFor": "{time} के लिए शेड्यूल",
-  "reminderEdit": "संपादित करें",
-  "reminderRemove": "हटाएं",
-  "reminderSaveNoteFirst": "रिमाइंडर सेट करने से पहले शीर्षक या नोट का विवरण जोड़ें.",
-  "reminderMayBeDelayed": "सटीक अलार्म सक्षम नहीं हैं. यह रिमाइंडर देर से आ सकता है.",
-  "reminderMustBeFuture": "भविष्य की तारीख और समय चुनें.",
-  "reminderNoteNotFound": "वह रिमाइंडर नोट नहीं मिला.",
-  "removeDoneTasksLabel": "पूर्ण कार्य हटाएं",
-  "removeDoneTasksTitle": "पूर्ण कार्य हटाएं?",
-  "removeDoneTasksBody": "पूर्ण किए गए कार्य स्थायी रूप से हटा दिए जाएंगे।",
-  "widgetViewEditTitle": "नोट संपादित करें",
-  "widgetViewEdit": "संपादित करें",
-  "widgetViewDelete": "हटाएं",
-  "widgetViewUnlocking": "अनलॉक हो रहा है…",
-  "widgetViewNoContent": "कोई सामग्री नहीं",
-  "widgetViewNotFound": "नोट नहीं मिला",
-  "widgetViewDiscardTitle": "परिवर्तन त्यागें?",
-  "widgetViewDiscardBody": "आपके संपादन सहेजे नहीं जाएंगे।",
-  "widgetViewKeepEditing": "संपादन जारी रखें"
-  ,
-  "reminderNotificationBody": "इस नोट को खोलने के लिए टैप करें",
-  "reminderNotificationsRequired": "रिमाइंडर के लिए नोटिफिकेशन अनुमति देना आवश्यक है."
+  "jotReminderNotFound": "यह ?????????????????????????? अब उपलब्ध नहीं है।",
+  "editorSttRecord": "आवाज़ रिकॉर्ड करें"
 }

@@ -6,14 +6,16 @@ void main() {
     test('track() does not throw regardless of event type', () {
       const svc = NoopAnalyticsService();
       expect(() => svc.track('session_started'), returnsNormally);
-      expect(() => svc.track('note_created', metadata: {'key': 'value'}), returnsNormally);
+      expect(() => svc.track('note_created', metadata: {'key': 'value'}),
+          returnsNormally);
       expect(() => svc.track('note_deleted'), returnsNormally);
       expect(() => svc.track('category_created'), returnsNormally);
     });
 
     test('track() accepts null metadata without throwing', () {
       const svc = NoopAnalyticsService();
-      expect(() => svc.track('session_started', metadata: null), returnsNormally);
+      expect(
+          () => svc.track('session_started', metadata: null), returnsNormally);
     });
   });
 }

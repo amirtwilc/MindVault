@@ -133,16 +133,18 @@ class NoteRepositoryImpl implements NoteRepository {
     final ops = await _local.getPendingOps();
     return ops.any((op) =>
         op.recordId == noteId &&
-        (op.opType == 'create_note' || op.opType == 'update_note'));
+        (op.opType == 'create_memory' ||
+            op.opType == 'update_memory' ||
+            op.opType == 'delete_memory'));
   }
 
   Future<bool> _hasPendingChecklistMutation(String itemId) async {
     final ops = await _local.getPendingOps();
     return ops.any((op) =>
         op.recordId == itemId &&
-        (op.opType == 'create_checklist_item' ||
-            op.opType == 'update_checklist_item' ||
-            op.opType == 'delete_checklist_item'));
+        (op.opType == 'create_plan_item' ||
+            op.opType == 'update_plan_item' ||
+            op.opType == 'delete_plan_item'));
   }
 
   Future<void> _syncAllNotes() async {
@@ -159,7 +161,8 @@ class NoteRepositoryImpl implements NoteRepository {
       final remoteIds = filtered.map((m) => m.id).toSet();
       final pendingOps = await _local.getPendingOps();
       final pendingCreateIds = pendingOps
-          .where((o) => o.opType == 'create_note' || o.opType == 'update_note')
+          .where(
+              (o) => o.opType == 'create_memory' || o.opType == 'update_memory')
           .map((o) => o.recordId)
           .toSet();
       final localNotes = await _local.getAllNotes(_userId);
@@ -280,7 +283,7 @@ class NoteRepositoryImpl implements NoteRepository {
       });
       await _local.deletePendingOp(noteId);
     } catch (_) {
-      await _local.upsertPendingOp(noteId, 'update_note', noteId);
+      await _local.upsertPendingOp(noteId, 'update_memory', noteId);
     }
   }
 
@@ -330,8 +333,13 @@ class NoteRepositoryImpl implements NoteRepository {
       final synced = _decryptModel(model);
       await _local.upsertNote(_noteToCompanion(synced));
       return synced;
-    } catch (_) {
-      await _local.upsertPendingOp(id, 'create_note', id);
+    } catch (e) {
+      _errorLogger.report(
+        source: 'create_memory_remote',
+        message: e.toString(),
+        context: {'memory_id': id},
+      );
+      await _local.upsertPendingOp(id, 'create_memory', id);
       return note;
     }
   }
@@ -357,7 +365,8 @@ class NoteRepositoryImpl implements NoteRepository {
       lastUsedAt: now,
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,
-      noteType: noteType ?? NoteType.fromStorage(existing?.noteType ?? 'text'),
+      noteType:
+          noteType ?? NoteType.fromStorage(existing?.noteType ?? 'record'),
       isPinned: existing?.isPinned ?? false,
       pinnedAt: existing?.pinnedAt,
       pinOrder: existing?.pinOrder,
@@ -376,8 +385,13 @@ class NoteRepositoryImpl implements NoteRepository {
       await _local.upsertNote(_noteToCompanion(synced));
       await _local.deletePendingOp(id);
       return synced;
-    } catch (_) {
-      await _local.upsertPendingOp(id, 'update_note', id);
+    } catch (e) {
+      _errorLogger.report(
+        source: 'update_memory_remote',
+        message: e.toString(),
+        context: {'memory_id': id},
+      );
+      await _local.upsertPendingOp(id, 'update_memory', id);
       return updated;
     }
   }
@@ -388,10 +402,23 @@ class NoteRepositoryImpl implements NoteRepository {
     _analytics?.track('note_deleted');
     await _local.removePendingOpsForRecord(id);
     await _local.removeHistoryReferencingNoteIds([id]);
+    final deletedRemotely = await _deleteRemoteNoteConfirmed(id);
+    if (!deletedRemotely) {
+      _errorLogger.report(
+        source: 'delete_memory_remote',
+        message: 'Remote delete was not confirmed',
+        context: {'memory_id': id},
+      );
+      await _local.upsertPendingOp('del_$id', 'delete_memory', id);
+    }
+  }
+
+  Future<bool> _deleteRemoteNoteConfirmed(String id) async {
     try {
       await _remote.deleteNote(id);
+      return await _remote.fetchNoteById(id) == null;
     } catch (_) {
-      await _local.upsertPendingOp('del_$id', 'delete_note', id);
+      return false;
     }
   }
 
@@ -400,17 +427,22 @@ class NoteRepositoryImpl implements NoteRepository {
     final ops = await _local.getPendingOps();
     for (final op in ops) {
       try {
-        if (op.opType == 'delete_note') {
-          await _remote.deleteNote(op.recordId);
+        var handled = true;
+        if (op.opType == 'delete_memory') {
+          final deleted = await _deleteRemoteNoteConfirmed(op.recordId);
+          if (!deleted) {
+            throw StateError('Remote memory delete was not confirmed');
+          }
           await _local.deleteNote(op.recordId);
-        } else if (op.opType == 'create_note' || op.opType == 'update_note') {
+        } else if (op.opType == 'create_memory' ||
+            op.opType == 'update_memory') {
           final row = await _local.getNote(op.recordId);
           if (row == null) {
             await _local.deletePendingOp(op.id);
             continue;
           }
           final note = rowToNote(row);
-          if (op.opType == 'update_note') {
+          if (op.opType == 'update_memory') {
             try {
               final remote = await _remote.fetchNoteById(note.id);
               if (remote != null &&
@@ -434,11 +466,11 @@ class NoteRepositoryImpl implements NoteRepository {
             'pin_order': note.pinOrder,
             'note_type': note.noteType.storageValue,
           });
-        } else if (op.opType == 'delete_checklist_item') {
+        } else if (op.opType == 'delete_plan_item') {
           await _remote.deleteChecklistItem(op.recordId);
           await _local.deleteChecklistItem(op.recordId);
-        } else if (op.opType == 'create_checklist_item' ||
-            op.opType == 'update_checklist_item') {
+        } else if (op.opType == 'create_plan_item' ||
+            op.opType == 'update_plan_item') {
           final row = await _local.getChecklistItem(op.recordId);
           if (row == null) {
             await _local.deletePendingOp(op.id);
@@ -446,8 +478,12 @@ class NoteRepositoryImpl implements NoteRepository {
           }
           await _remote.upsertChecklistItem(
               _checklistItemPayload(rowToChecklistItem(row)));
+        } else {
+          handled = false;
         }
-        await _local.deletePendingOp(op.id);
+        if (handled) {
+          await _local.deletePendingOp(op.id);
+        }
       } catch (_) {}
     }
     await _syncAllNotes();
@@ -506,7 +542,7 @@ class NoteRepositoryImpl implements NoteRepository {
       });
       await _local.deletePendingOp(id);
     } catch (_) {
-      await _local.upsertPendingOp(id, 'update_note', id);
+      await _local.upsertPendingOp(id, 'update_memory', id);
     }
   }
 
@@ -538,7 +574,7 @@ class NoteRepositoryImpl implements NoteRepository {
       await _remote.updatePinOrders(updates);
     } catch (_) {
       for (final id in orderedIds) {
-        await _local.upsertPendingOp(id, 'update_note', id);
+        await _local.upsertPendingOp(id, 'update_memory', id);
       }
     }
   }
@@ -580,7 +616,7 @@ class NoteRepositoryImpl implements NoteRepository {
       } catch (_) {
         for (final item in items) {
           await _local.upsertPendingOp(
-              'del_checklist_${item.id}', 'delete_checklist_item', item.id);
+              'del_checklist_${item.id}', 'delete_plan_item', item.id);
         }
       }
     }
@@ -648,11 +684,11 @@ class NoteRepositoryImpl implements NoteRepository {
       }
     } catch (_) {
       for (final item in items) {
-        await _local.upsertPendingOp(item.id, 'update_checklist_item', item.id);
+        await _local.upsertPendingOp(item.id, 'update_plan_item', item.id);
       }
       for (final item in removed) {
         await _local.upsertPendingOp(
-            'del_checklist_${item.id}', 'delete_checklist_item', item.id);
+            'del_checklist_${item.id}', 'delete_plan_item', item.id);
       }
     }
     return items;
@@ -686,7 +722,7 @@ class NoteRepositoryImpl implements NoteRepository {
     try {
       await _remote.upsertChecklistItem(_checklistItemPayload(item));
     } catch (_) {
-      await _local.upsertPendingOp(item.id, 'update_checklist_item', item.id);
+      await _local.upsertPendingOp(item.id, 'update_plan_item', item.id);
     }
   }
 
@@ -713,7 +749,7 @@ class NoteRepositoryImpl implements NoteRepository {
           .upsertChecklistItems(items.map(_checklistItemPayload).toList());
     } catch (_) {
       for (final item in items) {
-        await _local.upsertPendingOp(item.id, 'update_checklist_item', item.id);
+        await _local.upsertPendingOp(item.id, 'update_plan_item', item.id);
       }
     }
   }
@@ -730,7 +766,7 @@ class NoteRepositoryImpl implements NoteRepository {
         await _remote.deleteChecklistItem(item.id);
       } catch (_) {
         await _local.upsertPendingOp(
-            'del_checklist_${item.id}', 'delete_checklist_item', item.id);
+            'del_checklist_${item.id}', 'delete_plan_item', item.id);
       }
     }
   }

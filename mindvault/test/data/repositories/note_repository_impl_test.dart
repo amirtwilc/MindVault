@@ -140,7 +140,7 @@ void main() {
       expect(fromDb!.title, equals('Saved'));
     });
 
-    test('queues create_note pending op when Supabase fails', () async {
+    test('queues create_memory pending op when Supabase fails', () async {
       when(() => remote.insertNote(any())).thenThrow(Exception('offline'));
 
       final note = await repo.createNote(
@@ -152,7 +152,7 @@ void main() {
 
       final ops = await db.getPendingOps();
       expect(ops.length, equals(1));
-      expect(ops.first.opType, equals('create_note'));
+      expect(ops.first.opType, equals('create_memory'));
       expect(ops.first.recordId, equals(note.id));
     });
 
@@ -237,14 +237,14 @@ void main() {
       expect(note.body, equals('New Body'));
     });
 
-    test('queues update_note pending op when Supabase fails', () async {
+    test('queues update_memory pending op when Supabase fails', () async {
       when(() => remote.updateNote(any(), any()))
           .thenThrow(Exception('offline'));
 
       await repo.updateNote(id: 'note-1', title: 'Changed');
 
       final ops = await db.getPendingOps();
-      expect(ops.any((o) => o.opType == 'update_note'), isTrue);
+      expect(ops.any((o) => o.opType == 'update_memory'), isTrue);
     });
   });
 
@@ -264,7 +264,7 @@ void main() {
         createdAt: Value(now),
         updatedAt: Value(now),
       ));
-      await db.upsertPendingOp('note-1', 'create_note', 'note-1');
+      await db.upsertPendingOp('note-1', 'create_memory', 'note-1');
     });
 
     test('removes note from Drift immediately', () async {
@@ -279,13 +279,33 @@ void main() {
       expect(await db.getPendingOps(), isEmpty);
     });
 
-    test('queues delete_note pending op when Supabase fails', () async {
+    test('queues delete_memory pending op when Supabase fails', () async {
       when(() => remote.deleteNote(any())).thenThrow(Exception('offline'));
       await repo.deleteNote('note-1');
       final ops = await db.getPendingOps();
       expect(
-          ops.any((o) => o.opType == 'delete_note' && o.recordId == 'note-1'),
+          ops.any((o) => o.opType == 'delete_memory' && o.recordId == 'note-1'),
           isTrue);
+    });
+
+    test('queues delete_memory pending op when Supabase delete is a no-op',
+        () async {
+      when(() => remote.deleteNote('note-1')).thenAnswer((_) async {});
+      when(() => remote.fetchNoteById('note-1')).thenAnswer(
+        (_) async => _fakeModel(
+          title: encService.encrypt('Still remote', aesKey),
+          body: encService.encrypt('', aesKey),
+        ),
+      );
+
+      await repo.deleteNote('note-1');
+
+      expect(await db.getNote('note-1'), isNull);
+      final ops = await db.getPendingOps();
+      expect(
+        ops.any((o) => o.opType == 'delete_memory' && o.recordId == 'note-1'),
+        isTrue,
+      );
     });
 
     test('removes AI history entries citing the deleted note', () async {
@@ -308,7 +328,7 @@ void main() {
   // ── syncPendingOps ────────────────────────────────────────────────────────
 
   group('syncPendingOps', () {
-    test('sends create_note op to Supabase with timestamps', () async {
+    test('sends create_memory op to Supabase with timestamps', () async {
       final now = DateTime.now().toUtc();
       await db.upsertNote(NotesTableCompanion(
         id: const Value('note-2'),
@@ -321,7 +341,7 @@ void main() {
         createdAt: Value(now),
         updatedAt: Value(now),
       ));
-      await db.upsertPendingOp('note-2', 'create_note', 'note-2');
+      await db.upsertPendingOp('note-2', 'create_memory', 'note-2');
 
       Map<String, dynamic>? payload;
       when(() => remote.upsertNote(any())).thenAnswer((inv) async {
@@ -350,7 +370,7 @@ void main() {
         createdAt: Value(now),
         updatedAt: Value(now),
       ));
-      await db.upsertPendingOp('note-3', 'create_note', 'note-3');
+      await db.upsertPendingOp('note-3', 'create_memory', 'note-3');
 
       when(() => remote.upsertNote(any())).thenAnswer((_) async {});
       when(() => remote.fetchAllNotes()).thenAnswer((_) async => []);
@@ -374,7 +394,7 @@ void main() {
           createdAt: Value(now),
           updatedAt: Value(now),
         ));
-        await db.upsertPendingOp(id, 'create_note', id);
+        await db.upsertPendingOp(id, 'create_memory', id);
       }
 
       when(() => remote.upsertNote(any())).thenThrow(Exception('offline'));
@@ -386,9 +406,9 @@ void main() {
       expect((await db.getPendingOps()).length, equals(2));
     });
 
-    test('retries create_note op on second call after first call failed',
+    test('retries create_memory op on second call after first call failed',
         () async {
-      // Regression: notes were queued with a create_note op while offline.
+      // Regression: notes were queued with a create_memory op while offline.
       // The first syncPendingOps() call fails (e.g. FK violation — category not yet
       // in Supabase). The op must stay queued so a second call (after categories are
       // synced) can succeed. This mirrors the fix in app_router.dart that ensures
@@ -405,7 +425,7 @@ void main() {
         createdAt: Value(now),
         updatedAt: Value(now),
       ));
-      await db.upsertPendingOp('note-retry', 'create_note', 'note-retry');
+      await db.upsertPendingOp('note-retry', 'create_memory', 'note-retry');
 
       // First call: Supabase rejects (category doesn't exist yet).
       when(() => remote.upsertNote(any())).thenThrow(Exception('FK violation'));
@@ -421,8 +441,8 @@ void main() {
           reason: 'op must be cleared after successful retry');
     });
 
-    test('sends delete_note op to Supabase', () async {
-      await db.upsertPendingOp('del_note-x', 'delete_note', 'note-x');
+    test('sends delete_memory op to Supabase', () async {
+      await db.upsertPendingOp('del_note-x', 'delete_memory', 'note-x');
 
       when(() => remote.deleteNote('note-x')).thenAnswer((_) async {});
       when(() => remote.fetchAllNotes()).thenAnswer((_) async => []);
@@ -433,11 +453,38 @@ void main() {
       expect(await db.getPendingOps(), isEmpty);
     });
 
+    test('keeps delete_memory op queued when Supabase delete is a no-op',
+        () async {
+      await db.upsertPendingOp('del_note-x', 'delete_memory', 'note-x');
+
+      when(() => remote.deleteNote('note-x')).thenAnswer((_) async {});
+      when(() => remote.fetchNoteById('note-x')).thenAnswer(
+        (_) async => _fakeModel(
+          id: 'note-x',
+          title: encService.encrypt('Still remote', aesKey),
+          body: encService.encrypt('', aesKey),
+        ),
+      );
+      when(() => remote.fetchAllNotes()).thenAnswer((_) async => [
+            _fakeModel(
+              id: 'note-x',
+              title: encService.encrypt('Still remote', aesKey),
+              body: encService.encrypt('', aesKey),
+            ),
+          ]);
+
+      await repo.syncPendingOps();
+
+      expect(await db.getNote('note-x'), isNull);
+      final ops = await db.getPendingOps();
+      expect(ops.single.opType, equals('delete_memory'));
+    });
+
     test(
-        'delete_note op removes note from Drift even if Realtime re-inserted it',
+        'delete_memory op removes note from Drift even if Realtime re-inserted it',
         () async {
       // Regression: note created ONLINE (in Supabase), deleted OFFLINE (Drift removed,
-      // delete_note op queued). On reconnect, Supabase Realtime re-fires the note row
+      // delete_memory op queued). On reconnect, Supabase Realtime re-fires the note row
       // as an INSERT → Realtime handler upserts it back into Drift. syncPendingOps must
       // then delete from Supabase AND also re-delete from Drift.
       final now = DateTime.now().toUtc();
@@ -454,7 +501,7 @@ void main() {
         updatedAt: Value(now),
       ));
       await db.upsertPendingOp(
-          'del_note-deleted', 'delete_note', 'note-deleted');
+          'del_note-deleted', 'delete_memory', 'note-deleted');
 
       when(() => remote.deleteNote('note-deleted')).thenAnswer((_) async {});
       when(() => remote.fetchAllNotes()).thenAnswer((_) async => []);
@@ -465,7 +512,7 @@ void main() {
       expect(await db.getPendingOps(), isEmpty);
       expect(await db.getNote('note-deleted'), isNull,
           reason:
-              'note must be gone from Drift after delete_note op is processed');
+              'note must be gone from Drift after delete_memory op is processed');
     });
 
     test('syncPendingOps processes all ops even when one fails', () async {
@@ -494,8 +541,8 @@ void main() {
         createdAt: Value(now),
         updatedAt: Value(now),
       ));
-      await db.upsertPendingOp('note-fail', 'create_note', 'note-fail');
-      await db.upsertPendingOp('note-ok', 'create_note', 'note-ok');
+      await db.upsertPendingOp('note-fail', 'create_memory', 'note-fail');
+      await db.upsertPendingOp('note-ok', 'create_memory', 'note-ok');
 
       // First note fails, second succeeds.
       var callCount = 0;
@@ -512,9 +559,26 @@ void main() {
           reason: 'only the failed op should remain');
       expect(remaining.first.recordId, equals('note-fail'));
     });
+
+    test('leaves non-note pending ops for their own sync handlers', () async {
+      await db.upsertPendingOp('spark-1', 'create_spark', 'spark-1');
+      await db.upsertPendingOp('reminder-1', 'upsert_reminder', 'note-1');
+      await db.upsertPendingOp('cluster-1', 'upsert_cluster', 'cat-1');
+
+      await repo.syncPendingOps();
+
+      final ops = await db.getPendingOps();
+      expect(
+          ops.map((o) => o.opType),
+          containsAll([
+            'create_spark',
+            'upsert_reminder',
+            'upsert_cluster',
+          ]));
+    });
   });
 
-  test('skips stale update_note op when remote already has a newer version',
+  test('skips stale update_memory op when remote already has a newer version',
       () async {
     // Scenario: note edited offline on Device A (oldTime), then edited online
     // on Device B (newTime). When Device A reconnects, its pending op must NOT
@@ -533,7 +597,7 @@ void main() {
       createdAt: Value(oldTime),
       updatedAt: Value(oldTime),
     ));
-    await db.upsertPendingOp('note-stale', 'update_note', 'note-stale');
+    await db.upsertPendingOp('note-stale', 'update_memory', 'note-stale');
 
     final remoteModel = NoteModel(
       id: 'note-stale',
@@ -562,7 +626,7 @@ void main() {
         reason: '_syncAllNotes must have pulled the newer remote version');
   });
 
-  test('pushes update_note op when local is newer than remote', () async {
+  test('pushes update_memory op when local is newer than remote', () async {
     final oldTime = DateTime(2024, 1, 1).toUtc();
     final newTime = DateTime(2024, 6, 1).toUtc();
 
@@ -577,7 +641,7 @@ void main() {
       createdAt: Value(oldTime),
       updatedAt: Value(newTime),
     ));
-    await db.upsertPendingOp('note-newer', 'update_note', 'note-newer');
+    await db.upsertPendingOp('note-newer', 'update_memory', 'note-newer');
 
     // Remote has an older version.
     final remoteModel = NoteModel(
@@ -602,10 +666,10 @@ void main() {
     expect(await db.getPendingOps(), isEmpty);
   });
 
-  test('cleans up update_note pending op when local note no longer exists',
+  test('cleans up update_memory pending op when local note no longer exists',
       () async {
     // Note was deleted locally after the pending op was created.
-    await db.upsertPendingOp('ghost-note', 'update_note', 'ghost-note');
+    await db.upsertPendingOp('ghost-note', 'update_memory', 'ghost-note');
     when(() => remote.fetchAllNotes()).thenAnswer((_) async => []);
 
     await repo.syncPendingOps();
@@ -644,7 +708,7 @@ void main() {
           reason: 'Drift must not keep a note that is absent from Supabase');
     });
 
-    test('does NOT remove Drift note that has a pending create_note op',
+    test('does NOT remove Drift note that has a pending create_memory op',
         () async {
       // Note was created offline — it is in Drift but not yet in Supabase.
       // _syncAllNotes must not delete it because the pending op will push it later.
@@ -660,7 +724,7 @@ void main() {
         createdAt: Value(now),
         updatedAt: Value(now),
       ));
-      await db.upsertPendingOp('offline-note', 'create_note', 'offline-note');
+      await db.upsertPendingOp('offline-note', 'create_memory', 'offline-note');
 
       when(() => remote.upsertNote(any()))
           .thenThrow(Exception('still offline'));
@@ -670,6 +734,31 @@ void main() {
 
       expect(await db.getNote('offline-note'), isNotNull,
           reason: 'pending create note must be preserved in Drift');
+    });
+
+    test('does NOT restore remote note while delete_memory op is pending',
+        () async {
+      await db.upsertPendingOp(
+          'del_pending-delete', 'delete_memory', 'pending-delete');
+      when(() => remote.deleteNote('pending-delete'))
+          .thenThrow(Exception('still offline'));
+      when(() => remote.fetchAllNotes()).thenAnswer((_) async => [
+            _fakeModel(
+              id: 'pending-delete',
+              title: encService.encrypt('Remote copy', aesKey),
+              body: encService.encrypt('', aesKey),
+            ),
+          ]);
+
+      await repo.syncPendingOps();
+
+      expect(await db.getNote('pending-delete'), isNull,
+          reason:
+              'remote sync must not resurrect a note with a pending delete');
+      expect(
+        (await db.getPendingOps()).single.opType,
+        equals('delete_memory'),
+      );
     });
   });
 
@@ -771,7 +860,7 @@ void main() {
       expect(row.pinnedAt, isNull);
     });
 
-    test('queues update_note pending op when remote fails', () async {
+    test('queues update_memory pending op when remote fails', () async {
       when(() => remote.updateNote(any(), any()))
           .thenThrow(Exception('offline'));
 
@@ -779,7 +868,7 @@ void main() {
 
       final ops = await db.getPendingOps();
       expect(
-          ops.any((o) => o.opType == 'update_note' && o.recordId == 'note-1'),
+          ops.any((o) => o.opType == 'update_memory' && o.recordId == 'note-1'),
           isTrue);
     });
 
@@ -855,7 +944,7 @@ void main() {
       expect((await db.getNote('note-b'))!.pinOrder, equals(2));
     });
 
-    test('queues update_note ops for each pinned note when remote fails',
+    test('queues update_memory ops for each pinned note when remote fails',
         () async {
       when(() => remote.updatePinOrders(any())).thenThrow(Exception('offline'));
 
@@ -917,7 +1006,7 @@ void main() {
         pinnedAt: Value(now),
         pinOrder: const Value(0),
       ));
-      await db.upsertPendingOp('note-pin', 'update_note', 'note-pin');
+      await db.upsertPendingOp('note-pin', 'update_memory', 'note-pin');
 
       Map<String, dynamic>? payload;
       when(() => remote.upsertNote(any())).thenAnswer((inv) async {
@@ -966,7 +1055,7 @@ void main() {
 
       final note = await db.getNote('check-note');
       final items = await db.getChecklistItems('check-note');
-      expect(note!.noteType, equals('checklist'));
+      expect(note!.noteType, equals('plan'));
       expect(note.body, equals('One\nTwo'));
       expect(items.map((i) => i.itemText), equals(['One', 'Two']));
       expect(items.every((i) => !i.isCompleted), isTrue);
@@ -1067,8 +1156,8 @@ void main() {
         createdAt: Value(now),
         updatedAt: Value(now),
       ));
-      await db.upsertPendingOp('check-note', 'update_note', 'check-note');
-      await db.upsertPendingOp('item-1', 'update_checklist_item', 'item-1');
+      await db.upsertPendingOp('check-note', 'update_memory', 'check-note');
+      await db.upsertPendingOp('item-1', 'update_plan_item', 'item-1');
 
       when(() => remote.fetchAllChecklistItems()).thenAnswer((_) async => [
             ChecklistItemModel(
@@ -1100,9 +1189,9 @@ void main() {
           .copyWith(noteType: 'checklist')
           .toCompanion(false));
       await db.deleteChecklistItemsByNoteId('check-note');
-      await db.upsertPendingOp('check-note', 'update_note', 'check-note');
+      await db.upsertPendingOp('check-note', 'update_memory', 'check-note');
       await db.upsertPendingOp(
-          'del_checklist_item-1', 'delete_checklist_item', 'item-1');
+          'del_checklist_item-1', 'delete_plan_item', 'item-1');
 
       when(() => remote.fetchAllChecklistItems()).thenAnswer((_) async => [
             ChecklistItemModel(
@@ -1142,7 +1231,7 @@ void main() {
         createdAt: Value(now),
         updatedAt: Value(now),
       ));
-      await db.upsertPendingOp('check-note', 'update_note', 'check-note');
+      await db.upsertPendingOp('check-note', 'update_memory', 'check-note');
 
       when(() => remote.fetchAllChecklistItems()).thenAnswer((_) async => []);
 
@@ -1168,7 +1257,7 @@ void main() {
         createdAt: Value(now),
         updatedAt: Value(now),
       ));
-      await db.upsertPendingOp('offline-note', 'update_note', 'offline-note');
+      await db.upsertPendingOp('offline-note', 'update_memory', 'offline-note');
 
       when(() => remote.fetchAllNotes()).thenAnswer((_) async => [
             _fakeModel(

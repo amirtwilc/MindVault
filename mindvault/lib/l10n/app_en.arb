@@ -1,9 +1,9 @@
 {
   "@@locale": "en",
-
   "appBrand": "MindVault",
-  "@appBrand": { "description": "Brand name. Should NOT be translated." },
-
+  "@appBrand": {
+    "description": "Brand name. Should NOT be translated."
+  },
   "actionCancel": "Cancel",
   "actionSave": "Save",
   "actionDelete": "Delete",
@@ -20,11 +20,9 @@
   "actionStartFresh": "Start fresh",
   "actionContactUs": "Contact us",
   "actionOk": "OK",
-
   "splashTagline": "Your thoughts, safely encrypted.",
   "splashLoading": "Securing your vault…",
-
-  "authSubtitle": "Your encrypted AI-powered notes",
+  "authSubtitle": "Your encrypted AI-powered memories",
   "authEmailLabel": "Email",
   "authPasswordLabel": "Password",
   "authEmailRequired": "Email is required.",
@@ -78,14 +76,13 @@
   "authPasswordUpdated": "Password updated. Finishing sign-in...",
   "authSignInGoogle": "Sign in with Google",
   "authSigningIn": "Signing in...",
-  "authDisclaimer": "Your notes are end-to-end encrypted.\nOnly you can read them.",
-
+  "authDisclaimer": "Your memories are end-to-end encrypted.\nOnly you can read them.",
   "pinSetupAppBar": "Set Up Encryption",
   "pinRecoveryAppBar": "Recover Encryption Key",
   "pinSetupHeading": "Create a Recovery PIN",
   "pinRecoveryHeading": "Enter Your Recovery PIN",
-  "pinSetupBody": "This PIN protects your notes from being read by anyone but you. You'll need it if you sign in on a new device.",
-  "pinRecoveryBody": "Your notes are encrypted. Enter your recovery PIN to unlock them on this device.",
+  "pinSetupBody": "This PIN protects your memories from being read by anyone but you. You'll need it if you sign in on a new device.",
+  "pinRecoveryBody": "Your memories are encrypted. Enter your recovery PIN to unlock them on this device.",
   "pinLabel": "Recovery PIN (4–8 digits)",
   "pinConfirmLabel": "Confirm PIN",
   "pinSetupDisclaimer": "Your PIN never leaves this device. Your encrypted key is stored on our servers so you can recover it on reinstall, but it cannot be read without the PIN.",
@@ -96,9 +93,13 @@
   "pinMismatch": "PINs do not match.",
   "pinRecoverError": "Incorrect PIN. Could not recover your encryption key.",
   "pinServerError": "Server error: {message}",
-  "@pinServerError": { "placeholders": { "message": {} } },
+  "@pinServerError": {
+    "placeholders": {
+      "message": {}
+    }
+  },
   "pinStartFreshTitle": "Start fresh?",
-  "pinStartFreshBody": "This will generate a new encryption key. Your existing notes will be lost.\n\nThis cannot be undone.",
+  "pinStartFreshBody": "This will generate a new encryption key. Your existing memories will be lost.\n\nThis cannot be undone.",
   "pinEntryAppBar": "Enter Recovery PIN",
   "pinEntryHeading": "Enter your Recovery PIN",
   "pinEntryLabel": "Recovery PIN",
@@ -106,141 +107,209 @@
   "pinEntryIncorrect": "Incorrect PIN. Please try again.",
   "pinSetupError": "Encryption setup failed. Please try again.",
   "pinLockedSeconds": "Too many failed attempts. Try again in {seconds}s.",
-  "@pinLockedSeconds": { "placeholders": { "seconds": { "type": "int" } } },
+  "@pinLockedSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "pinLockedMinutes": "Too many failed attempts. Try again in {minutes}m.",
-  "@pinLockedMinutes": { "placeholders": { "minutes": { "type": "int" } } },
-
-  "navAllNotes": "All Notes",
-  "navJots": "Jots",
-  "navCategories": "Categories",
-  "navSearch": "Search",
+  "@pinLockedMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "navAllNotes": "Archive",
+  "navJots": "Sparks",
+  "navCategories": "Clusters",
+  "navSearch": "Recall",
   "navSettings": "Settings",
-
-  "homeNoCategoriesTitle": "No categories yet.\nTap + to create one.",
-  "newCategoryDialogTitle": "New Category",
-  "categoryNameHint": "Category name",
+  "homeNoCategoriesTitle": "No clusters yet.\nTap + to create one.",
+  "newCategoryDialogTitle": "New Cluster",
+  "categoryNameHint": "Cluster name",
   "categoryColorLabel": "Color",
   "categoryNameInUse": "Name already in use",
-  "categoryLimitReached": "Category limit reached ({max}). {upgradeHint}",
+  "categoryLimitReached": "Cluster limit reached ({max}). {upgradeHint}",
   "@categoryLimitReached": {
-    "placeholders": { "max": { "type": "int" }, "upgradeHint": {} }
+    "placeholders": {
+      "max": {
+        "type": "int"
+      },
+      "upgradeHint": {}
+    }
   },
-  "noteLimitReached": "Note limit reached ({max}). {upgradeHint}",
+  "noteLimitReached": "Memory limit reached ({max}). {upgradeHint}",
   "@noteLimitReached": {
-    "placeholders": { "max": { "type": "int" }, "upgradeHint": {} }
+    "placeholders": {
+      "max": {
+        "type": "int"
+      },
+      "upgradeHint": {}
+    }
   },
   "upgradeHintFree": "Upgrade to Pro for more.",
   "upgradeHintNone": "",
-
-  "notesListTitleFallback": "Notes",
-  "notesListEmptyTitle": "No notes yet",
-  "notesListEmptyBody": "Tap + to create your first note",
+  "notesListTitleFallback": "Memories",
+  "notesListEmptyTitle": "No memories yet",
+  "notesListEmptyBody": "Tap + to create your first memory",
   "noteUntitled": "(untitled)",
-  "noteDeletedSnack": "Note deleted",
-  "deleteNoteTitle": "Delete note?",
+  "noteDeletedSnack": "Memory deleted",
+  "deleteNoteTitle": "Delete memory?",
   "deleteNoteBody": "This action cannot be undone.",
-  "privateAuthReason": "Authenticate to view this private note",
+  "privateAuthReason": "Authenticate to view this private memory",
   "renameCategory": "Rename",
   "changeCategoryColor": "Change color",
-  "deleteCategoryAction": "Delete category",
-  "renameCategoryDialog": "Rename Category",
-  "categoryColorDialog": "Category Color",
+  "deleteCategoryAction": "Delete cluster",
+  "renameCategoryDialog": "Rename Cluster",
+  "categoryColorDialog": "Cluster Color",
   "deleteCategoryConfirmTitle": "Delete \"{name}\"?",
-  "@deleteCategoryConfirmTitle": { "placeholders": { "name": {} } },
-  "deleteCategoryConfirmBody": "All notes in this category will also be deleted.",
-
-  "allNotesEmptyTitle": "No notes yet",
-  "allNotesEmptyBody": "Create a category and add your first note",
-  "allNotesCreateFirst": "Create a category first",
-
-  "editorNewTitle": "New Note",
-  "editorEditTitle": "Edit Note",
+  "@deleteCategoryConfirmTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "deleteCategoryConfirmBody": "All memories in this cluster will also be deleted.",
+  "allNotesEmptyTitle": "No memories yet",
+  "allNotesEmptyBody": "Create a cluster and add your first memory",
+  "allNotesCreateFirst": "Create a cluster first",
+  "editorNewTitle": "New Memory",
+  "editorEditTitle": "Edit Memory",
   "editorSaving": "Saving…",
   "editorSavedAt": "Saved {time}",
-  "@editorSavedAt": { "placeholders": { "time": {} } },
+  "@editorSavedAt": {
+    "placeholders": {
+      "time": {}
+    }
+  },
   "editorTitleHint": "Title",
   "editorBodyHint": "Start writing…",
-  "editorChangeCategory": "Change category",
-  "editorNewCategoryEntry": "New category…",
+  "editorChangeCategory": "Change cluster",
+  "editorNewCategoryEntry": "New cluster…",
   "editorTooltipPublic": "Public",
   "editorTooltipPrivate": "Private",
-  "editorTooltipDelete": "Delete note",
-  "editorTooltipEdit": "Edit note",
-  "editorTooltipCopy": "Copy note",
+  "editorTooltipDelete": "Delete memory",
+  "editorTooltipEdit": "Edit memory",
+  "editorTooltipCopy": "Copy memory",
   "reminderTooltipSet": "Set reminder",
   "reminderTooltipActive": "Reminder set",
   "reminderDialogTitle": "Reminder",
   "reminderScheduledFor": "Scheduled for {time}",
-  "@reminderScheduledFor": { "placeholders": { "time": {} } },
+  "@reminderScheduledFor": {
+    "placeholders": {
+      "time": {}
+    }
+  },
   "reminderEdit": "Edit",
   "reminderRemove": "Remove",
-  "reminderSaveNoteFirst": "Add a title or note body before setting a reminder.",
+  "reminderSaveNoteFirst": "Add a title or memory body before setting a reminder.",
   "reminderNotificationsRequired": "Notification permission must be granted for reminders.",
   "reminderMayBeDelayed": "Exact alarms are not enabled. This reminder may be delayed.",
   "reminderBackgroundPermissionTitle": "Allow background reminders",
   "reminderBackgroundPermissionBody": "Some devices require MindVault to be allowed to work in the background or autostart so exact reminders can fire when the app is closed. If a settings page opens, enable MindVault and return to the app.",
   "reminderBackgroundPermissionOpenSettings": "Open settings",
   "reminderMustBeFuture": "Choose a future date and time.",
-  "reminderNoteNotFound": "That reminder note could not be found.",
-  "reminderNotificationBody": "Tap to open this note",
-  "editorCopyMenuItem": "Copy note",
-  "editorCopiedSnack": "Note copied",
-  "editorSttRecord": "Record voice",
+  "reminderNoteNotFound": "That reminder memory could not be found.",
+  "reminderNotificationBody": "Tap to open this memory",
+  "editorCopyMenuItem": "Copy memory",
+  "editorCopiedSnack": "Memory copied",
   "editorSttStop": "Stop recording",
-
-  "searchHint": "Search notes…",
-  "searchIdleTitle": "Search your notes",
-  "searchIdleBody": "Type keywords or ask a question. \nPrivate notes are ignored.",
+  "searchHint": "Search memories…",
+  "searchIdleTitle": "Search your memories",
+  "searchIdleBody": "Type keywords or ask a question. \nPrivate memories are ignored.",
   "searchNoResults": "No results for \"{query}\"",
-  "@searchNoResults": { "placeholders": { "query": {} } },
+  "@searchNoResults": {
+    "placeholders": {
+      "query": {}
+    }
+  },
   "searchTryDifferent": "Try different keywords",
   "searchMoreLines": "+{count} more lines",
-  "@searchMoreLines": { "placeholders": { "count": { "type": "int" } } },
-  "searchTryAiHint": "Not what you were looking for? Try AI search",
-  "searchNoResultsAiCta": "No results found. Click to perform an AI Search",
-  "searchHistoryButtonTooltip": "AI search history",
+  "@searchMoreLines": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchTryAiHint": "Not what you were looking for? Try AI recall",
+  "searchNoResultsAiCta": "No results found. Click to perform an AI Recall",
+  "searchHistoryButtonTooltip": "AI recall history",
   "searchBackToResults": "Back to results",
-  "widgetSearchTitle": "Search your notes",
-
-  "aiSearchTitle": "AI Search",
-  "aiSearchHint": "Ask about your notes…",
-  "aiSearchLoading": "Searching your notes…",
-  "aiSearchIdleTitle": "Ask anything about your notes",
-  "aiSearchIdleBody": "AI searches your notes and synthesises an answer",
-  "aiSearchSuggestion1": "Summarize my workout notes",
+  "widgetSearchTitle": "Recall your memories",
+  "aiSearchTitle": "AI Recall",
+  "aiSearchHint": "Ask about your memories…",
+  "aiSearchLoading": "Recalling your memories…",
+  "aiSearchIdleTitle": "Ask anything about your memories",
+  "aiSearchIdleBody": "AI recalls your memories and synthesises an answer",
+  "aiSearchSuggestion1": "Summarize my workout memories",
   "aiSearchSuggestion2": "What did I write about work?",
-  "aiSearchSuggestion3": "Find notes about my goals",
+  "aiSearchSuggestion3": "Find memories about my goals",
   "aiSearchSuggestion4": "What are my travel plans?",
   "aiSearchSources": "Sources",
   "aiSearchFromCache": "From cache",
   "aiSearchRateTitle": "Rate limit reached",
   "aiSearchRateSeconds": "Try again in {seconds}s",
-  "@aiSearchRateSeconds": { "placeholders": { "seconds": { "type": "int" } } },
+  "@aiSearchRateSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "aiSearchRateMinutes": "Try again in {minutes}m",
-  "@aiSearchRateMinutes": { "placeholders": { "minutes": { "type": "int" } } },
+  "@aiSearchRateMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "aiSearchRateResetsAt": "Resets at {time}",
-  "@aiSearchRateResetsAt": { "placeholders": { "time": {} } },
+  "@aiSearchRateResetsAt": {
+    "placeholders": {
+      "time": {}
+    }
+  },
   "aiSearchRateDefault": "Please wait before searching again",
   "aiSearchErrorDailyLimit": "Daily AI limit reached. Try again tomorrow.",
   "aiSearchErrorSessionExpired": "Session expired. Please sign in again.",
   "aiSearchErrorUnavailable": "AI is not available right now.",
   "aiSearchErrorNetwork": "No connection. Check your internet and try again.",
   "aiSearchErrorGeneric": "AI request failed. Please try again.",
-  "aiInfoTitle": "About AI Search",
-  "aiInfoBody": "AI Search reads your notes to answer your question.\n\n🔒 Private notes are never sent to AI.\n\n📄 Very long notes are shortened before being sent.",
+  "aiInfoTitle": "About AI Recall",
+  "aiInfoBody": "AI Recall reads your memories to answer your question.\n\n🔒 Private memories are never sent to AI.\n\n📄 Very long memories are shortened before being sent.",
   "aiInfoDismiss": "Got it",
   "aiAnswerCopied": "Copied to clipboard",
-
-  "aiHistoryTitle": "AI Search History",
-  "aiHistoryEmpty": "No search history yet",
+  "aiHistoryTitle": "AI Recall History",
+  "aiHistoryEmpty": "No recall history yet",
   "aiHistoryRelativeNow": "Just now",
   "aiHistoryRelativeMinutes": "{count,plural, =1{1 minute ago} other{{count} minutes ago}}",
-  "@aiHistoryRelativeMinutes": { "placeholders": { "count": { "type": "int" } } },
+  "@aiHistoryRelativeMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "aiHistoryRelativeHours": "{count,plural, =1{1 hour ago} other{{count} hours ago}}",
-  "@aiHistoryRelativeHours": { "placeholders": { "count": { "type": "int" } } },
+  "@aiHistoryRelativeHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "aiHistoryRelativeDays": "{count,plural, =1{1 day ago} other{{count} days ago}}",
-  "@aiHistoryRelativeDays": { "placeholders": { "count": { "type": "int" } } },
-
+  "@aiHistoryRelativeDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "settingsTitle": "Settings",
   "settingsSectionAccount": "Account",
   "settingsSectionUsage": "Usage",
@@ -250,13 +319,13 @@
   "settingsUnknownUser": "Unknown",
   "settingsTierFree": "Free",
   "settingsTierPro": "Pro",
-  "settingsUsageAi": "AI searches today",
-  "settingsUsageJotsAi": "Jot AI organizes today",
-  "settingsUsageNotes": "Notes",
-  "settingsUsageCategories": "Categories",
+  "settingsUsageAi": "AI recalls today",
+  "settingsUsageJotsAi": "Spark AI organizes today",
+  "settingsUsageNotes": "Memories",
+  "settingsUsageCategories": "Clusters",
   "settingsUpgradeTitle": "Upgrade to Pro",
-  "settingsUpgradeSubtitle": "50 AI searches/day · 1000 notes · 50 categories",
-  "settingsUpgradeDialogBody": "Pro gives you 50 AI searches/day, up to 1000 notes, 50 categories, and 20,000 chars per note.",
+  "settingsUpgradeSubtitle": "30 AI recalls/day · 1000 memories · 50 clusters",
+  "settingsUpgradeDialogBody": "Pro gives you 30 AI recalls/day, up to 1000 memories, 50 clusters, and 20,000 chars per memory.",
   "contactUsMessageHint": "Your message (optional)…",
   "contactUsNoEmailApp": "No email app found. Please email us at:",
   "contactUsCopied": "Email address copied",
@@ -268,77 +337,105 @@
   "settingsLanguageHindi": "हिन्दी",
   "settingsLanguageSpanish": "Español",
   "settingsLanguageFrench": "Français",
-
-  "jotsAddTooltip": "Add jot",
-  "jotAddDialogTitle": "New Jot",
+  "jotsAddTooltip": "Add spark",
+  "jotAddDialogTitle": "New Spark",
   "jotInputHint": "Capture a quick thought",
   "jotSavedSnack": "Thought saved",
   "jotSaveUnavailable": "Thought could not be saved. Please try again.",
   "jotCharCounter": "{count}/{max} characters",
-  "@jotCharCounter": { "placeholders": { "count": { "type": "int" }, "max": { "type": "int" } } },
-  "jotsEmptyTitle": "No jots waiting",
+  "@jotCharCounter": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "jotsEmptyTitle": "No sparks waiting",
   "jotsEmptyBody": "Tap + whenever a thought pops up.",
   "jotsSortOldestFirst": "Oldest first",
   "jotsSortNewestFirst": "Newest first",
   "jotsOrganizeAi": "Organize with AI",
   "jotsAcceptAll": "Accept all suggestions",
-  "jotsAiInfoTitle": "About Jots AI",
-  "jotsAiInfoBody": "Jots AI suggests how to organize unhandled thoughts. Only unsent jots, category names, and note titles are sent. Note bodies and private notes are not sent, and long lists may be limited.",
+  "jotsAiInfoTitle": "About Sparks AI",
+  "jotsAiInfoBody": "Sparks AI suggests how to organize unhandled thoughts. Only unsent sparks, cluster names, and memory titles are sent. Memory bodies and private memories are not sent, and long lists may be limited.",
   "jotsAiNoNew": "No new thoughts to organize.",
-  "jotsAiQuota": "Daily Jots AI limit reached.",
-  "jotsAiFailed": "Could not organize jots. Try again.",
+  "jotsAiQuota": "Daily Sparks AI limit reached.",
+  "jotsAiFailed": "Could not organize sparks. Try again.",
   "jotsAiSuggestionsProvided": "{count,plural, =0{0 suggestions were provided. Try writing more specific thoughts next time.} =1{1 suggestion was provided.} other{{count} suggestions were provided.}}",
-  "@jotsAiSuggestionsProvided": { "placeholders": { "count": { "type": "int" } } },
-  "jotsAiLimitedTo30": "Only the oldest 30 new jots were sent.",
+  "@jotsAiSuggestionsProvided": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jotsAiLimitedTo30": "Only the oldest 30 new sparks were sent.",
   "jotsSelectedCount": "{count} selected",
-  "@jotsSelectedCount": { "placeholders": { "count": { "type": "int" } } },
-  "jotsDeleteSelectedTitle": "Delete selected jots?",
+  "@jotsSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jotsDeleteSelectedTitle": "Delete selected sparks?",
   "jotsDeleteSelectedBody": "Selected thoughts will be permanently deleted.",
   "jotCreatedAt": "Created {time}",
-  "@jotCreatedAt": { "placeholders": { "time": {} } },
-  "jotActionsTooltip": "Handle jot",
+  "@jotCreatedAt": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "jotActionsTooltip": "Handle spark",
   "jotActionsTitle": "Handle thought",
-  "jotActionCreateNote": "Create new note",
-  "jotActionAddToNote": "Add to existing note",
+  "jotActionCreateNote": "Create new memory",
+  "jotActionAddToNote": "Add to existing memory",
   "jotActionCreateAlert": "Create alert",
   "jotActionDeleteThought": "Delete thought",
   "jotActionSuggestedByAi": "These actions were suggested by AI.",
   "jotActionUpdateThought": "Update thought text",
   "jotActionUpdatedThoughtText": "Updated thought",
   "jotActionUpdatedThoughtHint": "Example: Lord of the Rings",
-  "jotActionNewNoteTitle": "Note title",
-  "jotActionCategory": "Category",
-  "jotActionNewCategory": "New category",
-  "jotActionNote": "Note",
-  "jotActionNoNotes": "No notes in this category",
-  "jotActionLock": "Lock note",
+  "jotActionNewNoteTitle": "Memory title",
+  "jotActionCategory": "Cluster",
+  "jotActionNewCategory": "New cluster",
+  "jotActionNote": "Memory",
+  "jotActionNoNotes": "No memories in this cluster",
+  "jotActionLock": "Lock memory",
   "jotActionReminderWhen": "Alert at {time}",
-  "@jotActionReminderWhen": { "placeholders": { "time": {} } },
+  "@jotActionReminderWhen": {
+    "placeholders": {
+      "time": {}
+    }
+  },
   "jotActionPickReminder": "Choose date and time",
   "jotActionAccept": "Accept",
   "jotActionChooseFuture": "Choose a future date and time.",
   "jotNotificationBody": "Tap to organize this thought",
   "jotReminderNotFound": "That thought could not be found.",
-
-  "widgetAddNoteTooltip": "Add note",
-  "widgetComposeTitle": "New Note",
-  "widgetComposeDiscardTitle": "Discard note?",
-  "widgetComposeDiscardBody": "Your note will not be saved.",
-  "widgetComposeNoCategories": "No categories found.\nOpen MindVault to create one first.",
-  "widgetComposeCategoryLabel": "Category",
+  "widgetAddNoteTooltip": "Add memory",
+  "widgetComposeTitle": "New Memory",
+  "widgetComposeDiscardTitle": "Discard memory?",
+  "widgetComposeDiscardBody": "Your memory will not be saved.",
+  "widgetComposeNoCategories": "No clusters found.\nOpen MindVault to create one first.",
+  "widgetComposeCategoryLabel": "Cluster",
   "noteTypeLabel": "Type",
-  "noteTypeText": "Text",
-  "noteTypeChecklist": "Checklist",
+  "noteTypeText": "Record",
+  "noteTypeChecklist": "Plan",
   "removeDoneTasksLabel": "Remove done tasks",
   "removeDoneTasksTitle": "Remove done tasks?",
   "removeDoneTasksBody": "Completed tasks will be permanently removed.",
-  "widgetViewEditTitle": "Edit Note",
+  "widgetViewEditTitle": "Edit Memory",
   "widgetViewEdit": "Edit",
   "widgetViewDelete": "Delete",
   "widgetViewUnlocking": "Unlocking…",
   "widgetViewNoContent": "No content",
-  "widgetViewNotFound": "Note not found",
+  "widgetViewNotFound": "Memory not found",
   "widgetViewDiscardTitle": "Discard changes?",
   "widgetViewDiscardBody": "Your edits will not be saved.",
-  "widgetViewKeepEditing": "Keep editing"
+  "widgetViewKeepEditing": "Keep editing",
+  "editorSttRecord": "Record voice"
 }

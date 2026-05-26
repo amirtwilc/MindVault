@@ -10,6 +10,9 @@ part 'app_database.g.dart';
 // ── Tables ────────────────────────────────────────────────────
 
 class CategoriesTable extends Table {
+  @override
+  String get tableName => 'clusters';
+
   TextColumn get id => text()();
   TextColumn get userId => text().named('user_id')();
   TextColumn get name => text()();
@@ -24,6 +27,9 @@ class CategoriesTable extends Table {
 }
 
 class NotesTable extends Table {
+  @override
+  String get tableName => 'memories';
+
   TextColumn get id => text()();
   TextColumn get userId => text().named('user_id')();
   TextColumn get categoryId => text().named('category_id')();
@@ -37,7 +43,7 @@ class NotesTable extends Table {
   DateTimeColumn get lastOpenedAt =>
       dateTime().named('last_opened_at').nullable()();
   TextColumn get noteType =>
-      text().named('note_type').withDefault(const Constant('text'))();
+      text().named('note_type').withDefault(const Constant('record'))();
   BoolColumn get isPinned =>
       boolean().named('is_pinned').withDefault(const Constant(false))();
   DateTimeColumn get pinnedAt => dateTime().named('pinned_at').nullable()();
@@ -48,9 +54,13 @@ class NotesTable extends Table {
 }
 
 class ChecklistItemsTable extends Table {
+  @override
+  String get tableName => 'plan_items';
+
   TextColumn get id => text()();
-  TextColumn get noteId => text().named('note_id').customConstraint(
-      'NOT NULL REFERENCES notes_table(id) ON DELETE CASCADE')();
+  TextColumn get noteId => text()
+      .named('note_id')
+      .customConstraint('NOT NULL REFERENCES memories(id) ON DELETE CASCADE')();
   TextColumn get userId => text().named('user_id')();
   TextColumn get itemText => text().named('text')();
   BoolColumn get isCompleted =>
@@ -100,6 +110,9 @@ class PendingOpsTable extends Table {
 }
 
 class NoteRemindersTable extends Table {
+  @override
+  String get tableName => 'memory_reminders';
+
   TextColumn get noteId => text().named('note_id')();
   TextColumn get userId => text().named('user_id')();
   DateTimeColumn get remindAt => dateTime().named('remind_at')();
@@ -112,6 +125,9 @@ class NoteRemindersTable extends Table {
 }
 
 class ReminderDeviceStateTable extends Table {
+  @override
+  String get tableName => 'memory_reminder_device_state';
+
   TextColumn get noteId => text().named('note_id')();
   TextColumn get reminderVersion => text().named('reminder_version')();
   IntColumn get notificationId => integer().named('notification_id')();
@@ -124,6 +140,9 @@ class ReminderDeviceStateTable extends Table {
 }
 
 class JotsTable extends Table {
+  @override
+  String get tableName => 'sparks';
+
   TextColumn get id => text()();
   TextColumn get userId => text().named('user_id')();
   TextColumn get jotText => text().named('text')();
@@ -143,7 +162,7 @@ class JotsTable extends Table {
 }
 
 // ── FTS5 virtual table (defined via raw SQL in migration) ─────
-// notes_fts: content table pointing at NotesTable
+// memories_fts: content table pointing at NotesTable
 // Created in migration, not as a Drift table class.
 
 // ── Database ──────────────────────────────────────────────────
@@ -165,11 +184,14 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 12;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
         onUpgrade: (m, from, to) async {
+          if (from < 11) {
+            await _renameLegacyTablesForRevamp();
+          }
           if (from < 2) {
             await m.addColumn(categoriesTable, categoriesTable.color);
           }
@@ -202,43 +224,140 @@ class AppDatabase extends _$AppDatabase {
           if (from < 10) {
             await m.createTable(jotsTable);
           }
+          if (from < 11) {
+            await _remapPendingOpsForRenaming();
+            await _rebuildMemoryFts();
+          }
+          if (from < 12) {
+            await _repairRenamedLocalSchema();
+          }
         },
         onCreate: (m) async {
           await m.createAll();
-          // Create FTS5 virtual table for full-text search
-          await customStatement('''
-            CREATE VIRTUAL TABLE IF NOT EXISTS notes_fts
-            USING fts5(
-              id UNINDEXED,
-              title,
-              body,
-              content=notes_table,
-              content_rowid=rowid
-            )
-          ''');
-          // Triggers to keep FTS index in sync
-          await customStatement('''
-            CREATE TRIGGER notes_ai AFTER INSERT ON notes_table BEGIN
-              INSERT INTO notes_fts(rowid, id, title, body)
-              VALUES (new.rowid, new.id, new.title, new.body);
-            END
-          ''');
-          await customStatement('''
-            CREATE TRIGGER notes_ad AFTER DELETE ON notes_table BEGIN
-              INSERT INTO notes_fts(notes_fts, rowid, id, title, body)
-              VALUES ('delete', old.rowid, old.id, old.title, old.body);
-            END
-          ''');
-          await customStatement('''
-            CREATE TRIGGER notes_au AFTER UPDATE ON notes_table BEGIN
-              INSERT INTO notes_fts(notes_fts, rowid, id, title, body)
-              VALUES ('delete', old.rowid, old.id, old.title, old.body);
-              INSERT INTO notes_fts(rowid, id, title, body)
-              VALUES (new.rowid, new.id, new.title, new.body);
-            END
-          ''');
+          await _rebuildMemoryFts();
         },
       );
+
+  Future<bool> _tableExists(String name) async {
+    final rows = await customSelect(
+      "SELECT name FROM sqlite_master WHERE type IN ('table', 'view') AND name = ?",
+      variables: [Variable.withString(name)],
+    ).get();
+    return rows.isNotEmpty;
+  }
+
+  Future<void> _renameTableIfExists(String oldName, String newName) async {
+    if (!await _tableExists(oldName) || await _tableExists(newName)) return;
+    await customStatement('ALTER TABLE $oldName RENAME TO $newName');
+  }
+
+  Future<void> _renameLegacyTablesForRevamp() async {
+    await _renameTableIfExists('categories_table', 'clusters');
+    await _renameTableIfExists('notes_table', 'memories');
+    await _renameTableIfExists('checklist_items_table', 'plan_items');
+    await _renameTableIfExists('note_reminders', 'memory_reminders');
+    await _renameTableIfExists(
+      'reminder_device_state_table',
+      'memory_reminder_device_state',
+    );
+    await _renameTableIfExists('jots_table', 'sparks');
+  }
+
+  Future<void> _repairRenamedLocalSchema() async {
+    await _renameLegacyTablesForRevamp();
+
+    await customStatement('''
+      CREATE TABLE IF NOT EXISTS memory_reminders (
+        note_id TEXT NOT NULL PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        remind_at INTEGER NOT NULL,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        deleted_at INTEGER NULL
+      )
+    ''');
+    await customStatement('''
+      CREATE TABLE IF NOT EXISTS memory_reminder_device_state (
+        note_id TEXT NOT NULL PRIMARY KEY,
+        reminder_version TEXT NOT NULL,
+        notification_id INTEGER NOT NULL,
+        scheduled_at INTEGER NULL,
+        fired_at INTEGER NULL
+      )
+    ''');
+
+    await _remapPendingOpsForRenaming();
+    await _rebuildMemoryFts();
+  }
+
+  Future<void> _remapPendingOpsForRenaming() async {
+    const replacements = {
+      'create_note': 'create_memory',
+      'update_note': 'update_memory',
+      'delete_note': 'delete_memory',
+      'create_category': 'upsert_cluster',
+      'update_category': 'upsert_cluster',
+      'upsert_category': 'upsert_cluster',
+      'delete_category': 'delete_cluster',
+      'create_jot': 'create_spark',
+      'update_jot': 'update_spark',
+      'delete_jot': 'delete_spark',
+      'create_checklist_item': 'create_plan_item',
+      'update_checklist_item': 'update_plan_item',
+      'delete_checklist_item': 'delete_plan_item',
+    };
+    for (final entry in replacements.entries) {
+      await customStatement(
+        'UPDATE pending_ops_table SET op_type = ? WHERE op_type = ?',
+        [entry.value, entry.key],
+      );
+    }
+  }
+
+  Future<void> _rebuildMemoryFts() async {
+    await customStatement('DROP TRIGGER IF EXISTS notes_ai');
+    await customStatement('DROP TRIGGER IF EXISTS notes_ad');
+    await customStatement('DROP TRIGGER IF EXISTS notes_au');
+    await customStatement('DROP TRIGGER IF EXISTS memories_ai');
+    await customStatement('DROP TRIGGER IF EXISTS memories_ad');
+    await customStatement('DROP TRIGGER IF EXISTS memories_au');
+    await customStatement('DROP TABLE IF EXISTS notes_fts');
+    await customStatement('DROP TABLE IF EXISTS memories_fts');
+    await customStatement('''
+      CREATE VIRTUAL TABLE IF NOT EXISTS memories_fts
+      USING fts5(
+        id UNINDEXED,
+        title,
+        body,
+        content=memories,
+        content_rowid=rowid
+      )
+    ''');
+    await customStatement('''
+      CREATE TRIGGER memories_ai AFTER INSERT ON memories BEGIN
+        INSERT INTO memories_fts(rowid, id, title, body)
+        VALUES (new.rowid, new.id, new.title, new.body);
+      END
+    ''');
+    await customStatement('''
+      CREATE TRIGGER memories_ad AFTER DELETE ON memories BEGIN
+        INSERT INTO memories_fts(memories_fts, rowid, id, title, body)
+        VALUES ('delete', old.rowid, old.id, old.title, old.body);
+      END
+    ''');
+    await customStatement('''
+      CREATE TRIGGER memories_au AFTER UPDATE ON memories BEGIN
+        INSERT INTO memories_fts(memories_fts, rowid, id, title, body)
+        VALUES ('delete', old.rowid, old.id, old.title, old.body);
+        INSERT INTO memories_fts(rowid, id, title, body)
+        VALUES (new.rowid, new.id, new.title, new.body);
+      END
+    ''');
+    await customStatement('''
+      INSERT INTO memories_fts(rowid, id, title, body)
+      SELECT rowid, id, title, body FROM memories
+    ''');
+  }
 
   // ── Categories queries ──────────────────────────────────────
 
@@ -565,9 +684,9 @@ class AppDatabase extends _$AppDatabase {
     final results = await customSelect(
       '''
       SELECT n.id
-      FROM notes_fts f
-      JOIN notes_table n ON n.id = f.id
-      WHERE notes_fts MATCH ? AND n.user_id = ?
+      FROM memories_fts f
+      JOIN memories n ON n.id = f.id
+      WHERE memories_fts MATCH ? AND n.user_id = ?
         AND n.is_private = 0
       ORDER BY rank
       LIMIT 15

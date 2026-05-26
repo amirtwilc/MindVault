@@ -42,7 +42,8 @@ class PinAttemptTracker {
       // Each additional failure doubles the lockout: 30s → 60s → 120s → …
       final delaySecs = _baseDelaySeconds * (1 << (extra - 1).clamp(0, 10));
       final until = DateTime.now().add(Duration(seconds: delaySecs));
-      await _storage.write(key: _lockedUntilKey, value: until.toIso8601String());
+      await _storage.write(
+          key: _lockedUntilKey, value: until.toIso8601String());
     }
   }
 
@@ -147,14 +148,16 @@ class EncryptionService {
     for (final ivLen in [_ivLength, _legacyIvLength]) {
       try {
         final iv = IV(Uint8List.fromList(payload.sublist(0, ivLen)));
-        final ciphertext = Encrypted(Uint8List.fromList(payload.sublist(ivLen)));
+        final ciphertext =
+            Encrypted(Uint8List.fromList(payload.sublist(ivLen)));
         final decryptedBytes = encrypter.decryptBytes(ciphertext, iv: iv);
         return Key(Uint8List.fromList(decryptedBytes));
       } catch (_) {
         continue;
       }
     }
-    throw StateError('unwrapKey: GCM authentication failed — wrong PIN or corrupt data');
+    throw StateError(
+        'unwrapKey: GCM authentication failed — wrong PIN or corrupt data');
   }
 
   // ── Isolate-safe static variants (no platform channels) ─────────────────
@@ -185,13 +188,15 @@ class EncryptionService {
     for (final ivLen in [_ivLength, _legacyIvLength]) {
       try {
         final iv = IV(Uint8List.fromList(payload.sublist(0, ivLen)));
-        final ciphertext = Encrypted(Uint8List.fromList(payload.sublist(ivLen)));
+        final ciphertext =
+            Encrypted(Uint8List.fromList(payload.sublist(ivLen)));
         return Uint8List.fromList(encrypter.decryptBytes(ciphertext, iv: iv));
       } catch (_) {
         continue;
       }
     }
-    throw StateError('unwrapKeyStatic: GCM authentication failed — wrong PIN or corrupt data');
+    throw StateError(
+        'unwrapKeyStatic: GCM authentication failed — wrong PIN or corrupt data');
   }
 
   static Uint8List _staticRandomBytes(int length) {
@@ -235,7 +240,8 @@ class EncryptionService {
         continue;
       }
     }
-    throw StateError('decrypt: GCM authentication failed — wrong key or corrupt ciphertext');
+    throw StateError(
+        'decrypt: GCM authentication failed — wrong key or corrupt ciphertext');
   }
 
   // ── Private helpers ───────────────────────────────────────────────────────

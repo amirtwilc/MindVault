@@ -7,11 +7,13 @@ enum NoteType {
   checklist;
 
   static NoteType fromStorage(String value) =>
-      value == 'checklist' ? NoteType.checklist : NoteType.text;
+      value == 'checklist' || value == 'plan'
+          ? NoteType.checklist
+          : NoteType.text;
 
   String get storageValue => switch (this) {
-        NoteType.text => 'text',
-        NoteType.checklist => 'checklist',
+        NoteType.text => 'record',
+        NoteType.checklist => 'plan',
       };
 }
 

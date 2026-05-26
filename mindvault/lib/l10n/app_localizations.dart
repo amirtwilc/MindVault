@@ -223,7 +223,7 @@ abstract class AppStrings {
   /// No description provided for @authSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Your encrypted AI-powered notes'**
+  /// **'Your encrypted AI-powered memories'**
   String get authSubtitle;
 
   /// No description provided for @authEmailLabel.
@@ -547,7 +547,7 @@ abstract class AppStrings {
   /// No description provided for @authDisclaimer.
   ///
   /// In en, this message translates to:
-  /// **'Your notes are end-to-end encrypted.\nOnly you can read them.'**
+  /// **'Your memories are end-to-end encrypted.\nOnly you can read them.'**
   String get authDisclaimer;
 
   /// No description provided for @pinSetupAppBar.
@@ -577,13 +577,13 @@ abstract class AppStrings {
   /// No description provided for @pinSetupBody.
   ///
   /// In en, this message translates to:
-  /// **'This PIN protects your notes from being read by anyone but you. You\'ll need it if you sign in on a new device.'**
+  /// **'This PIN protects your memories from being read by anyone but you. You\'ll need it if you sign in on a new device.'**
   String get pinSetupBody;
 
   /// No description provided for @pinRecoveryBody.
   ///
   /// In en, this message translates to:
-  /// **'Your notes are encrypted. Enter your recovery PIN to unlock them on this device.'**
+  /// **'Your memories are encrypted. Enter your recovery PIN to unlock them on this device.'**
   String get pinRecoveryBody;
 
   /// No description provided for @pinLabel.
@@ -655,7 +655,7 @@ abstract class AppStrings {
   /// No description provided for @pinStartFreshBody.
   ///
   /// In en, this message translates to:
-  /// **'This will generate a new encryption key. Your existing notes will be lost.\n\nThis cannot be undone.'**
+  /// **'This will generate a new encryption key. Your existing memories will be lost.\n\nThis cannot be undone.'**
   String get pinStartFreshBody;
 
   /// No description provided for @pinEntryAppBar.
@@ -709,25 +709,25 @@ abstract class AppStrings {
   /// No description provided for @navAllNotes.
   ///
   /// In en, this message translates to:
-  /// **'All Notes'**
+  /// **'Archive'**
   String get navAllNotes;
 
   /// No description provided for @navJots.
   ///
   /// In en, this message translates to:
-  /// **'Jots'**
+  /// **'Sparks'**
   String get navJots;
 
   /// No description provided for @navCategories.
   ///
   /// In en, this message translates to:
-  /// **'Categories'**
+  /// **'Clusters'**
   String get navCategories;
 
   /// No description provided for @navSearch.
   ///
   /// In en, this message translates to:
-  /// **'Search'**
+  /// **'Recall'**
   String get navSearch;
 
   /// No description provided for @navSettings.
@@ -739,19 +739,19 @@ abstract class AppStrings {
   /// No description provided for @homeNoCategoriesTitle.
   ///
   /// In en, this message translates to:
-  /// **'No categories yet.\nTap + to create one.'**
+  /// **'No clusters yet.\nTap + to create one.'**
   String get homeNoCategoriesTitle;
 
   /// No description provided for @newCategoryDialogTitle.
   ///
   /// In en, this message translates to:
-  /// **'New Category'**
+  /// **'New Cluster'**
   String get newCategoryDialogTitle;
 
   /// No description provided for @categoryNameHint.
   ///
   /// In en, this message translates to:
-  /// **'Category name'**
+  /// **'Cluster name'**
   String get categoryNameHint;
 
   /// No description provided for @categoryColorLabel.
@@ -769,13 +769,13 @@ abstract class AppStrings {
   /// No description provided for @categoryLimitReached.
   ///
   /// In en, this message translates to:
-  /// **'Category limit reached ({max}). {upgradeHint}'**
+  /// **'Cluster limit reached ({max}). {upgradeHint}'**
   String categoryLimitReached(int max, Object upgradeHint);
 
   /// No description provided for @noteLimitReached.
   ///
   /// In en, this message translates to:
-  /// **'Note limit reached ({max}). {upgradeHint}'**
+  /// **'Memory limit reached ({max}). {upgradeHint}'**
   String noteLimitReached(int max, Object upgradeHint);
 
   /// No description provided for @upgradeHintFree.
@@ -793,19 +793,19 @@ abstract class AppStrings {
   /// No description provided for @notesListTitleFallback.
   ///
   /// In en, this message translates to:
-  /// **'Notes'**
+  /// **'Memories'**
   String get notesListTitleFallback;
 
   /// No description provided for @notesListEmptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'No notes yet'**
+  /// **'No memories yet'**
   String get notesListEmptyTitle;
 
   /// No description provided for @notesListEmptyBody.
   ///
   /// In en, this message translates to:
-  /// **'Tap + to create your first note'**
+  /// **'Tap + to create your first memory'**
   String get notesListEmptyBody;
 
   /// No description provided for @noteUntitled.
@@ -817,13 +817,13 @@ abstract class AppStrings {
   /// No description provided for @noteDeletedSnack.
   ///
   /// In en, this message translates to:
-  /// **'Note deleted'**
+  /// **'Memory deleted'**
   String get noteDeletedSnack;
 
   /// No description provided for @deleteNoteTitle.
   ///
   /// In en, this message translates to:
-  /// **'Delete note?'**
+  /// **'Delete memory?'**
   String get deleteNoteTitle;
 
   /// No description provided for @deleteNoteBody.
@@ -835,7 +835,7 @@ abstract class AppStrings {
   /// No description provided for @privateAuthReason.
   ///
   /// In en, this message translates to:
-  /// **'Authenticate to view this private note'**
+  /// **'Authenticate to view this private memory'**
   String get privateAuthReason;
 
   /// No description provided for @renameCategory.
@@ -853,19 +853,19 @@ abstract class AppStrings {
   /// No description provided for @deleteCategoryAction.
   ///
   /// In en, this message translates to:
-  /// **'Delete category'**
+  /// **'Delete cluster'**
   String get deleteCategoryAction;
 
   /// No description provided for @renameCategoryDialog.
   ///
   /// In en, this message translates to:
-  /// **'Rename Category'**
+  /// **'Rename Cluster'**
   String get renameCategoryDialog;
 
   /// No description provided for @categoryColorDialog.
   ///
   /// In en, this message translates to:
-  /// **'Category Color'**
+  /// **'Cluster Color'**
   String get categoryColorDialog;
 
   /// No description provided for @deleteCategoryConfirmTitle.
@@ -877,37 +877,37 @@ abstract class AppStrings {
   /// No description provided for @deleteCategoryConfirmBody.
   ///
   /// In en, this message translates to:
-  /// **'All notes in this category will also be deleted.'**
+  /// **'All memories in this cluster will also be deleted.'**
   String get deleteCategoryConfirmBody;
 
   /// No description provided for @allNotesEmptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'No notes yet'**
+  /// **'No memories yet'**
   String get allNotesEmptyTitle;
 
   /// No description provided for @allNotesEmptyBody.
   ///
   /// In en, this message translates to:
-  /// **'Create a category and add your first note'**
+  /// **'Create a cluster and add your first memory'**
   String get allNotesEmptyBody;
 
   /// No description provided for @allNotesCreateFirst.
   ///
   /// In en, this message translates to:
-  /// **'Create a category first'**
+  /// **'Create a cluster first'**
   String get allNotesCreateFirst;
 
   /// No description provided for @editorNewTitle.
   ///
   /// In en, this message translates to:
-  /// **'New Note'**
+  /// **'New Memory'**
   String get editorNewTitle;
 
   /// No description provided for @editorEditTitle.
   ///
   /// In en, this message translates to:
-  /// **'Edit Note'**
+  /// **'Edit Memory'**
   String get editorEditTitle;
 
   /// No description provided for @editorSaving.
@@ -937,13 +937,13 @@ abstract class AppStrings {
   /// No description provided for @editorChangeCategory.
   ///
   /// In en, this message translates to:
-  /// **'Change category'**
+  /// **'Change cluster'**
   String get editorChangeCategory;
 
   /// No description provided for @editorNewCategoryEntry.
   ///
   /// In en, this message translates to:
-  /// **'New category…'**
+  /// **'New cluster…'**
   String get editorNewCategoryEntry;
 
   /// No description provided for @editorTooltipPublic.
@@ -961,19 +961,19 @@ abstract class AppStrings {
   /// No description provided for @editorTooltipDelete.
   ///
   /// In en, this message translates to:
-  /// **'Delete note'**
+  /// **'Delete memory'**
   String get editorTooltipDelete;
 
   /// No description provided for @editorTooltipEdit.
   ///
   /// In en, this message translates to:
-  /// **'Edit note'**
+  /// **'Edit memory'**
   String get editorTooltipEdit;
 
   /// No description provided for @editorTooltipCopy.
   ///
   /// In en, this message translates to:
-  /// **'Copy note'**
+  /// **'Copy memory'**
   String get editorTooltipCopy;
 
   /// No description provided for @reminderTooltipSet.
@@ -1015,7 +1015,7 @@ abstract class AppStrings {
   /// No description provided for @reminderSaveNoteFirst.
   ///
   /// In en, this message translates to:
-  /// **'Add a title or note body before setting a reminder.'**
+  /// **'Add a title or memory body before setting a reminder.'**
   String get reminderSaveNoteFirst;
 
   /// No description provided for @reminderNotificationsRequired.
@@ -1057,32 +1057,26 @@ abstract class AppStrings {
   /// No description provided for @reminderNoteNotFound.
   ///
   /// In en, this message translates to:
-  /// **'That reminder note could not be found.'**
+  /// **'That reminder memory could not be found.'**
   String get reminderNoteNotFound;
 
   /// No description provided for @reminderNotificationBody.
   ///
   /// In en, this message translates to:
-  /// **'Tap to open this note'**
+  /// **'Tap to open this memory'**
   String get reminderNotificationBody;
 
   /// No description provided for @editorCopyMenuItem.
   ///
   /// In en, this message translates to:
-  /// **'Copy note'**
+  /// **'Copy memory'**
   String get editorCopyMenuItem;
 
   /// No description provided for @editorCopiedSnack.
   ///
   /// In en, this message translates to:
-  /// **'Note copied'**
+  /// **'Memory copied'**
   String get editorCopiedSnack;
-
-  /// No description provided for @editorSttRecord.
-  ///
-  /// In en, this message translates to:
-  /// **'Record voice'**
-  String get editorSttRecord;
 
   /// No description provided for @editorSttStop.
   ///
@@ -1093,19 +1087,19 @@ abstract class AppStrings {
   /// No description provided for @searchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search notes…'**
+  /// **'Search memories…'**
   String get searchHint;
 
   /// No description provided for @searchIdleTitle.
   ///
   /// In en, this message translates to:
-  /// **'Search your notes'**
+  /// **'Search your memories'**
   String get searchIdleTitle;
 
   /// No description provided for @searchIdleBody.
   ///
   /// In en, this message translates to:
-  /// **'Type keywords or ask a question. \nPrivate notes are ignored.'**
+  /// **'Type keywords or ask a question. \nPrivate memories are ignored.'**
   String get searchIdleBody;
 
   /// No description provided for @searchNoResults.
@@ -1129,19 +1123,19 @@ abstract class AppStrings {
   /// No description provided for @searchTryAiHint.
   ///
   /// In en, this message translates to:
-  /// **'Not what you were looking for? Try AI search'**
+  /// **'Not what you were looking for? Try AI recall'**
   String get searchTryAiHint;
 
   /// No description provided for @searchNoResultsAiCta.
   ///
   /// In en, this message translates to:
-  /// **'No results found. Click to perform an AI Search'**
+  /// **'No results found. Click to perform an AI Recall'**
   String get searchNoResultsAiCta;
 
   /// No description provided for @searchHistoryButtonTooltip.
   ///
   /// In en, this message translates to:
-  /// **'AI search history'**
+  /// **'AI recall history'**
   String get searchHistoryButtonTooltip;
 
   /// No description provided for @searchBackToResults.
@@ -1153,43 +1147,43 @@ abstract class AppStrings {
   /// No description provided for @widgetSearchTitle.
   ///
   /// In en, this message translates to:
-  /// **'Search your notes'**
+  /// **'Recall your memories'**
   String get widgetSearchTitle;
 
   /// No description provided for @aiSearchTitle.
   ///
   /// In en, this message translates to:
-  /// **'AI Search'**
+  /// **'AI Recall'**
   String get aiSearchTitle;
 
   /// No description provided for @aiSearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Ask about your notes…'**
+  /// **'Ask about your memories…'**
   String get aiSearchHint;
 
   /// No description provided for @aiSearchLoading.
   ///
   /// In en, this message translates to:
-  /// **'Searching your notes…'**
+  /// **'Recalling your memories…'**
   String get aiSearchLoading;
 
   /// No description provided for @aiSearchIdleTitle.
   ///
   /// In en, this message translates to:
-  /// **'Ask anything about your notes'**
+  /// **'Ask anything about your memories'**
   String get aiSearchIdleTitle;
 
   /// No description provided for @aiSearchIdleBody.
   ///
   /// In en, this message translates to:
-  /// **'AI searches your notes and synthesises an answer'**
+  /// **'AI recalls your memories and synthesises an answer'**
   String get aiSearchIdleBody;
 
   /// No description provided for @aiSearchSuggestion1.
   ///
   /// In en, this message translates to:
-  /// **'Summarize my workout notes'**
+  /// **'Summarize my workout memories'**
   String get aiSearchSuggestion1;
 
   /// No description provided for @aiSearchSuggestion2.
@@ -1201,7 +1195,7 @@ abstract class AppStrings {
   /// No description provided for @aiSearchSuggestion3.
   ///
   /// In en, this message translates to:
-  /// **'Find notes about my goals'**
+  /// **'Find memories about my goals'**
   String get aiSearchSuggestion3;
 
   /// No description provided for @aiSearchSuggestion4.
@@ -1285,13 +1279,13 @@ abstract class AppStrings {
   /// No description provided for @aiInfoTitle.
   ///
   /// In en, this message translates to:
-  /// **'About AI Search'**
+  /// **'About AI Recall'**
   String get aiInfoTitle;
 
   /// No description provided for @aiInfoBody.
   ///
   /// In en, this message translates to:
-  /// **'AI Search reads your notes to answer your question.\n\n🔒 Private notes are never sent to AI.\n\n📄 Very long notes are shortened before being sent.'**
+  /// **'AI Recall reads your memories to answer your question.\n\n🔒 Private memories are never sent to AI.\n\n📄 Very long memories are shortened before being sent.'**
   String get aiInfoBody;
 
   /// No description provided for @aiInfoDismiss.
@@ -1309,13 +1303,13 @@ abstract class AppStrings {
   /// No description provided for @aiHistoryTitle.
   ///
   /// In en, this message translates to:
-  /// **'AI Search History'**
+  /// **'AI Recall History'**
   String get aiHistoryTitle;
 
   /// No description provided for @aiHistoryEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No search history yet'**
+  /// **'No recall history yet'**
   String get aiHistoryEmpty;
 
   /// No description provided for @aiHistoryRelativeNow.
@@ -1399,25 +1393,25 @@ abstract class AppStrings {
   /// No description provided for @settingsUsageAi.
   ///
   /// In en, this message translates to:
-  /// **'AI searches today'**
+  /// **'AI recalls today'**
   String get settingsUsageAi;
 
   /// No description provided for @settingsUsageJotsAi.
   ///
   /// In en, this message translates to:
-  /// **'Jot AI organizes today'**
+  /// **'Spark AI organizes today'**
   String get settingsUsageJotsAi;
 
   /// No description provided for @settingsUsageNotes.
   ///
   /// In en, this message translates to:
-  /// **'Notes'**
+  /// **'Memories'**
   String get settingsUsageNotes;
 
   /// No description provided for @settingsUsageCategories.
   ///
   /// In en, this message translates to:
-  /// **'Categories'**
+  /// **'Clusters'**
   String get settingsUsageCategories;
 
   /// No description provided for @settingsUpgradeTitle.
@@ -1429,13 +1423,13 @@ abstract class AppStrings {
   /// No description provided for @settingsUpgradeSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'50 AI searches/day · 1000 notes · 50 categories'**
+  /// **'30 AI recalls/day · 1000 memories · 50 clusters'**
   String get settingsUpgradeSubtitle;
 
   /// No description provided for @settingsUpgradeDialogBody.
   ///
   /// In en, this message translates to:
-  /// **'Pro gives you 50 AI searches/day, up to 1000 notes, 50 categories, and 20,000 chars per note.'**
+  /// **'Pro gives you 30 AI recalls/day, up to 1000 memories, 50 clusters, and 20,000 chars per memory.'**
   String get settingsUpgradeDialogBody;
 
   /// No description provided for @contactUsMessageHint.
@@ -1507,13 +1501,13 @@ abstract class AppStrings {
   /// No description provided for @jotsAddTooltip.
   ///
   /// In en, this message translates to:
-  /// **'Add jot'**
+  /// **'Add spark'**
   String get jotsAddTooltip;
 
   /// No description provided for @jotAddDialogTitle.
   ///
   /// In en, this message translates to:
-  /// **'New Jot'**
+  /// **'New Spark'**
   String get jotAddDialogTitle;
 
   /// No description provided for @jotInputHint.
@@ -1543,7 +1537,7 @@ abstract class AppStrings {
   /// No description provided for @jotsEmptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'No jots waiting'**
+  /// **'No sparks waiting'**
   String get jotsEmptyTitle;
 
   /// No description provided for @jotsEmptyBody.
@@ -1579,13 +1573,13 @@ abstract class AppStrings {
   /// No description provided for @jotsAiInfoTitle.
   ///
   /// In en, this message translates to:
-  /// **'About Jots AI'**
+  /// **'About Sparks AI'**
   String get jotsAiInfoTitle;
 
   /// No description provided for @jotsAiInfoBody.
   ///
   /// In en, this message translates to:
-  /// **'Jots AI suggests how to organize unhandled thoughts. Only unsent jots, category names, and note titles are sent. Note bodies and private notes are not sent, and long lists may be limited.'**
+  /// **'Sparks AI suggests how to organize unhandled thoughts. Only unsent sparks, cluster names, and memory titles are sent. Memory bodies and private memories are not sent, and long lists may be limited.'**
   String get jotsAiInfoBody;
 
   /// No description provided for @jotsAiNoNew.
@@ -1597,13 +1591,13 @@ abstract class AppStrings {
   /// No description provided for @jotsAiQuota.
   ///
   /// In en, this message translates to:
-  /// **'Daily Jots AI limit reached.'**
+  /// **'Daily Sparks AI limit reached.'**
   String get jotsAiQuota;
 
   /// No description provided for @jotsAiFailed.
   ///
   /// In en, this message translates to:
-  /// **'Could not organize jots. Try again.'**
+  /// **'Could not organize sparks. Try again.'**
   String get jotsAiFailed;
 
   /// No description provided for @jotsAiSuggestionsProvided.
@@ -1615,7 +1609,7 @@ abstract class AppStrings {
   /// No description provided for @jotsAiLimitedTo30.
   ///
   /// In en, this message translates to:
-  /// **'Only the oldest 30 new jots were sent.'**
+  /// **'Only the oldest 30 new sparks were sent.'**
   String get jotsAiLimitedTo30;
 
   /// No description provided for @jotsSelectedCount.
@@ -1627,7 +1621,7 @@ abstract class AppStrings {
   /// No description provided for @jotsDeleteSelectedTitle.
   ///
   /// In en, this message translates to:
-  /// **'Delete selected jots?'**
+  /// **'Delete selected sparks?'**
   String get jotsDeleteSelectedTitle;
 
   /// No description provided for @jotsDeleteSelectedBody.
@@ -1645,7 +1639,7 @@ abstract class AppStrings {
   /// No description provided for @jotActionsTooltip.
   ///
   /// In en, this message translates to:
-  /// **'Handle jot'**
+  /// **'Handle spark'**
   String get jotActionsTooltip;
 
   /// No description provided for @jotActionsTitle.
@@ -1657,13 +1651,13 @@ abstract class AppStrings {
   /// No description provided for @jotActionCreateNote.
   ///
   /// In en, this message translates to:
-  /// **'Create new note'**
+  /// **'Create new memory'**
   String get jotActionCreateNote;
 
   /// No description provided for @jotActionAddToNote.
   ///
   /// In en, this message translates to:
-  /// **'Add to existing note'**
+  /// **'Add to existing memory'**
   String get jotActionAddToNote;
 
   /// No description provided for @jotActionCreateAlert.
@@ -1705,37 +1699,37 @@ abstract class AppStrings {
   /// No description provided for @jotActionNewNoteTitle.
   ///
   /// In en, this message translates to:
-  /// **'Note title'**
+  /// **'Memory title'**
   String get jotActionNewNoteTitle;
 
   /// No description provided for @jotActionCategory.
   ///
   /// In en, this message translates to:
-  /// **'Category'**
+  /// **'Cluster'**
   String get jotActionCategory;
 
   /// No description provided for @jotActionNewCategory.
   ///
   /// In en, this message translates to:
-  /// **'New category'**
+  /// **'New cluster'**
   String get jotActionNewCategory;
 
   /// No description provided for @jotActionNote.
   ///
   /// In en, this message translates to:
-  /// **'Note'**
+  /// **'Memory'**
   String get jotActionNote;
 
   /// No description provided for @jotActionNoNotes.
   ///
   /// In en, this message translates to:
-  /// **'No notes in this category'**
+  /// **'No memories in this cluster'**
   String get jotActionNoNotes;
 
   /// No description provided for @jotActionLock.
   ///
   /// In en, this message translates to:
-  /// **'Lock note'**
+  /// **'Lock memory'**
   String get jotActionLock;
 
   /// No description provided for @jotActionReminderWhen.
@@ -1777,37 +1771,37 @@ abstract class AppStrings {
   /// No description provided for @widgetAddNoteTooltip.
   ///
   /// In en, this message translates to:
-  /// **'Add note'**
+  /// **'Add memory'**
   String get widgetAddNoteTooltip;
 
   /// No description provided for @widgetComposeTitle.
   ///
   /// In en, this message translates to:
-  /// **'New Note'**
+  /// **'New Memory'**
   String get widgetComposeTitle;
 
   /// No description provided for @widgetComposeDiscardTitle.
   ///
   /// In en, this message translates to:
-  /// **'Discard note?'**
+  /// **'Discard memory?'**
   String get widgetComposeDiscardTitle;
 
   /// No description provided for @widgetComposeDiscardBody.
   ///
   /// In en, this message translates to:
-  /// **'Your note will not be saved.'**
+  /// **'Your memory will not be saved.'**
   String get widgetComposeDiscardBody;
 
   /// No description provided for @widgetComposeNoCategories.
   ///
   /// In en, this message translates to:
-  /// **'No categories found.\nOpen MindVault to create one first.'**
+  /// **'No clusters found.\nOpen MindVault to create one first.'**
   String get widgetComposeNoCategories;
 
   /// No description provided for @widgetComposeCategoryLabel.
   ///
   /// In en, this message translates to:
-  /// **'Category'**
+  /// **'Cluster'**
   String get widgetComposeCategoryLabel;
 
   /// No description provided for @noteTypeLabel.
@@ -1819,13 +1813,13 @@ abstract class AppStrings {
   /// No description provided for @noteTypeText.
   ///
   /// In en, this message translates to:
-  /// **'Text'**
+  /// **'Record'**
   String get noteTypeText;
 
   /// No description provided for @noteTypeChecklist.
   ///
   /// In en, this message translates to:
-  /// **'Checklist'**
+  /// **'Plan'**
   String get noteTypeChecklist;
 
   /// No description provided for @removeDoneTasksLabel.
@@ -1849,7 +1843,7 @@ abstract class AppStrings {
   /// No description provided for @widgetViewEditTitle.
   ///
   /// In en, this message translates to:
-  /// **'Edit Note'**
+  /// **'Edit Memory'**
   String get widgetViewEditTitle;
 
   /// No description provided for @widgetViewEdit.
@@ -1879,7 +1873,7 @@ abstract class AppStrings {
   /// No description provided for @widgetViewNotFound.
   ///
   /// In en, this message translates to:
-  /// **'Note not found'**
+  /// **'Memory not found'**
   String get widgetViewNotFound;
 
   /// No description provided for @widgetViewDiscardTitle.
@@ -1899,6 +1893,12 @@ abstract class AppStrings {
   /// In en, this message translates to:
   /// **'Keep editing'**
   String get widgetViewKeepEditing;
+
+  /// No description provided for @editorSttRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Record voice'**
+  String get editorSttRecord;
 }
 
 class _AppStringsDelegate extends LocalizationsDelegate<AppStrings> {

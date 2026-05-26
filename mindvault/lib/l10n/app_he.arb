@@ -1,12 +1,10 @@
-{
+﻿{
   "@@locale": "he",
   "actionNotNow": "לא עכשיו",
   "reminderBackgroundPermissionTitle": "אישור תזכורות ברקע",
   "reminderBackgroundPermissionBody": "בחלק מהמכשירים צריך לאפשר ל-MindVault לפעול ברקע או להתחיל אוטומטית כדי שתזכורות מדויקות יפעלו כשהאפליקציה סגורה. אם נפתח מסך הגדרות, הפעילו את MindVault וחזרו לאפליקציה.",
   "reminderBackgroundPermissionOpenSettings": "פתיחת הגדרות",
-
   "appBrand": "MindVault",
-
   "actionCancel": "ביטול",
   "actionSave": "שמירה",
   "actionDelete": "מחיקה",
@@ -22,11 +20,9 @@
   "actionStartFresh": "התחל מחדש",
   "actionContactUs": "צור קשר",
   "actionOk": "אישור",
-
   "splashTagline": "המחשבות שלך, מוצפנות בבטחה.",
   "splashLoading": "מאבטח את הכספת שלך…",
-
-  "authSubtitle": "פתקים מוצפנים מבוססי בינה מלאכותית",
+  "authSubtitle": "זיכרונות מוצפנים מבוססי בינה מלאכותית",
   "authEmailLabel": "אימייל",
   "authPasswordLabel": "סיסמה",
   "authEmailRequired": "נדרש אימייל.",
@@ -80,14 +76,13 @@
   "authPasswordUpdated": "הסיסמה עודכנה. משלים את ההתחברות...",
   "authSignInGoogle": "התחבר עם Google",
   "authSigningIn": "מתחבר...",
-  "authDisclaimer": "הפתקים שלך מוצפנים מקצה לקצה.\nרק אתה יכול לקרוא אותם.",
-
+  "authDisclaimer": "הזיכרונות שלך מוצפנים מקצה לקצה.\nרק אתה יכול לקרוא אותם.",
   "pinSetupAppBar": "הגדרת הצפנה",
   "pinRecoveryAppBar": "שחזור מפתח הצפנה",
   "pinSetupHeading": "צור קוד שחזור",
   "pinRecoveryHeading": "הזן את קוד השחזור שלך",
-  "pinSetupBody": "הקוד הזה מגן על ההערות שלך כך שאף אחד מלבדך לא יוכל לקרוא אותן. תזדקק לו אם תתחבר ממכשיר חדש.",
-  "pinRecoveryBody": "הפתקים שלך מוצפנים. הזן את קוד השחזור כדי לפתוח אותם במכשיר זה.",
+  "pinSetupBody": "הקוד הזה מגן על הזיכרונות שלך כך שאף אחד מלבדך לא יוכל לקרוא אותן. תזדקק לו אם תתחבר ממכשיר חדש.",
+  "pinRecoveryBody": "הזיכרונות שלך מוצפנים. הזן את קוד השחזור כדי לפתוח אותם במכשיר זה.",
   "pinLabel": "קוד שחזור (4–8 ספרות)",
   "pinConfirmLabel": "אימות קוד",
   "pinSetupDisclaimer": "הקוד שלך לעולם לא יוצא מהמכשיר. המפתח המוצפן שלך מאוחסן בשרתים שלנו כדי שתוכל לשחזר אותו לאחר התקנה מחדש, אבל אי אפשר לקרוא אותו בלי הקוד.",
@@ -98,9 +93,13 @@
   "pinMismatch": "הקודים אינם תואמים.",
   "pinRecoverError": "קוד שגוי. לא ניתן לשחזר את מפתח ההצפנה.",
   "pinServerError": "שגיאת שרת: {message}",
-  "@pinServerError": { "placeholders": { "message": {} } },
+  "@pinServerError": {
+    "placeholders": {
+      "message": {}
+    }
+  },
   "pinStartFreshTitle": "להתחיל מחדש?",
-  "pinStartFreshBody": "פעולה זו תיצור מפתח הצפנה חדש. הפתקים הקיימים שלך יאבדו.\n\nלא ניתן לבטל פעולה זו.",
+  "pinStartFreshBody": "פעולה זו תיצור מפתח הצפנה חדש. הזיכרונות הקיימים שלך יאבדו.\n\nלא ניתן לבטל פעולה זו.",
   "pinEntryAppBar": "הזן קוד שחזור",
   "pinEntryHeading": "הזן את קוד השחזור שלך",
   "pinEntryLabel": "קוד שחזור",
@@ -108,104 +107,152 @@
   "pinEntryIncorrect": "קוד שגוי. אנא נסה שוב.",
   "pinSetupError": "הגדרת ההצפנה נכשלה. אנא נסה שוב.",
   "pinLockedSeconds": "יותר מדי ניסיונות כושלים. נסה שוב בעוד {seconds}ש'.",
-  "@pinLockedSeconds": { "placeholders": { "seconds": { "type": "int" } } },
+  "@pinLockedSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "pinLockedMinutes": "יותר מדי ניסיונות כושלים. נסה שוב בעוד {minutes}ד'.",
-  "@pinLockedMinutes": { "placeholders": { "minutes": { "type": "int" } } },
-
-  "navAllNotes": "כל הפתקים",
-  "navJots": "Jots",
-  "navCategories": "קטגוריות",
-  "navSearch": "חיפוש",
+  "@pinLockedMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "navAllNotes": "ארכיון",
+  "navJots": "ניצוצות",
+  "navCategories": "אשכולות",
+  "navSearch": "שליפה",
   "navSettings": "הגדרות",
-
-  "homeNoCategoriesTitle": "אין עדיין קטגוריות.\nהקש + ליצירה.",
-  "newCategoryDialogTitle": "קטגוריה חדשה",
-  "categoryNameHint": "שם הקטגוריה",
+  "homeNoCategoriesTitle": "אין עדיין אשכולות.\nהקש + ליצירה.",
+  "newCategoryDialogTitle": "אשכול חדש",
+  "categoryNameHint": "שם האשכול",
   "categoryColorLabel": "צבע",
   "categoryNameInUse": "השם כבר בשימוש",
-  "categoryLimitReached": "הגעת למגבלת הקטגוריות ({max}). {upgradeHint}",
+  "categoryLimitReached": "הגעת למגבלת האשכולות ({max}). {upgradeHint}",
   "@categoryLimitReached": {
-    "placeholders": { "max": { "type": "int" }, "upgradeHint": {} }
+    "placeholders": {
+      "max": {
+        "type": "int"
+      },
+      "upgradeHint": {}
+    }
   },
-  "noteLimitReached": "הגעת למגבלת הפתקים ({max}). {upgradeHint}",
+  "noteLimitReached": "הגעת למגבלת הזיכרונות ({max}). {upgradeHint}",
   "@noteLimitReached": {
-    "placeholders": { "max": { "type": "int" }, "upgradeHint": {} }
+    "placeholders": {
+      "max": {
+        "type": "int"
+      },
+      "upgradeHint": {}
+    }
   },
   "upgradeHintFree": "שדרג ל-Pro לקבלת יותר.",
   "upgradeHintNone": "",
-
-  "notesListTitleFallback": "פתקים",
-  "notesListEmptyTitle": "אין עדיין פתקים",
-  "notesListEmptyBody": "הקש + כדי ליצור את הפתק הראשון שלך",
+  "notesListTitleFallback": "זיכרונות",
+  "notesListEmptyTitle": "אין עדיין זיכרונות",
+  "notesListEmptyBody": "הקש + כדי ליצור את הזיכרון הראשון שלך",
   "noteUntitled": "(ללא כותרת)",
-  "noteDeletedSnack": "הפתק נמחק",
-  "deleteNoteTitle": "למחוק את הפתק?",
+  "noteDeletedSnack": "הזיכרון נמחק",
+  "deleteNoteTitle": "למחוק את הזיכרון?",
   "deleteNoteBody": "לא ניתן לבטל פעולה זו.",
-  "privateAuthReason": "אמת את זהותך כדי לצפות בפתק פרטי זה",
+  "privateAuthReason": "אמת את זהותך כדי לצפות בזיכרון פרטי זה",
   "renameCategory": "שנה שם",
   "changeCategoryColor": "שנה צבע",
-  "deleteCategoryAction": "מחק קטגוריה",
-  "renameCategoryDialog": "שנה שם קטגוריה",
-  "categoryColorDialog": "צבע קטגוריה",
+  "deleteCategoryAction": "מחק אשכול",
+  "renameCategoryDialog": "שנה שם אשכול",
+  "categoryColorDialog": "צבע אשכול",
   "deleteCategoryConfirmTitle": "למחוק את \"{name}\"?",
-  "@deleteCategoryConfirmTitle": { "placeholders": { "name": {} } },
-  "deleteCategoryConfirmBody": "כל הפתקים בקטגוריה זו יימחקו גם הם.",
-
-  "allNotesEmptyTitle": "אין עדיין פתקים",
-  "allNotesEmptyBody": "צור קטגוריה והוסף את הפתק הראשון שלך",
-  "allNotesCreateFirst": "צור קטגוריה תחילה",
-
-  "editorNewTitle": "פתק חדש",
-  "editorEditTitle": "עריכת פתק",
+  "@deleteCategoryConfirmTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "deleteCategoryConfirmBody": "כל הזיכרונות באשכול זו יימחקו גם הם.",
+  "allNotesEmptyTitle": "אין עדיין זיכרונות",
+  "allNotesEmptyBody": "צור אשכול והוסף את הזיכרון הראשון שלך",
+  "allNotesCreateFirst": "צור אשכול תחילה",
+  "editorNewTitle": "זיכרון חדש",
+  "editorEditTitle": "עריכת זיכרון",
   "editorSaving": "שומר…",
   "editorSavedAt": "נשמר {time}",
-  "@editorSavedAt": { "placeholders": { "time": {} } },
+  "@editorSavedAt": {
+    "placeholders": {
+      "time": {}
+    }
+  },
   "editorTitleHint": "כותרת",
   "editorBodyHint": "התחל לכתוב…",
-  "editorChangeCategory": "שנה קטגוריה",
-  "editorNewCategoryEntry": "קטגוריה חדשה…",
+  "editorChangeCategory": "שנה אשכול",
+  "editorNewCategoryEntry": "אשכול חדש…",
   "editorTooltipPublic": "ציבורי",
   "editorTooltipPrivate": "פרטי",
-  "editorTooltipDelete": "מחק פתק",
-  "editorTooltipEdit": "ערוך פתק",
-  "editorTooltipCopy": "העתק פתק",
-  "editorCopyMenuItem": "העתק פתק",
-  "editorCopiedSnack": "הפתק הועתק",
-  "editorSttRecord": "הקלט קול",
+  "editorTooltipDelete": "מחק זיכרון",
+  "editorTooltipEdit": "ערוך זיכרון",
+  "editorTooltipCopy": "העתק זיכרון",
+  "editorCopyMenuItem": "העתק זיכרון",
+  "editorCopiedSnack": "הזיכרון הועתק",
   "editorSttStop": "הפסק הקלטה",
-
-  "searchHint": "חפש פתקים…",
-  "searchIdleTitle": "חפש בפתקים שלך",
-  "searchIdleBody": "הקלד מילות מפתח או שאל שאלה.\nפתקים פרטיים אינם נכללים.",
+  "searchHint": "חפש זיכרונות…",
+  "searchIdleTitle": "חפש בזיכרונות שלך",
+  "searchIdleBody": "הקלד מילות מפתח או שאל שאלה.\nזיכרונות פרטיים אינם נכללים.",
   "searchNoResults": "אין תוצאות עבור \"{query}\"",
-  "@searchNoResults": { "placeholders": { "query": {} } },
+  "@searchNoResults": {
+    "placeholders": {
+      "query": {}
+    }
+  },
   "searchTryDifferent": "נסה מילות מפתח אחרות",
   "searchMoreLines": "+{count} שורות נוספות",
-  "@searchMoreLines": { "placeholders": { "count": { "type": "int" } } },
+  "@searchMoreLines": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "searchTryAiHint": "לא מצאת מה שחיפשת? נסה חיפוש AI",
   "searchNoResultsAiCta": "לא נמצאו תוצאות. לחץ לחיפוש AI",
   "searchHistoryButtonTooltip": "היסטוריית חיפוש AI",
   "searchBackToResults": "חזרה לתוצאות",
-  "widgetSearchTitle": "חפש בפתקים שלך",
-
-  "aiSearchTitle": "חיפוש AI",
-  "aiSearchHint": "שאל על הפתקים שלך…",
-  "aiSearchLoading": "מחפש בפתקים שלך…",
-  "aiSearchIdleTitle": "שאל כל דבר על הפתקים שלך",
-  "aiSearchIdleBody": "ה-AI מחפש בפתקים שלך ומסכם תשובה",
-  "aiSearchSuggestion1": "סכם את פתקי האימון שלי",
+  "widgetSearchTitle": "חפש בזיכרונות שלך",
+  "aiSearchTitle": "שליפה AI",
+  "aiSearchHint": "שאל על הזיכרונות שלך…",
+  "aiSearchLoading": "מחפש בזיכרונות שלך…",
+  "aiSearchIdleTitle": "שאל כל דבר על הזיכרונות שלך",
+  "aiSearchIdleBody": "ה-AI מחפש בזיכרונות שלך ומסכם תשובה",
+  "aiSearchSuggestion1": "סכם את האימונים שלי",
   "aiSearchSuggestion2": "מה כתבתי על העבודה?",
-  "aiSearchSuggestion3": "מצא פתקים על המטרות שלי",
+  "aiSearchSuggestion3": "מצא הערות על המטרות שלי",
   "aiSearchSuggestion4": "מהן תוכניות הנסיעה שלי?",
   "aiSearchSources": "מקורות",
   "aiSearchFromCache": "מהמטמון",
   "aiSearchRateTitle": "הגעת למגבלת השימוש",
   "aiSearchRateSeconds": "נסה שוב בעוד {seconds} שניות",
-  "@aiSearchRateSeconds": { "placeholders": { "seconds": { "type": "int" } } },
+  "@aiSearchRateSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "aiSearchRateMinutes": "נסה שוב בעוד {minutes} דקות",
-  "@aiSearchRateMinutes": { "placeholders": { "minutes": { "type": "int" } } },
+  "@aiSearchRateMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "aiSearchRateResetsAt": "מתאפס ב-{time}",
-  "@aiSearchRateResetsAt": { "placeholders": { "time": {} } },
+  "@aiSearchRateResetsAt": {
+    "placeholders": {
+      "time": {}
+    }
+  },
   "aiSearchRateDefault": "אנא המתן לפני חיפוש נוסף",
   "aiSearchErrorDailyLimit": "הגעת למגבלת ה-AI היומית. נסה שוב מחר.",
   "aiSearchErrorSessionExpired": "פג תוקף ההתחברות. התחבר שוב.",
@@ -213,20 +260,36 @@
   "aiSearchErrorNetwork": "אין חיבור. בדוק את חיבור האינטרנט ונסה שוב.",
   "aiSearchErrorGeneric": "בקשת ה-AI נכשלה. נסה שוב.",
   "aiInfoTitle": "על חיפוש AI",
-  "aiInfoBody": "חיפוש AI קורא את הפתקים שלך כדי לענות על שאלתך.\n\n🔒 פתקים פרטיים לעולם אינם נשלחים ל-AI.\n\n📄 פתקים ארוכים מאוד מקוצרים לפני השליחה.",
+  "aiInfoBody": "חיפוש AI קורא את הזיכורנות שלך כדי לענות על שאלתך.\n\n🔒 זיכרונות פרטיים לעולם אינם נשלחים ל-AI.\n\n📄 זיכרונות ארוכים מאוד מקוצרים לפני השליחה.",
   "aiInfoDismiss": "הבנתי",
   "aiAnswerCopied": "הועתק ללוח",
-
   "aiHistoryTitle": "היסטוריית חיפוש AI",
   "aiHistoryEmpty": "אין היסטוריית חיפוש עדיין",
   "aiHistoryRelativeNow": "עכשיו",
   "aiHistoryRelativeMinutes": "{count,plural, =1{לפני דקה} other{לפני {count} דקות}}",
-  "@aiHistoryRelativeMinutes": { "placeholders": { "count": { "type": "int" } } },
+  "@aiHistoryRelativeMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "aiHistoryRelativeHours": "{count,plural, =1{לפני שעה} other{לפני {count} שעות}}",
-  "@aiHistoryRelativeHours": { "placeholders": { "count": { "type": "int" } } },
+  "@aiHistoryRelativeHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "aiHistoryRelativeDays": "{count,plural, =1{לפני יום} other{לפני {count} ימים}}",
-  "@aiHistoryRelativeDays": { "placeholders": { "count": { "type": "int" } } },
-
+  "@aiHistoryRelativeDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "settingsTitle": "הגדרות",
   "settingsSectionAccount": "חשבון",
   "settingsSectionUsage": "שימוש",
@@ -237,12 +300,12 @@
   "settingsTierFree": "חינם",
   "settingsTierPro": "Pro",
   "settingsUsageAi": "חיפושי AI היום",
-  "settingsUsageJotsAi": "ארגוני Jots AI היום",
-  "settingsUsageNotes": "פתקים",
-  "settingsUsageCategories": "קטגוריות",
+  "settingsUsageJotsAi": "ארגוני AI לניצוצות היום",
+  "settingsUsageNotes": "זיכרונות",
+  "settingsUsageCategories": "אשכולות",
   "settingsUpgradeTitle": "שדרג ל-Pro",
-  "settingsUpgradeSubtitle": "50 חיפושי AI ביום · 1000 פתקים · 50 קטגוריות",
-  "settingsUpgradeDialogBody": "Pro מעניק לך 50 חיפושי AI ביום, עד 1000 פתקים, 50 קטגוריות ו-20,000 תווים בפתק.",
+  "settingsUpgradeSubtitle": "30 חיפושי AI ביום · 1000 זיכרונות · 50 אשכולות",
+  "settingsUpgradeDialogBody": "Pro מעניק לך 30 חיפושי AI ביום, עד 1000 זיכרונות, 50 אשכולות ו-20,000 תווים בזיכרון.",
   "contactUsMessageHint": "הודעתך (אופציונלי)…",
   "contactUsNoEmailApp": "לא נמצאה אפליקציית דוא\"ל. אנא פנה אלינו בכתובת:",
   "contactUsCopied": "כתובת הדוא\"ל הועתקה",
@@ -254,89 +317,120 @@
   "settingsLanguageHindi": "हिन्दी",
   "settingsLanguageSpanish": "Español",
   "settingsLanguageFrench": "Français",
-
-  "jotsAddTooltip": "הוסף jot",
-  "jotAddDialogTitle": "Jot חדש",
+  "jotsAddTooltip": "הוסף ניצוץ",
+  "jotAddDialogTitle": "ניצוץ חדש",
   "jotInputHint": "רשום מחשבה מהירה",
   "jotSavedSnack": "המחשבה נשמרה",
   "jotSaveUnavailable": "לא ניתן היה לשמור את המחשבה. נסה שוב.",
   "jotCharCounter": "{count}/{max} תווים",
-  "@jotCharCounter": {"placeholders":{"count":{"type":"int"},"max":{"type":"int"}}},
-  "jotsEmptyTitle": "אין jots שממתינים",
-  "jotsEmptyBody": "הקש על + כשעולה מחשבה.",
+  "@jotCharCounter": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "jotsEmptyTitle": "אין ניצוצות ממתינים",
+  "jotsEmptyBody": "הקש + כאשר מחשבה צצה",
   "jotsSortOldestFirst": "הישנים קודם",
   "jotsSortNewestFirst": "החדשים קודם",
   "jotsOrganizeAi": "ארגון עם AI",
   "jotsAcceptAll": "קבל את כל ההצעות",
-  "jotsAiInfoTitle": "על Jots AI",
-  "jotsAiInfoBody": "Jots AI מציע איך לארגן מחשבות שלא טופלו. נשלחים רק jots שטרם נשלחו, שמות קטגוריות וכותרות של הערות. תוכן הערות והערות פרטיות לא נשלחים, ורשימות ארוכות עשויות להיות מוגבלות.",
+  "jotsAiInfoTitle": "על AI לניצוצות",
+  "jotsAiInfoBody": "AI ניצוצות מציע איך לארגן מחשבות שלא טופלו. נשלחים רק ניצוצות שטרם נשלחו, שמות אשכולות וכותרות של זיכרונות. תוכן זיכרונות וזיכרונות פרטיים לא נשלחים. זיכרונות ארוכים עשויות להיות מוגבלות.",
   "jotsAiNoNew": "אין מחשבות חדשות לארגון.",
-  "jotsAiQuota": "הגעת למגבלת Jots AI היומית.",
-  "jotsAiFailed": "לא ניתן היה לארגן את ה-jots. נסה שוב.",
+  "jotsAiQuota": "הגעת למגבלת AI היומית לניצוצות.",
+  "jotsAiFailed": "לא ניתן היה לארגן ניצוצות.",
   "jotsAiSuggestionsProvided": "{count,plural, =0{לא סופקו הצעות. נסה לכתוב מחשבות ספציפיות יותר בפעם הבאה.} =1{סופקה הצעה אחת.} other{סופקו {count} הצעות.}}",
-  "@jotsAiSuggestionsProvided": {"placeholders":{"count":{"type":"int"}}},
-  "jotsAiLimitedTo30": "נשלחו רק 30 ה-jots החדשים הישנים ביותר.",
+  "@jotsAiSuggestionsProvided": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jotsAiLimitedTo30": "נשלחו רק 30 הניצוצות החדשים הישנים ביותר.",
   "jotsSelectedCount": "{count} נבחרו",
-  "@jotsSelectedCount": {"placeholders":{"count":{"type":"int"}}},
-  "jotsDeleteSelectedTitle": "למחוק את ה-jots שנבחרו?",
+  "@jotsSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jotsDeleteSelectedTitle": "למחוק את הניצוצות שנבחרו?",
   "jotsDeleteSelectedBody": "המחשבות שנבחרו יימחקו לצמיתות.",
   "jotCreatedAt": "נוצר: {time}",
-  "@jotCreatedAt": {"placeholders":{"time":{}}},
-  "jotActionsTooltip": "טפל ב-jot",
+  "@jotCreatedAt": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "jotActionsTooltip": "טפל בניצוץ",
   "jotActionsTitle": "טיפול במחשבה",
-  "jotActionCreateNote": "צור הערה חדשה",
-  "jotActionAddToNote": "הוסף להערה קיימת",
+  "jotActionCreateNote": "צור זיכרון חדש",
+  "jotActionAddToNote": "הוסף לזיכרון קיים",
   "jotActionCreateAlert": "צור התראה",
   "jotActionDeleteThought": "מחק מחשבה",
   "jotActionSuggestedByAi": "הפעולות האלה הוצעו על ידי AI.",
   "jotActionUpdateThought": "עדכן טקסט מחשבה",
   "jotActionUpdatedThoughtText": "מחשבה מעודכנת",
   "jotActionUpdatedThoughtHint": "לדוגמה: שר הטבעות",
-  "jotActionNewNoteTitle": "כותרת הערה",
-  "jotActionCategory": "קטגוריה",
-  "jotActionNewCategory": "קטגוריה חדשה",
-  "jotActionNote": "הערה",
-  "jotActionNoNotes": "אין הערות בקטגוריה זו",
-  "jotActionLock": "נעל הערה",
+  "jotActionNewNoteTitle": "כותרת זיכרון",
+  "jotActionCategory": "אשכול",
+  "jotActionNewCategory": "אשכול חדש",
+  "jotActionNote": "מחשבה",
+  "jotActionNoNotes": "אין מחשבות באשכול זה",
+  "jotActionLock": "נעל מחשבה",
   "jotActionReminderWhen": "התראה ב-{time}",
-  "@jotActionReminderWhen": {"placeholders":{"time":{}}},
+  "@jotActionReminderWhen": {
+    "placeholders": {
+      "time": {}
+    }
+  },
   "jotActionPickReminder": "בחר תאריך ושעה",
   "jotActionAccept": "קבל",
   "jotActionChooseFuture": "בחר תאריך ושעה בעתיד.",
   "jotNotificationBody": "הקש כדי לארגן את המחשבה הזו",
-  "jotReminderNotFound": "ה-jot הזה כבר לא זמין.",
-  "widgetAddNoteTooltip": "הוסף פתק",
-  "widgetComposeTitle": "פתק חדש",
-  "widgetComposeDiscardTitle": "להתעלם מהפתק?",
-  "widgetComposeDiscardBody": "הפתק שלך לא יישמר.",
-  "widgetComposeNoCategories": "לא נמצאו קטגוריות.\nפתח את MindVault כדי ליצור אחת תחילה.",
-  "widgetComposeCategoryLabel": "קטגוריה",
+  "jotReminderNotFound": "הניצוץ הזה כבר לא זמין.",
+  "widgetAddNoteTooltip": "הוסף זיכרון",
+  "widgetComposeTitle": "זיכרון חדש",
+  "widgetComposeDiscardTitle": "למחוק את הזיכרון?",
+  "widgetComposeDiscardBody": "הזיכרון שלך לא יישמר.",
+  "widgetComposeNoCategories": "לא נמצאו אשכולות.\\nפתח את MindVault כדי ליצור אחד קודם.",
+  "widgetComposeCategoryLabel": "אשכול",
   "noteTypeLabel": "סוג",
-  "noteTypeText": "טקסט",
-  "noteTypeChecklist": "רשימת משימות",
+  "noteTypeText": "רשומה",
+  "noteTypeChecklist": "תוכנית",
   "reminderTooltipSet": "הגדר תזכורת",
   "reminderTooltipActive": "הוגדרה תזכורת",
   "reminderDialogTitle": "תזכורת",
   "reminderScheduledFor": "מתוזמן ל-{time}",
   "reminderEdit": "עריכה",
   "reminderRemove": "הסרה",
-  "reminderSaveNoteFirst": "הוסף כותרת או גוף פתק לפני הגדרת תזכורת.",
+  "reminderSaveNoteFirst": "הוסף כותרת או גוף זיכרון לפני הגדרת תזכורת.",
   "reminderMayBeDelayed": "התראות מדויקות אינן מופעלות. התזכורת הזו עשויה להתעכב.",
   "reminderMustBeFuture": "בחר תאריך ושעה עתידיים.",
-  "reminderNoteNotFound": "פתק התזכורת הזה לא נמצא.",
+  "reminderNoteNotFound": "זיכרון התזכורת הזה לא נמצא.",
   "removeDoneTasksLabel": "הסר משימות שהושלמו",
   "removeDoneTasksTitle": "להסיר משימות שהושלמו?",
   "removeDoneTasksBody": "משימות שהושלמו יימחקו לצמיתות.",
-  "widgetViewEditTitle": "עריכת פתק",
+  "widgetViewEditTitle": "עריכת זיכרון",
   "widgetViewEdit": "ערוך",
   "widgetViewDelete": "מחק",
   "widgetViewUnlocking": "פותח…",
   "widgetViewNoContent": "אין תוכן",
-  "widgetViewNotFound": "הפתק לא נמצא",
+  "widgetViewNotFound": "זיכרון לא נמצא",
   "widgetViewDiscardTitle": "להתעלם מהשינויים?",
   "widgetViewDiscardBody": "העריכות שלך לא יישמרו.",
-  "widgetViewKeepEditing": "המשך לערוך"
-  ,
-  "reminderNotificationBody": "הקש כדי לפתוח את הפתק הזה",
-  "reminderNotificationsRequired": "יש לאשר הרשאת התראות כדי להשתמש בתזכורות."
+  "widgetViewKeepEditing": "המשך לערוך",
+  "reminderNotificationBody": "הקש כדי לפתוח את הזיכרון הזה",
+  "reminderNotificationsRequired": "יש לאשר הרשאת התראות כדי להשתמש בתזכורות.",
+  "jotsAiInfoTitle": "על AI לניצוצות",
+  "jotsAiQuota": "הגעת למגבלת AI היומית לניצוצות.",
+  "jotsAiFailed": "לא ניתן היה לארגן ניצוצות.",
+  "editorSttRecord": "הקלט קול"
 }

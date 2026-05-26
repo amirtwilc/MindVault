@@ -42,8 +42,10 @@ void main() {
     // Two users, both with notes in a category whose id collides ('c1')
     // — simulates a stale widget configured by user A being tapped after
     // user B signs in on the same device.
-    await db.upsertNote(_row(id: 'a1', userId: 'user-A', categoryId: 'c1', title: 'A-note'));
-    await db.upsertNote(_row(id: 'b1', userId: 'user-B', categoryId: 'c1', title: 'B-note'));
+    await db.upsertNote(
+        _row(id: 'a1', userId: 'user-A', categoryId: 'c1', title: 'A-note'));
+    await db.upsertNote(
+        _row(id: 'b1', userId: 'user-B', categoryId: 'c1', title: 'B-note'));
   });
 
   tearDown(() async {

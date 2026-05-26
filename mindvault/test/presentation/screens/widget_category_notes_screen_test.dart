@@ -49,7 +49,8 @@ Widget _harness({
 }) {
   return ProviderScope(
     overrides: [
-      categoriesProvider.overrideWith(() => _FakeCategoriesNotifier(categories)),
+      categoriesProvider
+          .overrideWith(() => _FakeCategoriesNotifier(categories)),
       notesByCategoryLocalProvider
           .overrideWith((ref, _) => Stream.value(notesForCategory)),
     ],
@@ -120,5 +121,4 @@ void main() {
     final l = await AppStrings.delegate.load(const Locale('en'));
     expect(find.text(l.notesListEmptyTitle), findsOneWidget);
   });
-
 }

@@ -24,13 +24,16 @@ TextDirection _innerDirection(WidgetTester tester) {
 void main() {
   testWidgets('uses ambient direction when text is empty', (tester) async {
     final ctrl = TextEditingController();
-    await tester.pumpWidget(_harness(controller: ctrl, ambient: TextDirection.rtl));
+    await tester
+        .pumpWidget(_harness(controller: ctrl, ambient: TextDirection.rtl));
     expect(_innerDirection(tester), TextDirection.rtl);
   });
 
-  testWidgets('switches to RTL when first strong char is Hebrew', (tester) async {
+  testWidgets('switches to RTL when first strong char is Hebrew',
+      (tester) async {
     final ctrl = TextEditingController();
-    await tester.pumpWidget(_harness(controller: ctrl, ambient: TextDirection.ltr));
+    await tester
+        .pumpWidget(_harness(controller: ctrl, ambient: TextDirection.ltr));
 
     ctrl.value = const TextEditingValue(
       text: 'שלום',
@@ -44,7 +47,8 @@ void main() {
   testWidgets('inherits previous paragraph direction on a fresh empty line',
       (tester) async {
     final ctrl = TextEditingController();
-    await tester.pumpWidget(_harness(controller: ctrl, ambient: TextDirection.ltr));
+    await tester
+        .pumpWidget(_harness(controller: ctrl, ambient: TextDirection.ltr));
 
     ctrl.value = const TextEditingValue(
       text: 'שלום\n',
@@ -58,7 +62,8 @@ void main() {
   testWidgets('switches to LTR when typing English on a new line',
       (tester) async {
     final ctrl = TextEditingController();
-    await tester.pumpWidget(_harness(controller: ctrl, ambient: TextDirection.ltr));
+    await tester
+        .pumpWidget(_harness(controller: ctrl, ambient: TextDirection.ltr));
 
     ctrl.value = const TextEditingValue(
       text: 'שלום\nhello',

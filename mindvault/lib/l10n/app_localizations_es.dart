@@ -66,7 +66,7 @@ class AppStringsEs extends AppStrings {
   String get splashLoading => 'Protegiendo tu bóveda…';
 
   @override
-  String get authSubtitle => 'Tus notas cifradas con IA';
+  String get authSubtitle => 'Tus memorias cifradas con IA';
 
   @override
   String get authEmailLabel => 'Correo electrónico';
@@ -247,7 +247,7 @@ class AppStringsEs extends AppStrings {
 
   @override
   String get authDisclaimer =>
-      'Tus notas están cifradas de extremo a extremo.\nSolo tú puedes leerlas.';
+      'Tus memorias están cifradas de extremo a extremo.\nSolo tú puedes leerlas.';
 
   @override
   String get pinSetupAppBar => 'Configurar cifrado';
@@ -263,11 +263,11 @@ class AppStringsEs extends AppStrings {
 
   @override
   String get pinSetupBody =>
-      'Este PIN protege tus notas para que nadie más que tú pueda leerlas. Lo necesitarás si inicias sesión en un nuevo dispositivo.';
+      'Este PIN protege tus memorias para que nadie más que tú pueda leerlas. Lo necesitarás si inicias sesión en un nuevo dispositivo.';
 
   @override
   String get pinRecoveryBody =>
-      'Tus notas están cifradas. Ingresa tu PIN de recuperación para desbloquearlas en este dispositivo.';
+      'Tus memorias están cifradas. Ingresa tu PIN de recuperación para desbloquearlas en este dispositivo.';
 
   @override
   String get pinLabel => 'PIN de recuperación (4–8 dígitos)';
@@ -309,7 +309,7 @@ class AppStringsEs extends AppStrings {
 
   @override
   String get pinStartFreshBody =>
-      'Esto generará una nueva clave de cifrado. Tus notas existentes se perderán.\n\nEsta acción no se puede deshacer.';
+      'Esto generará una nueva clave de cifrado. Tus memorias existentes se perderán.\n\nEsta acción no se puede deshacer.';
 
   @override
   String get pinEntryAppBar => 'Ingresar PIN de recuperación';
@@ -343,16 +343,16 @@ class AppStringsEs extends AppStrings {
   }
 
   @override
-  String get navAllNotes => 'Todas las notas';
+  String get navAllNotes => 'Archivo';
 
   @override
-  String get navJots => 'Jots';
+  String get navJots => 'Chispas';
 
   @override
-  String get navCategories => 'Categorías';
+  String get navCategories => 'Grupos';
 
   @override
-  String get navSearch => 'Buscar';
+  String get navSearch => 'Evocar';
 
   @override
   String get navSettings => 'Configuración';
@@ -379,7 +379,7 @@ class AppStringsEs extends AppStrings {
 
   @override
   String noteLimitReached(int max, Object upgradeHint) {
-    return 'Límite de notas alcanzado ($max). $upgradeHint';
+    return 'Límite de memorias alcanzado ($max). $upgradeHint';
   }
 
   @override
@@ -389,28 +389,28 @@ class AppStringsEs extends AppStrings {
   String get upgradeHintNone => '';
 
   @override
-  String get notesListTitleFallback => 'Notas';
+  String get notesListTitleFallback => 'Memorias';
 
   @override
-  String get notesListEmptyTitle => 'Sin notas aún';
+  String get notesListEmptyTitle => 'Sin memorias aún';
 
   @override
-  String get notesListEmptyBody => 'Toca + para crear tu primera nota';
+  String get notesListEmptyBody => 'Toca + para crear tu primera memoria';
 
   @override
   String get noteUntitled => '(sin título)';
 
   @override
-  String get noteDeletedSnack => 'Nota eliminada';
+  String get noteDeletedSnack => 'Memoria eliminada';
 
   @override
-  String get deleteNoteTitle => '¿Eliminar nota?';
+  String get deleteNoteTitle => '¿Eliminar memoria?';
 
   @override
   String get deleteNoteBody => 'Esta acción no se puede deshacer.';
 
   @override
-  String get privateAuthReason => 'Autentícate para ver esta nota privada';
+  String get privateAuthReason => 'Autentícate para ver esta memoria privada';
 
   @override
   String get renameCategory => 'Renombrar';
@@ -434,22 +434,23 @@ class AppStringsEs extends AppStrings {
 
   @override
   String get deleteCategoryConfirmBody =>
-      'Todas las notas de esta categoría también se eliminarán.';
+      'Archivo de esta categoría también se eliminarán.';
 
   @override
-  String get allNotesEmptyTitle => 'Sin notas aún';
+  String get allNotesEmptyTitle => 'Sin memorias aún';
 
   @override
-  String get allNotesEmptyBody => 'Crea una categoría y agrega tu primera nota';
+  String get allNotesEmptyBody =>
+      'Crea una categoría y agrega tu primera memoria';
 
   @override
   String get allNotesCreateFirst => 'Crea primero una categoría';
 
   @override
-  String get editorNewTitle => 'Nueva nota';
+  String get editorNewTitle => 'Nueva memoria';
 
   @override
-  String get editorEditTitle => 'Editar nota';
+  String get editorEditTitle => 'Editar memoria';
 
   @override
   String get editorSaving => 'Guardando…';
@@ -478,13 +479,13 @@ class AppStringsEs extends AppStrings {
   String get editorTooltipPrivate => 'Privada';
 
   @override
-  String get editorTooltipDelete => 'Eliminar nota';
+  String get editorTooltipDelete => 'Eliminar memoria';
 
   @override
-  String get editorTooltipEdit => 'Editar nota';
+  String get editorTooltipEdit => 'Editar memoria';
 
   @override
-  String get editorTooltipCopy => 'Copiar nota';
+  String get editorTooltipCopy => 'Copiar memoria';
 
   @override
   String get reminderTooltipSet => 'Definir recordatorio';
@@ -508,7 +509,7 @@ class AppStringsEs extends AppStrings {
 
   @override
   String get reminderSaveNoteFirst =>
-      'Agrega un título o texto de nota antes de definir un recordatorio.';
+      'Agrega un título o registro de memoria antes de definir un recordatorio.';
 
   @override
   String get reminderNotificationsRequired =>
@@ -534,32 +535,29 @@ class AppStringsEs extends AppStrings {
 
   @override
   String get reminderNoteNotFound =>
-      'No se pudo encontrar esa nota de recordatorio.';
+      'No se pudo encontrar esa memoria de recordatorio.';
 
   @override
-  String get reminderNotificationBody => 'Toca para abrir esta nota';
+  String get reminderNotificationBody => 'Toca para abrir esta memoria';
 
   @override
-  String get editorCopyMenuItem => 'Copiar nota';
+  String get editorCopyMenuItem => 'Copiar memoria';
 
   @override
-  String get editorCopiedSnack => 'Nota copiada';
-
-  @override
-  String get editorSttRecord => 'Grabar voz';
+  String get editorCopiedSnack => 'Memoria copiada';
 
   @override
   String get editorSttStop => 'Detener grabación';
 
   @override
-  String get searchHint => 'Buscar notas…';
+  String get searchHint => 'Buscar memorias…';
 
   @override
-  String get searchIdleTitle => 'Busca en tus notas';
+  String get searchIdleTitle => 'Busca en tus memorias';
 
   @override
   String get searchIdleBody =>
-      'Escribe palabras clave o haz una pregunta. \nLas notas privadas se ignoran.';
+      'Escribe palabras clave o haz una pregunta. \nLas memorias privadas se ignoran.';
 
   @override
   String searchNoResults(Object query) {
@@ -589,32 +587,32 @@ class AppStringsEs extends AppStrings {
   String get searchBackToResults => 'Volver a los resultados';
 
   @override
-  String get widgetSearchTitle => 'Busca en tus notas';
+  String get widgetSearchTitle => 'Busca en tus memorias';
 
   @override
-  String get aiSearchTitle => 'Búsqueda IA';
+  String get aiSearchTitle => 'Evocacion IA';
 
   @override
-  String get aiSearchHint => 'Pregunta sobre tus notas…';
+  String get aiSearchHint => 'Pregunta sobre tus memorias…';
 
   @override
-  String get aiSearchLoading => 'Buscando en tus notas…';
+  String get aiSearchLoading => 'Buscando en tus memorias…';
 
   @override
-  String get aiSearchIdleTitle => 'Pregunta cualquier cosa sobre tus notas';
+  String get aiSearchIdleTitle => 'Pregunta cualquier cosa sobre tus memorias';
 
   @override
   String get aiSearchIdleBody =>
-      'La IA busca en tus notas y elabora una respuesta';
+      'La IA busca en tus memorias y elabora una respuesta';
 
   @override
-  String get aiSearchSuggestion1 => 'Resume mis notas de entrenamiento';
+  String get aiSearchSuggestion1 => 'Resume mis memorias de entrenamiento';
 
   @override
   String get aiSearchSuggestion2 => '¿Qué escribí sobre el trabajo?';
 
   @override
-  String get aiSearchSuggestion3 => 'Encuentra notas sobre mis metas';
+  String get aiSearchSuggestion3 => 'Encuentra memorias sobre mis metas';
 
   @override
   String get aiSearchSuggestion4 => '¿Cuáles son mis planes de viaje?';
@@ -644,7 +642,7 @@ class AppStringsEs extends AppStrings {
   }
 
   @override
-  String get aiSearchRateDefault => 'Por favor espera antes de buscar de nuevo';
+  String get aiSearchRateDefault => 'Por favor espera antes de evocar de nuevo';
 
   @override
   String get aiSearchErrorDailyLimit =>
@@ -671,7 +669,7 @@ class AppStringsEs extends AppStrings {
 
   @override
   String get aiInfoBody =>
-      'La búsqueda IA lee tus notas para responder tu pregunta.\n\n🔒 Las notas privadas nunca se envían a la IA.\n\n📄 Las notas muy largas se acortan antes de enviarse.';
+      'La búsqueda IA lee tus memorias para responder tu pregunta.\n\n🔒 Las memorias privadas nunca se envían a la IA.\n\n📄 Las memorias muy largas se acortan antes de enviarse.';
 
   @override
   String get aiInfoDismiss => 'Entendido';
@@ -752,24 +750,24 @@ class AppStringsEs extends AppStrings {
   String get settingsUsageAi => 'Búsquedas IA hoy';
 
   @override
-  String get settingsUsageJotsAi => 'Organizaciones de Jots IA hoy';
+  String get settingsUsageJotsAi => 'Organizaciones de Chispas IA hoy';
 
   @override
-  String get settingsUsageNotes => 'Notas';
+  String get settingsUsageNotes => 'Memorias';
 
   @override
-  String get settingsUsageCategories => 'Categorías';
+  String get settingsUsageCategories => 'Grupos';
 
   @override
   String get settingsUpgradeTitle => 'Actualizar a Pro';
 
   @override
   String get settingsUpgradeSubtitle =>
-      '50 búsquedas IA/día · 1000 notas · 50 categorías';
+      '30 búsquedas IA/día · 1000 memorias · 50 categorías';
 
   @override
   String get settingsUpgradeDialogBody =>
-      'Pro te da 50 búsquedas IA/día, hasta 1000 notas, 50 categorías y 20.000 caracteres por nota.';
+      'Pro te da 30 búsquedas IA/día, hasta 1000 memorias, 50 categorías y 20.000 caracteres por memoria.';
 
   @override
   String get contactUsMessageHint => 'Tu mensaje (opcional)…';
@@ -806,10 +804,10 @@ class AppStringsEs extends AppStrings {
   String get settingsLanguageFrench => 'Français';
 
   @override
-  String get jotsAddTooltip => 'Añadir jot';
+  String get jotsAddTooltip => 'Agregar chispa';
 
   @override
-  String get jotAddDialogTitle => 'Nuevo jot';
+  String get jotAddDialogTitle => 'Nueva chispa';
 
   @override
   String get jotInputHint => 'Captura un pensamiento rápido';
@@ -827,7 +825,7 @@ class AppStringsEs extends AppStrings {
   }
 
   @override
-  String get jotsEmptyTitle => 'No hay jots pendientes';
+  String get jotsEmptyTitle => 'No hay chispas pendientes';
 
   @override
   String get jotsEmptyBody => 'Toca + cuando aparezca un pensamiento.';
@@ -845,21 +843,20 @@ class AppStringsEs extends AppStrings {
   String get jotsAcceptAll => 'Aceptar todas las sugerencias';
 
   @override
-  String get jotsAiInfoTitle => 'Acerca de Jots IA';
+  String get jotsAiInfoTitle => 'Acerca de Chispas IA';
 
   @override
   String get jotsAiInfoBody =>
-      'Jots IA sugiere cómo organizar pensamientos pendientes. Solo se envían jots no enviados, nombres de categorías y títulos de notas. No se envían cuerpos de notas ni notas privadas, y las listas largas pueden limitarse.';
+      'Chispas IA sugiere cómo organizar pensamientos pendientes. Solo se envían chispas no enviados, nombres de categorías y títulos de memorias. No se envían cuerpos de memorias ni memorias privadas, y las plans largas pueden limitarse.';
 
   @override
   String get jotsAiNoNew => 'No hay pensamientos nuevos para organizar.';
 
   @override
-  String get jotsAiQuota => 'Se alcanzó el límite diario de Jots IA.';
+  String get jotsAiQuota => 'L?mite diario de Chispas IA alcanzado.';
 
   @override
-  String get jotsAiFailed =>
-      'No se pudieron organizar los jots. Inténtalo de nuevo.';
+  String get jotsAiFailed => 'No se pudieron organizar las chispas.';
 
   @override
   String jotsAiSuggestionsProvided(int count) {
@@ -876,7 +873,7 @@ class AppStringsEs extends AppStrings {
 
   @override
   String get jotsAiLimitedTo30 =>
-      'Solo se enviaron los 30 jots nuevos más antiguos.';
+      'Solo se enviaron los 30 chispas nuevos más antiguos.';
 
   @override
   String jotsSelectedCount(int count) {
@@ -884,7 +881,7 @@ class AppStringsEs extends AppStrings {
   }
 
   @override
-  String get jotsDeleteSelectedTitle => '¿Eliminar jots seleccionados?';
+  String get jotsDeleteSelectedTitle => '¿Eliminar chispas seleccionados?';
 
   @override
   String get jotsDeleteSelectedBody =>
@@ -896,16 +893,16 @@ class AppStringsEs extends AppStrings {
   }
 
   @override
-  String get jotActionsTooltip => 'Gestionar jot';
+  String get jotActionsTooltip => 'Gestionar chispa';
 
   @override
   String get jotActionsTitle => 'Gestionar pensamiento';
 
   @override
-  String get jotActionCreateNote => 'Crear nota nueva';
+  String get jotActionCreateNote => 'Crear memoria nueva';
 
   @override
-  String get jotActionAddToNote => 'Añadir a nota existente';
+  String get jotActionAddToNote => 'Añadir a memoria existente';
 
   @override
   String get jotActionCreateAlert => 'Crear alerta';
@@ -918,7 +915,7 @@ class AppStringsEs extends AppStrings {
       'Estas acciones fueron sugeridas por IA.';
 
   @override
-  String get jotActionUpdateThought => 'Actualizar texto del pensamiento';
+  String get jotActionUpdateThought => 'Actualizar registro del pensamiento';
 
   @override
   String get jotActionUpdatedThoughtText => 'Pensamiento actualizado';
@@ -927,7 +924,7 @@ class AppStringsEs extends AppStrings {
   String get jotActionUpdatedThoughtHint => 'Ejemplo: El señor de los anillos';
 
   @override
-  String get jotActionNewNoteTitle => 'Título de la nota';
+  String get jotActionNewNoteTitle => 'Título de la memoria';
 
   @override
   String get jotActionCategory => 'Categoría';
@@ -936,13 +933,13 @@ class AppStringsEs extends AppStrings {
   String get jotActionNewCategory => 'Nueva categoría';
 
   @override
-  String get jotActionNote => 'Nota';
+  String get jotActionNote => 'Memoria';
 
   @override
-  String get jotActionNoNotes => 'No hay notas en esta categoría';
+  String get jotActionNoNotes => 'No hay memorias en esta categoría';
 
   @override
-  String get jotActionLock => 'Bloquear nota';
+  String get jotActionLock => 'Bloquear memoria';
 
   @override
   String jotActionReminderWhen(Object time) {
@@ -962,35 +959,35 @@ class AppStringsEs extends AppStrings {
   String get jotNotificationBody => 'Toca para organizar este pensamiento';
 
   @override
-  String get jotReminderNotFound => 'Este jot ya no está disponible.';
+  String get jotReminderNotFound => 'Este chispa ya no está disponible.';
 
   @override
-  String get widgetAddNoteTooltip => 'Añadir nota';
+  String get widgetAddNoteTooltip => 'Agregar memoria';
 
   @override
-  String get widgetComposeTitle => 'Nueva nota';
+  String get widgetComposeTitle => 'Nueva memoria';
 
   @override
-  String get widgetComposeDiscardTitle => '¿Descartar nota?';
+  String get widgetComposeDiscardTitle => '?Descartar memoria?';
 
   @override
-  String get widgetComposeDiscardBody => 'Tu nota no se guardará.';
+  String get widgetComposeDiscardBody => 'Tu memoria no se guardar?.';
 
   @override
   String get widgetComposeNoCategories =>
-      'No se encontraron categorías.\nAbre MindVault para crear una primero.';
+      'No se encontraron grupos.\nAbre MindVault para crear uno primero.';
 
   @override
-  String get widgetComposeCategoryLabel => 'Categoría';
+  String get widgetComposeCategoryLabel => 'Grupo';
 
   @override
   String get noteTypeLabel => 'Tipo';
 
   @override
-  String get noteTypeText => 'Texto';
+  String get noteTypeText => 'Registro';
 
   @override
-  String get noteTypeChecklist => 'Lista';
+  String get noteTypeChecklist => 'Plan';
 
   @override
   String get removeDoneTasksLabel => 'Eliminar tareas hechas';
@@ -1003,7 +1000,7 @@ class AppStringsEs extends AppStrings {
       'Las tareas completadas se eliminarán permanentemente.';
 
   @override
-  String get widgetViewEditTitle => 'Editar nota';
+  String get widgetViewEditTitle => 'Editar memoria';
 
   @override
   String get widgetViewEdit => 'Editar';
@@ -1018,7 +1015,7 @@ class AppStringsEs extends AppStrings {
   String get widgetViewNoContent => 'Sin contenido';
 
   @override
-  String get widgetViewNotFound => 'Nota no encontrada';
+  String get widgetViewNotFound => 'Memoria no encontrada';
 
   @override
   String get widgetViewDiscardTitle => '¿Descartar cambios?';
@@ -1028,4 +1025,7 @@ class AppStringsEs extends AppStrings {
 
   @override
   String get widgetViewKeepEditing => 'Seguir editando';
+
+  @override
+  String get editorSttRecord => 'Grabar voz';
 }

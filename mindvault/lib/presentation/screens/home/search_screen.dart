@@ -97,7 +97,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with SttMixin {
                 child: _SearchBar(
                   controller: _controller,
                   showClear: query.isNotEmpty,
-                  onChanged: (v) => ref.read(searchQueryProvider.notifier).state = v,
+                  onChanged: (v) =>
+                      ref.read(searchQueryProvider.notifier).state = v,
                   onClear: _clearSearch,
                 ),
               ),
@@ -105,7 +106,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with SttMixin {
                 IconButton(
                   icon: const Icon(Icons.history_rounded),
                   tooltip: l.searchHistoryButtonTooltip,
-                  onPressed: () => context.push('/home/search/history'),
+                  onPressed: () => context.push('/home/recall/history'),
                 ),
             ],
           ),
@@ -169,8 +170,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with SttMixin {
         tt: tt,
         onSuggestion: (s) {
           _controller.text = s;
-          _controller.selection =
-              TextSelection.collapsed(offset: s.length);
+          _controller.selection = TextSelection.collapsed(offset: s.length);
           ref.read(searchQueryProvider.notifier).state = s;
           // Per spec: chip tap runs regular search only, not AI
         },
@@ -358,7 +358,8 @@ class _NoResultsWithAiCta extends StatelessWidget {
                 children: [
                   Icon(Icons.info_outline_rounded, size: 14, color: cs.outline),
                   const SizedBox(width: 4),
-                  Text(l.aiInfoTitle, style: tt.labelSmall?.copyWith(color: cs.outline)),
+                  Text(l.aiInfoTitle,
+                      style: tt.labelSmall?.copyWith(color: cs.outline)),
                 ],
               ),
             ),
@@ -412,9 +413,14 @@ class _ResultsWithAiCta extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.info_outline_rounded, size: 14, color: cs.outline),
+                      Icon(Icons.info_outline_rounded,
+                          size: 14, color: cs.outline),
                       const SizedBox(width: 4),
-                      Text(l.aiInfoTitle, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: cs.outline)),
+                      Text(l.aiInfoTitle,
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelSmall
+                              ?.copyWith(color: cs.outline)),
                     ],
                   ),
                 ),
@@ -433,7 +439,8 @@ class _ResultsWithAiCta extends StatelessWidget {
 class SearchResultCard extends StatelessWidget {
   final SearchResult result;
   final String query;
-  const SearchResultCard({super.key, required this.result, required this.query});
+  const SearchResultCard(
+      {super.key, required this.result, required this.query});
 
   @override
   Widget build(BuildContext context) {
@@ -450,7 +457,8 @@ class SearchResultCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 4),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () => context.push('/home/categories/${note.categoryId}/edit/${note.id}'),
+        onTap: () =>
+            context.push('/home/clusters/${note.categoryId}/edit/${note.id}'),
         child: IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -503,8 +511,8 @@ class SearchResultCard extends StatelessWidget {
                                   text: _highlightSpan(
                                     line.trim(),
                                     query,
-                                    tt.bodySmall?.copyWith(
-                                        color: cs.onSurfaceVariant),
+                                    tt.bodySmall
+                                        ?.copyWith(color: cs.onSurfaceVariant),
                                     cs.primaryContainer,
                                     cs.onPrimaryContainer,
                                   ),
@@ -515,7 +523,8 @@ class SearchResultCard extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(top: 4),
                             child: Text(
-                              l.searchMoreLines(result.matchingLines.length - 3),
+                              l.searchMoreLines(
+                                  result.matchingLines.length - 3),
                               style: tt.labelSmall
                                   ?.copyWith(color: cs.outlineVariant),
                             ),

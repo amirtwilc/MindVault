@@ -72,7 +72,7 @@ class CategoriesWidgetProvider : AppWidgetProvider() {
         // floating window opened by tapping a row.
         val newNoteIntent = Intent(context, TransparentActivity::class.java).apply {
             action = Intent.ACTION_VIEW
-            data = Uri.parse("mindvault://widget/new-note")
+            data = Uri.parse("mindvault://widget/new-memory")
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
         val newNotePi = PendingIntent.getActivity(
@@ -83,7 +83,7 @@ class CategoriesWidgetProvider : AppWidgetProvider() {
 
         val newJotIntent = Intent(context, TransparentActivity::class.java).apply {
             action = Intent.ACTION_VIEW
-            data = Uri.parse("mindvault://widget/new-jot")
+            data = Uri.parse("mindvault://widget/new-spark")
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
         val newJotPi = PendingIntent.getActivity(
@@ -92,10 +92,10 @@ class CategoriesWidgetProvider : AppWidgetProvider() {
         )
         views.setOnClickPendingIntent(R.id.widget_new_jot_btn, newJotPi)
 
-        // ── Search button → TransparentActivity with widget-search deep link ──
+        // ── Search button → TransparentActivity with widget-recall deep link ──
         val searchIntent = Intent(context, TransparentActivity::class.java).apply {
             action = Intent.ACTION_VIEW
-            data = Uri.parse("mindvault://widget/widget-search")
+            data = Uri.parse("mindvault://widget/widget-recall")
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
         val searchPi = PendingIntent.getActivity(

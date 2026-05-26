@@ -16,7 +16,8 @@ const kCategoryColors = [
 ];
 
 Color categoryColor(String? hex) {
-  if (hex == null || hex.isEmpty) return const Color(0xFF78909C); // default blue-grey
+  if (hex == null || hex.isEmpty)
+    return const Color(0xFF78909C); // default blue-grey
   final buffer = StringBuffer();
   if (hex.length == 7) buffer.write('ff');
   buffer.write(hex.replaceFirst('#', ''));

@@ -27,7 +27,9 @@ class _PinEntryScreenState extends ConsumerState<PinEntryScreen> {
 
   String _formatLockout(AppStrings l, Duration remaining) {
     final secs = remaining.inSeconds + 1;
-    return secs < 60 ? l.pinLockedSeconds(secs) : l.pinLockedMinutes((secs / 60).ceil());
+    return secs < 60
+        ? l.pinLockedSeconds(secs)
+        : l.pinLockedMinutes((secs / 60).ceil());
   }
 
   Future<void> _unlock() async {
@@ -38,11 +40,16 @@ class _PinEntryScreenState extends ConsumerState<PinEntryScreen> {
     final tracker = ref.read(pinAttemptTrackerProvider);
     final lockout = await tracker.getLockoutRemaining();
     if (lockout != null) {
-      setState(() { _error = _formatLockout(l, lockout); });
+      setState(() {
+        _error = _formatLockout(l, lockout);
+      });
       return;
     }
 
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
 
     try {
       final client = Supabase.instance.client;
@@ -50,7 +57,10 @@ class _PinEntryScreenState extends ConsumerState<PinEntryScreen> {
       final record = await keysDatasource.fetchUserKey();
 
       if (record == null) {
-        setState(() { _error = l.pinEntryNoKey; _loading = false; });
+        setState(() {
+          _error = l.pinEntryNoKey;
+          _loading = false;
+        });
         return;
       }
 
@@ -64,7 +74,7 @@ class _PinEntryScreenState extends ConsumerState<PinEntryScreen> {
       ref.read(aesKeyProvider.notifier).state = aesKey;
       await tracker.reset();
 
-      if (mounted) context.go('/home/all-notes');
+      if (mounted) context.go('/home/archive');
     } catch (e) {
       await tracker.recordFailure();
       final lockoutAfter = await tracker.getLockoutRemaining();
@@ -115,13 +125,18 @@ class _PinEntryScreenState extends ConsumerState<PinEntryScreen> {
               ),
               if (_error != null) ...[
                 const SizedBox(height: 12),
-                Text(_error!, style: TextStyle(color: cs.error), textAlign: TextAlign.center),
+                Text(_error!,
+                    style: TextStyle(color: cs.error),
+                    textAlign: TextAlign.center),
               ],
               const SizedBox(height: 24),
               FilledButton(
                 onPressed: _loading ? null : _unlock,
                 child: _loading
-                    ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2))
                     : Text(l.actionUnlock),
               ),
               const Spacer(flex: 2),

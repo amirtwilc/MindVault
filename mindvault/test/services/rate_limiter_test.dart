@@ -56,9 +56,10 @@ void main() {
     });
 
     test('expired day window resets to 0', () async {
-      final past =
-          DateTime.now().subtract(const Duration(days: 2)).millisecondsSinceEpoch ~/
-              1000;
+      final past = DateTime.now()
+              .subtract(const Duration(days: 2))
+              .millisecondsSinceEpoch ~/
+          1000;
       await prefs.setInt('rl_day_tokens', 5000);
       await prefs.setInt('rl_day_reset', past);
 
@@ -67,9 +68,10 @@ void main() {
 
     test('non-expired window retains its value', () async {
       // Set reset time in the future
-      final future =
-          DateTime.now().add(const Duration(minutes: 1)).millisecondsSinceEpoch ~/
-              1000;
+      final future = DateTime.now()
+              .add(const Duration(minutes: 1))
+              .millisecondsSinceEpoch ~/
+          1000;
       await prefs.setInt('rl_minute_tokens', 300);
       await prefs.setInt('rl_minute_reset', future);
 

@@ -61,11 +61,11 @@ void main() {
     test('sorted by most recently touched (lastOpenedAt beats createdAt)', () {
       final notes = [
         _note('n1', 'A', categoryId: 'c1', createdAt: DateTime(2024, 1, 1)),
-        _note('n2', 'B', categoryId: 'c1',
+        _note('n2', 'B',
+            categoryId: 'c1',
             createdAt: DateTime(2024, 1, 2),
             lastOpenedAt: DateTime(2024, 6, 1)),
-        _note('n3', 'C', categoryId: 'c1',
-            createdAt: DateTime(2024, 1, 3)),
+        _note('n3', 'C', categoryId: 'c1', createdAt: DateTime(2024, 1, 3)),
       ];
       final payload =
           WidgetDataService.buildPayload(categories: cats, allNotes: notes);
@@ -79,8 +79,7 @@ void main() {
       final notes = List.generate(
         25,
         (i) => _note('n$i', 'Note $i',
-            categoryId: 'c1',
-            createdAt: DateTime(2024, 1, i + 1)),
+            categoryId: 'c1', createdAt: DateTime(2024, 1, i + 1)),
       );
       final payload =
           WidgetDataService.buildPayload(categories: cats, allNotes: notes);
@@ -110,8 +109,8 @@ void main() {
       final payload =
           WidgetDataService.buildPayload(categories: colored, allNotes: notes);
       final list = payload['notes'] as List;
-      expect(list.firstWhere((e) => e['id'] == 'n1')['category_color'],
-          '#FF0000');
+      expect(
+          list.firstWhere((e) => e['id'] == 'n1')['category_color'], '#FF0000');
       expect(list.firstWhere((e) => e['id'] == 'n2')['category_color'], isNull);
     });
 
@@ -135,7 +134,12 @@ void main() {
     test('caps notes at 20', () {
       final existing = List.generate(
         20,
-        (i) => {'id': 'e$i', 'title': 'E$i', 'category_id': 'c1', 'category_name': 'Work'},
+        (i) => {
+          'id': 'e$i',
+          'title': 'E$i',
+          'category_id': 'c1',
+          'category_name': 'Work'
+        },
       );
       final current = <String, dynamic>{'notes': existing};
       final result = WidgetDataService.applyNewNote(
@@ -171,8 +175,8 @@ void main() {
     });
 
     test('defaults to empty notes when missing from current', () {
-      final result =
-          WidgetDataService.applyNewNote({}, _note('n1', 'T', categoryId: 'c1'), cats);
+      final result = WidgetDataService.applyNewNote(
+          {}, _note('n1', 'T', categoryId: 'c1'), cats);
       expect((result['notes'] as List).first['id'], 'n1');
     });
   });
@@ -208,10 +212,13 @@ void main() {
   group('WidgetDataService.buildPayload — pinned ordering', () {
     test('pinned notes appear before unpinned notes', () {
       final notes = [
-        _note('u1', 'Unpinned', categoryId: 'c1',
-            createdAt: DateTime(2024, 6, 1)),
-        _note('p1', 'Pinned', categoryId: 'c1',
-            isPinned: true, pinOrder: 0, createdAt: DateTime(2024, 1, 1)),
+        _note('u1', 'Unpinned',
+            categoryId: 'c1', createdAt: DateTime(2024, 6, 1)),
+        _note('p1', 'Pinned',
+            categoryId: 'c1',
+            isPinned: true,
+            pinOrder: 0,
+            createdAt: DateTime(2024, 1, 1)),
       ];
       final payload =
           WidgetDataService.buildPayload(categories: cats, allNotes: notes);
@@ -250,15 +257,27 @@ void main() {
   group('WidgetDataService.applyNewNote — pinned section', () {
     test('new unpinned note lands after pinned notes', () {
       final existing = [
-        {'id': 'p1', 'title': 'Pinned', 'is_pinned': true, 'category_id': 'c1', 'category_name': 'Work'},
-        {'id': 'u1', 'title': 'Unpinned', 'is_pinned': false, 'category_id': 'c1', 'category_name': 'Work'},
+        {
+          'id': 'p1',
+          'title': 'Pinned',
+          'is_pinned': true,
+          'category_id': 'c1',
+          'category_name': 'Work'
+        },
+        {
+          'id': 'u1',
+          'title': 'Unpinned',
+          'is_pinned': false,
+          'category_id': 'c1',
+          'category_name': 'Work'
+        },
       ];
       final current = <String, dynamic>{'notes': existing};
       final newNote = _note('u2', 'New Unpinned', categoryId: 'c1');
       final result = WidgetDataService.applyNewNote(current, newNote, cats);
       final list = result['notes'] as List;
-      expect(list[0]['id'], 'p1');  // pinned stays first
-      expect(list[1]['id'], 'u2');  // new unpinned after pinned
+      expect(list[0]['id'], 'p1'); // pinned stays first
+      expect(list[1]['id'], 'u2'); // new unpinned after pinned
       expect(list[2]['id'], 'u1');
     });
   });
@@ -266,27 +285,65 @@ void main() {
   group('WidgetDataService.applyNoteOpened — pinned section', () {
     test('opened unpinned note lands after pinned section', () {
       final existing = [
-        {'id': 'p1', 'title': 'Pinned', 'is_pinned': true, 'category_id': 'c1', 'category_name': 'Work'},
-        {'id': 'u1', 'title': 'Unpinned1', 'is_pinned': false, 'category_id': 'c1', 'category_name': 'Work'},
-        {'id': 'u2', 'title': 'Unpinned2', 'is_pinned': false, 'category_id': 'c1', 'category_name': 'Work'},
+        {
+          'id': 'p1',
+          'title': 'Pinned',
+          'is_pinned': true,
+          'category_id': 'c1',
+          'category_name': 'Work'
+        },
+        {
+          'id': 'u1',
+          'title': 'Unpinned1',
+          'is_pinned': false,
+          'category_id': 'c1',
+          'category_name': 'Work'
+        },
+        {
+          'id': 'u2',
+          'title': 'Unpinned2',
+          'is_pinned': false,
+          'category_id': 'c1',
+          'category_name': 'Work'
+        },
       ];
       final current = <String, dynamic>{'notes': existing};
       final opened = _note('u2', 'Unpinned2', categoryId: 'c1');
       final result = WidgetDataService.applyNoteOpened(current, opened, cats);
       final list = result['notes'] as List;
-      expect(list[0]['id'], 'p1');  // pinned stays first
-      expect(list[1]['id'], 'u2');  // opened unpinned after pinned
+      expect(list[0]['id'], 'p1'); // pinned stays first
+      expect(list[1]['id'], 'u2'); // opened unpinned after pinned
       expect(list[2]['id'], 'u1');
     });
 
-    test('opened pinned note updates in place, preserving pinOrder position', () {
+    test('opened pinned note updates in place, preserving pinOrder position',
+        () {
       final existing = [
-        {'id': 'p1', 'title': 'P1', 'is_pinned': true, 'category_id': 'c1', 'category_name': 'Work'},
-        {'id': 'p2', 'title': 'P2', 'is_pinned': true, 'category_id': 'c1', 'category_name': 'Work'},
-        {'id': 'u1', 'title': 'U1', 'is_pinned': false, 'category_id': 'c1', 'category_name': 'Work'},
+        {
+          'id': 'p1',
+          'title': 'P1',
+          'is_pinned': true,
+          'category_id': 'c1',
+          'category_name': 'Work'
+        },
+        {
+          'id': 'p2',
+          'title': 'P2',
+          'is_pinned': true,
+          'category_id': 'c1',
+          'category_name': 'Work'
+        },
+        {
+          'id': 'u1',
+          'title': 'U1',
+          'is_pinned': false,
+          'category_id': 'c1',
+          'category_name': 'Work'
+        },
       ];
       final current = <String, dynamic>{'notes': existing};
-      final opened = _note('p2', 'P2 updated', categoryId: 'c1', isPinned: true);
+      final opened =
+          _note('p2', 'P2 updated', categoryId: 'c1', isPinned: true);
       final result = WidgetDataService.applyNoteOpened(current, opened, cats);
       final list = result['notes'] as List;
       // Pinned notes must not be reordered by recency — position governed by pinOrder.
@@ -300,8 +357,20 @@ void main() {
   group('WidgetDataService.applyUpsertNote', () {
     test('updates existing entry in place without reordering', () {
       final existing = [
-        {'id': 'a', 'title': 'A', 'is_private': true, 'category_id': 'c1', 'category_name': 'Work'},
-        {'id': 'b', 'title': 'B', 'is_private': false, 'category_id': 'c1', 'category_name': 'Work'},
+        {
+          'id': 'a',
+          'title': 'A',
+          'is_private': true,
+          'category_id': 'c1',
+          'category_name': 'Work'
+        },
+        {
+          'id': 'b',
+          'title': 'B',
+          'is_private': false,
+          'category_id': 'c1',
+          'category_name': 'Work'
+        },
       ];
       final current = <String, dynamic>{'notes': existing};
       // Note "a" was just unlocked in the main app — flip to public.
@@ -330,7 +399,12 @@ void main() {
     test('caps notes at 20 when inserting a new entry', () {
       final existing = List.generate(
         20,
-        (i) => {'id': 'e$i', 'title': 'E$i', 'category_id': 'c1', 'category_name': 'Work'},
+        (i) => {
+          'id': 'e$i',
+          'title': 'E$i',
+          'category_id': 'c1',
+          'category_name': 'Work'
+        },
       );
       final current = <String, dynamic>{'notes': existing};
       final result = WidgetDataService.applyUpsertNote(

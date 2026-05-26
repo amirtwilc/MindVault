@@ -84,7 +84,7 @@ private class CategoryWidgetFactory(
             val uri = Uri.Builder()
                 .scheme("mindvault")
                 .authority("widget")
-                .path("/category-notes")
+                .path("/cluster-memories")
                 .appendQueryParameter("categoryId", item.id)
                 .appendQueryParameter("name", item.name)
                 .build()

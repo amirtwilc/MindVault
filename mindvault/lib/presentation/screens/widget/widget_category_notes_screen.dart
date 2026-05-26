@@ -173,8 +173,8 @@ class _WidgetCategoryNotesScreenState
                             ),
                             error: (e, _) => Padding(
                               padding: const EdgeInsets.all(16),
-                              child: Text('$e',
-                                  style: theme.textTheme.bodySmall),
+                              child:
+                                  Text('$e', style: theme.textTheme.bodySmall),
                             ),
                             data: (notes) => notes.isEmpty
                                 ? _EmptyState(theme: theme)

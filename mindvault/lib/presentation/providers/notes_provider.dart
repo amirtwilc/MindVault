@@ -34,7 +34,8 @@ final noteRepositoryProvider = Provider<NoteRepository?>((ref) {
   return repo;
 });
 
-final notesByCategoryProvider = StreamProvider.family<List<Note>, String>((ref, categoryId) {
+final notesByCategoryProvider =
+    StreamProvider.family<List<Note>, String>((ref, categoryId) {
   final repo = ref.watch(noteRepositoryProvider);
   if (repo == null) return const Stream.empty();
   return repo.watchNotesByCategory(categoryId);

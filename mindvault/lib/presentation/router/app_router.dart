@@ -99,7 +99,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       if (encryptionReady &&
           (location == '/auth' || location == '/pin-setup')) {
-        return '/home/all-notes';
+        return '/home/archive';
       }
 
       return null;
@@ -124,17 +124,35 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // Deep link from home widget "New Note" button
       GoRoute(
         path: '/new-note',
+        redirect: (_, state) => Uri(
+          path: '/new-memory',
+          queryParameters: state.uri.queryParameters,
+        ).toString(),
+      ),
+      GoRoute(
+        path: '/new-memory',
         builder: (_, state) => WidgetComposeScreen(
           initialCategoryId: state.uri.queryParameters['categoryId'],
         ),
       ),
       GoRoute(
         path: '/new-jot',
+        redirect: (_, __) => '/new-spark',
+      ),
+      GoRoute(
+        path: '/new-spark',
         builder: (_, __) => const WidgetJotComposeScreen(),
       ),
       // Deep link from home widget note row tap
       GoRoute(
         path: '/view-note',
+        redirect: (_, state) => Uri(
+          path: '/view-memory',
+          queryParameters: state.uri.queryParameters,
+        ).toString(),
+      ),
+      GoRoute(
+        path: '/view-memory',
         builder: (_, state) => WidgetNoteViewScreen(
           noteId: state.uri.queryParameters['id'] ?? '',
           initialTitle: state.uri.queryParameters['title'],
@@ -143,6 +161,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // Deep link from categories widget category row tap
       GoRoute(
         path: '/category-notes',
+        redirect: (_, state) => Uri(
+          path: '/cluster-memories',
+          queryParameters: state.uri.queryParameters,
+        ).toString(),
+      ),
+      GoRoute(
+        path: '/cluster-memories',
         builder: (_, state) => WidgetCategoryNotesScreen(
           categoryId: state.uri.queryParameters['categoryId'] ?? '',
           initialName: state.uri.queryParameters['name'],
@@ -151,6 +176,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // Deep link from home widget search button
       GoRoute(
         path: '/widget-search',
+        redirect: (_, __) => '/widget-recall',
+      ),
+      GoRoute(
+        path: '/widget-recall',
         builder: (_, __) => const WidgetSearchScreen(),
       ),
       GoRoute(
@@ -167,7 +196,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       // Note editor — outside shell so bottom nav is hidden while editing
       GoRoute(
-        path: '/home/categories/:categoryId/edit',
+        path: '/home/clusters/:categoryId/edit',
         builder: (_, state) => NoteEditorScreen(
           categoryId: state.pathParameters['categoryId']!,
           returnToAllNotesOnBack:
@@ -175,7 +204,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         ),
       ),
       GoRoute(
-        path: '/home/categories/:categoryId/edit/:noteId',
+        path: '/home/clusters/:categoryId/edit/:noteId',
         builder: (_, state) => NoteEditorScreen(
           categoryId: state.pathParameters['categoryId']!,
           noteId: state.pathParameters['noteId'],
@@ -187,7 +216,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state, child) => HomeShell(child: child),
         routes: [
           GoRoute(
-            path: '/home/categories',
+            path: '/home/clusters',
             builder: (_, __) => const HomeScreen(),
             routes: [
               GoRoute(
@@ -199,17 +228,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             ],
           ),
           GoRoute(
-            path: '/home/all-notes',
+            path: '/home/archive',
             builder: (_, __) => const AllNotesScreen(),
           ),
           GoRoute(
-            path: '/home/jots',
+            path: '/home/sparks',
             builder: (_, state) => JotsScreen(
               highlightJotId: state.uri.queryParameters['highlight'],
             ),
           ),
           GoRoute(
-            path: '/home/search',
+            path: '/home/recall',
             builder: (_, __) => const SearchScreen(),
             routes: [
               GoRoute(
@@ -221,6 +250,49 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/home/settings',
             builder: (_, __) => const SettingsScreen(),
+          ),
+          GoRoute(
+            path: '/home/all-notes',
+            redirect: (_, __) => '/home/archive',
+          ),
+          GoRoute(
+            path: '/home/jots',
+            redirect: (_, state) => Uri(
+              path: '/home/sparks',
+              queryParameters: state.uri.queryParameters,
+            ).toString(),
+          ),
+          GoRoute(
+            path: '/home/categories',
+            redirect: (_, __) => '/home/clusters',
+          ),
+          GoRoute(
+            path: '/home/categories/:categoryId',
+            redirect: (_, state) =>
+                '/home/clusters/${state.pathParameters['categoryId']}',
+          ),
+          GoRoute(
+            path: '/home/categories/:categoryId/edit',
+            redirect: (_, state) => Uri(
+              path: '/home/clusters/${state.pathParameters['categoryId']}/edit',
+              queryParameters: state.uri.queryParameters,
+            ).toString(),
+          ),
+          GoRoute(
+            path: '/home/categories/:categoryId/edit/:noteId',
+            redirect: (_, state) => Uri(
+              path:
+                  '/home/clusters/${state.pathParameters['categoryId']}/edit/${state.pathParameters['noteId']}',
+              queryParameters: state.uri.queryParameters,
+            ).toString(),
+          ),
+          GoRoute(
+            path: '/home/search',
+            redirect: (_, __) => '/home/recall',
+          ),
+          GoRoute(
+            path: '/home/search/history',
+            redirect: (_, __) => '/home/recall/history',
           ),
         ],
       ),
@@ -317,16 +389,21 @@ class _HomeShellState extends ConsumerState<HomeShell>
   }
 
   bool _isCategoriesSubPage(String location) =>
+      location.startsWith('/home/clusters/') ||
       location.startsWith('/home/categories/');
 
-  bool _isJotsPage(String location) => location.startsWith('/home/jots');
+  bool _isJotsPage(String location) =>
+      location.startsWith('/home/sparks') || location.startsWith('/home/jots');
 
   bool _isSearchSubPage(String location) =>
+      location.startsWith('/home/recall/') ||
       location.startsWith('/home/search/');
 
   @override
   Widget build(BuildContext context) {
     final l = AppStrings.of(context);
+    final bottomNavLabelStyle =
+        Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 11);
 
     ref.listen<AsyncValue<bool>>(connectivityProvider, (prev, next) {
       final wasOnline = prev?.valueOrNull ?? true;
@@ -358,6 +435,7 @@ class _HomeShellState extends ConsumerState<HomeShell>
         ],
       ),
       bottomNavigationBar: NavigationBar(
+        labelTextStyle: WidgetStatePropertyAll<TextStyle?>(bottomNavLabelStyle),
         destinations: [
           NavigationDestination(
               icon: const Icon(Icons.notes), label: l.navAllNotes),
@@ -391,9 +469,18 @@ class _HomeShellState extends ConsumerState<HomeShell>
 
   int _selectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
-    if (location.startsWith('/home/jots')) return 1;
-    if (location.startsWith('/home/categories')) return 2;
-    if (location.startsWith('/home/search')) return 3;
+    if (location.startsWith('/home/sparks') ||
+        location.startsWith('/home/jots')) {
+      return 1;
+    }
+    if (location.startsWith('/home/clusters') ||
+        location.startsWith('/home/categories')) {
+      return 2;
+    }
+    if (location.startsWith('/home/recall') ||
+        location.startsWith('/home/search')) {
+      return 3;
+    }
     if (location.startsWith('/home/settings')) return 4;
     return 0;
   }
@@ -401,13 +488,13 @@ class _HomeShellState extends ConsumerState<HomeShell>
   void _navigate(BuildContext context, int index) {
     switch (index) {
       case 0:
-        context.go('/home/all-notes');
+        context.go('/home/archive');
       case 1:
-        context.go('/home/jots');
+        context.go('/home/sparks');
       case 2:
-        context.go('/home/categories');
+        context.go('/home/clusters');
       case 3:
-        context.go('/home/search');
+        context.go('/home/recall');
       case 4:
         context.go('/home/settings');
     }

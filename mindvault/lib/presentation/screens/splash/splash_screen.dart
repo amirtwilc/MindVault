@@ -52,7 +52,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       ref.read(aesKeyProvider.notifier).state = key;
     }
 
-    if (mounted) context.go('/home/all-notes');
+    if (mounted) context.go('/home/archive');
   }
 
   @override

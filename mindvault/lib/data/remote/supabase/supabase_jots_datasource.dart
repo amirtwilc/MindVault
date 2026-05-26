@@ -2,6 +2,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/constants/supabase_constants.dart';
 import '../../models/jot_model.dart';
+import 'supabase_profile_bootstrap.dart';
 
 class SupabaseJotsDatasource {
   final SupabaseClient _client;
@@ -39,6 +40,7 @@ class SupabaseJotsDatasource {
   }
 
   Future<JotModel> insertJot(Map<String, dynamic> data) async {
+    await ensureSupabaseProfile(_client);
     final response = await _client
         .from(SupabaseConstants.jotsTable)
         .insert({...data, 'user_id': _userId})
@@ -48,6 +50,7 @@ class SupabaseJotsDatasource {
   }
 
   Future<JotModel> upsertJot(Map<String, dynamic> data) async {
+    await ensureSupabaseProfile(_client);
     final response = await _client
         .from(SupabaseConstants.jotsTable)
         .upsert({...data, 'user_id': _userId})

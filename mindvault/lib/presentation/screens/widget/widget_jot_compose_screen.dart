@@ -8,6 +8,7 @@ import '../../../core/constants/jot_constants.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../providers/encryption_provider.dart';
 import '../../providers/jots_provider.dart';
+import '../home/_ai_search_widgets.dart' show SttMixin;
 
 class WidgetJotComposeScreen extends ConsumerStatefulWidget {
   const WidgetJotComposeScreen({super.key});
@@ -17,8 +18,8 @@ class WidgetJotComposeScreen extends ConsumerStatefulWidget {
       _WidgetJotComposeScreenState();
 }
 
-class _WidgetJotComposeScreenState
-    extends ConsumerState<WidgetJotComposeScreen> {
+class _WidgetJotComposeScreenState extends ConsumerState<WidgetJotComposeScreen>
+    with SttMixin<WidgetJotComposeScreen> {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
   final _keyboardTimers = <Timer>[];
@@ -28,6 +29,7 @@ class _WidgetJotComposeScreenState
   void initState() {
     super.initState();
     _controller.addListener(() => setState(() {}));
+    initStt();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _ensureKeyLoaded();
       _showKeyboard();
@@ -39,6 +41,7 @@ class _WidgetJotComposeScreenState
     for (final timer in _keyboardTimers) {
       timer.cancel();
     }
+    stopStt();
     _controller.dispose();
     _focusNode.dispose();
     super.dispose();
@@ -94,6 +97,27 @@ class _WidgetJotComposeScreenState
     );
     await Future<void>.delayed(const Duration(milliseconds: 350));
     if (mounted) SystemNavigator.pop();
+  }
+
+  void _onSttResult(String text) {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return;
+    final insertText = '$trimmed ';
+    final sel = _controller.selection;
+    final raw = _controller.text;
+    if (sel.isValid) {
+      final start = sel.start.clamp(0, raw.length);
+      final end = sel.end.clamp(0, raw.length);
+      final next = raw.replaceRange(start, end, insertText);
+      _controller.value = _controller.value.copyWith(
+        text: next,
+        selection: TextSelection.collapsed(offset: start + insertText.length),
+      );
+    } else {
+      _controller.text = raw.isEmpty ? trimmed : '$raw $trimmed';
+      _controller.selection =
+          TextSelection.collapsed(offset: _controller.text.length);
+    }
   }
 
   @override
@@ -166,6 +190,19 @@ class _WidgetJotComposeScreenState
                             hintText: l.jotInputHint,
                             border: const OutlineInputBorder(),
                             counterText: '',
+                            suffixIcon: sttAvailable
+                                ? IconButton(
+                                    tooltip: listening
+                                        ? l.editorSttStop
+                                        : l.editorSttRecord,
+                                    icon: Icon(
+                                        listening ? Icons.mic : Icons.mic_none),
+                                    color: listening ? cs.error : null,
+                                    onPressed: _saving
+                                        ? null
+                                        : () => toggleListen(_onSttResult),
+                                  )
+                                : null,
                           ),
                           onSubmitted: (_) => _save(),
                         ),

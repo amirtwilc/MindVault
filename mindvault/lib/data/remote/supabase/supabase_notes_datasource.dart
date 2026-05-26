@@ -3,6 +3,7 @@ import '../../../core/constants/supabase_constants.dart';
 import '../../models/checklist_item_model.dart';
 import '../../models/note_reminder_model.dart';
 import '../../models/note_model.dart';
+import 'supabase_profile_bootstrap.dart';
 
 class SupabaseNotesDatasource {
   final SupabaseClient _client;
@@ -28,6 +29,7 @@ class SupabaseNotesDatasource {
   }
 
   Future<NoteModel> insertNote(Map<String, dynamic> data) async {
+    await ensureSupabaseProfile(_client);
     final response = await _client
         .from(SupabaseConstants.notesTable)
         .insert({...data, 'user_id': _userId})
@@ -37,6 +39,7 @@ class SupabaseNotesDatasource {
   }
 
   Future<NoteModel> updateNote(String id, Map<String, dynamic> data) async {
+    await ensureSupabaseProfile(_client);
     final response = await _client
         .from(SupabaseConstants.notesTable)
         .update(
@@ -69,6 +72,7 @@ class SupabaseNotesDatasource {
   RealtimeChannel? _remindersChannel;
 
   Future<void> upsertNote(Map<String, dynamic> data) async {
+    await ensureSupabaseProfile(_client);
     await _client
         .from(SupabaseConstants.notesTable)
         .upsert({...data, 'user_id': _userId});
@@ -130,6 +134,7 @@ class SupabaseNotesDatasource {
   }
 
   Future<NoteReminderModel> upsertReminder(Map<String, dynamic> data) async {
+    await ensureSupabaseProfile(_client);
     final response = await _client
         .from(SupabaseConstants.noteRemindersTable)
         .upsert({...data, 'user_id': _userId})
@@ -215,6 +220,7 @@ class SupabaseNotesDatasource {
 
   Future<ChecklistItemModel> upsertChecklistItem(
       Map<String, dynamic> data) async {
+    await ensureSupabaseProfile(_client);
     final response = await _client
         .from(SupabaseConstants.checklistItemsTable)
         .upsert({...data, 'user_id': _userId})
@@ -225,6 +231,7 @@ class SupabaseNotesDatasource {
 
   Future<void> upsertChecklistItems(List<Map<String, dynamic>> items) async {
     if (items.isEmpty) return;
+    await ensureSupabaseProfile(_client);
     await _client
         .from(SupabaseConstants.checklistItemsTable)
         .upsert(items.map((e) => {...e, 'user_id': _userId}).toList());

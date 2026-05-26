@@ -4,9 +4,7 @@
   "reminderBackgroundPermissionTitle": "Hintergrund-Erinnerungen erlauben",
   "reminderBackgroundPermissionBody": "Einige Geräte erfordern, dass MindVault im Hintergrund arbeiten oder automatisch starten darf, damit genaue Erinnerungen ausgelöst werden, wenn die App geschlossen ist. Falls eine Einstellungsseite geöffnet wird, aktiviere MindVault und kehre zur App zurück.",
   "reminderBackgroundPermissionOpenSettings": "Einstellungen öffnen",
-
   "appBrand": "MindVault",
-
   "actionCancel": "Abbrechen",
   "actionSave": "Speichern",
   "actionDelete": "Löschen",
@@ -22,11 +20,9 @@
   "actionStartFresh": "Neu beginnen",
   "actionContactUs": "Kontakt",
   "actionOk": "OK",
-
   "splashTagline": "Deine Gedanken, sicher verschlüsselt.",
   "splashLoading": "Tresor wird gesichert…",
-
-  "authSubtitle": "Deine verschlüsselten KI-Notizen",
+  "authSubtitle": "Deine verschlüsselten KI-Erinnerungen",
   "authEmailLabel": "E-Mail",
   "authPasswordLabel": "Passwort",
   "authEmailRequired": "E-Mail ist erforderlich.",
@@ -80,14 +76,13 @@
   "authPasswordUpdated": "Passwort aktualisiert. Anmeldung wird abgeschlossen...",
   "authSignInGoogle": "Mit Google anmelden",
   "authSigningIn": "Anmelden...",
-  "authDisclaimer": "Deine Notizen sind Ende-zu-Ende verschlüsselt.\nNur du kannst sie lesen.",
-
+  "authDisclaimer": "Deine Erinnerungen sind Ende-zu-Ende verschlüsselt.\nNur du kannst sie lesen.",
   "pinSetupAppBar": "Verschlüsselung einrichten",
   "pinRecoveryAppBar": "Verschlüsselungsschlüssel wiederherstellen",
   "pinSetupHeading": "Wiederherstellungs-PIN erstellen",
   "pinRecoveryHeading": "Gib deine Wiederherstellungs-PIN ein",
-  "pinSetupBody": "Diese PIN schützt deine Notizen davor, von anderen gelesen zu werden. Du brauchst sie, wenn du dich auf einem neuen Gerät anmeldest.",
-  "pinRecoveryBody": "Deine Notizen sind verschlüsselt. Gib deine Wiederherstellungs-PIN ein, um sie auf diesem Gerät zu entsperren.",
+  "pinSetupBody": "Diese PIN schützt deine Erinnerungen davor, von anderen gelesen zu werden. Du brauchst sie, wenn du dich auf einem neuen Gerät anmeldest.",
+  "pinRecoveryBody": "Deine Erinnerungen sind verschlüsselt. Gib deine Wiederherstellungs-PIN ein, um sie auf diesem Gerät zu entsperren.",
   "pinLabel": "Wiederherstellungs-PIN (4–8 Stellen)",
   "pinConfirmLabel": "PIN bestätigen",
   "pinSetupDisclaimer": "Deine PIN verlässt nie dieses Gerät. Dein verschlüsselter Schlüssel wird auf unseren Servern gespeichert, damit du ihn nach einer Neuinstallation wiederherstellen kannst, aber ohne die PIN kann er nicht gelesen werden.",
@@ -98,9 +93,13 @@
   "pinMismatch": "PINs stimmen nicht überein.",
   "pinRecoverError": "Falsche PIN. Verschlüsselungsschlüssel konnte nicht wiederhergestellt werden.",
   "pinServerError": "Serverfehler: {message}",
-  "@pinServerError": { "placeholders": { "message": {} } },
+  "@pinServerError": {
+    "placeholders": {
+      "message": {}
+    }
+  },
   "pinStartFreshTitle": "Neu beginnen?",
-  "pinStartFreshBody": "Dies erzeugt einen neuen Verschlüsselungsschlüssel. Deine bestehenden Notizen gehen verloren.\n\nDieser Schritt ist endgültig.",
+  "pinStartFreshBody": "Dies erzeugt einen neuen Verschlüsselungsschlüssel. Deine bestehenden Erinnerungen gehen verloren.\n\nDieser Schritt ist endgültig.",
   "pinEntryAppBar": "Wiederherstellungs-PIN eingeben",
   "pinEntryHeading": "Gib deine Wiederherstellungs-PIN ein",
   "pinEntryLabel": "Wiederherstellungs-PIN",
@@ -108,125 +107,189 @@
   "pinEntryIncorrect": "Falsche PIN. Bitte versuche es erneut.",
   "pinSetupError": "Verschlüsselung konnte nicht eingerichtet werden. Bitte versuche es erneut.",
   "pinLockedSeconds": "Zu viele Fehlversuche. Versuche es in {seconds}s erneut.",
-  "@pinLockedSeconds": { "placeholders": { "seconds": { "type": "int" } } },
+  "@pinLockedSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "pinLockedMinutes": "Zu viele Fehlversuche. Versuche es in {minutes}m erneut.",
-  "@pinLockedMinutes": { "placeholders": { "minutes": { "type": "int" } } },
-
-  "navAllNotes": "Alle Notizen",
-  "navJots": "Jots",
-  "navCategories": "Kategorien",
-  "navSearch": "Suche",
+  "@pinLockedMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "navAllNotes": "Archiv",
+  "navJots": "Funken",
+  "navCategories": "Cluster",
+  "navSearch": "Abruf",
   "navSettings": "Einstellungen",
-
-  "homeNoCategoriesTitle": "Noch keine Kategorien.\nTippe + zum Erstellen.",
-  "newCategoryDialogTitle": "Neue Kategorie",
-  "categoryNameHint": "Kategoriename",
+  "homeNoCategoriesTitle": "Noch keine Cluster.\nTippe + zum Erstellen.",
+  "newCategoryDialogTitle": "Neue Cluster",
+  "categoryNameHint": "Clusterame",
   "categoryColorLabel": "Farbe",
   "categoryNameInUse": "Name bereits in Verwendung",
-  "categoryLimitReached": "Kategorienlimit erreicht ({max}). {upgradeHint}",
+  "categoryLimitReached": "Clusterlimit erreicht ({max}). {upgradeHint}",
   "@categoryLimitReached": {
-    "placeholders": { "max": { "type": "int" }, "upgradeHint": {} }
+    "placeholders": {
+      "max": {
+        "type": "int"
+      },
+      "upgradeHint": {}
+    }
   },
-  "noteLimitReached": "Notizenlimit erreicht ({max}). {upgradeHint}",
+  "noteLimitReached": "Erinnerungenlimit erreicht ({max}). {upgradeHint}",
   "@noteLimitReached": {
-    "placeholders": { "max": { "type": "int" }, "upgradeHint": {} }
+    "placeholders": {
+      "max": {
+        "type": "int"
+      },
+      "upgradeHint": {}
+    }
   },
   "upgradeHintFree": "Auf Pro upgraden für mehr.",
   "upgradeHintNone": "",
-
-  "notesListTitleFallback": "Notizen",
-  "notesListEmptyTitle": "Noch keine Notizen",
-  "notesListEmptyBody": "Tippe +, um deine erste Notiz zu erstellen",
+  "notesListTitleFallback": "Erinnerungen",
+  "notesListEmptyTitle": "Noch keine Erinnerungen",
+  "notesListEmptyBody": "Tippe +, um deine erste Erinnerung zu erstellen",
   "noteUntitled": "(ohne Titel)",
-  "noteDeletedSnack": "Notiz gelöscht",
-  "deleteNoteTitle": "Notiz löschen?",
+  "noteDeletedSnack": "Erinnerung gelöscht",
+  "deleteNoteTitle": "Erinnerung löschen?",
   "deleteNoteBody": "Dieser Vorgang kann nicht rückgängig gemacht werden.",
-  "privateAuthReason": "Authentifiziere dich, um diese private Notiz zu sehen",
+  "privateAuthReason": "Authentifiziere dich, um diese private Erinnerung zu sehen",
   "renameCategory": "Umbenennen",
   "changeCategoryColor": "Farbe ändern",
-  "deleteCategoryAction": "Kategorie löschen",
-  "renameCategoryDialog": "Kategorie umbenennen",
-  "categoryColorDialog": "Kategoriefarbe",
+  "deleteCategoryAction": "Cluster löschen",
+  "renameCategoryDialog": "Cluster umbenennen",
+  "categoryColorDialog": "Clusterfarbe",
   "deleteCategoryConfirmTitle": "\"{name}\" löschen?",
-  "@deleteCategoryConfirmTitle": { "placeholders": { "name": {} } },
-  "deleteCategoryConfirmBody": "Alle Notizen in dieser Kategorie werden ebenfalls gelöscht.",
-
-  "allNotesEmptyTitle": "Noch keine Notizen",
-  "allNotesEmptyBody": "Erstelle eine Kategorie und füge deine erste Notiz hinzu",
-  "allNotesCreateFirst": "Erstelle zuerst eine Kategorie",
-
-  "editorNewTitle": "Neue Notiz",
+  "@deleteCategoryConfirmTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "deleteCategoryConfirmBody": "Archiv in dieser Cluster werden ebenfalls gelöscht.",
+  "allNotesEmptyTitle": "Noch keine Erinnerungen",
+  "allNotesEmptyBody": "Erstelle eine Cluster und füge deine erste Erinnerung hinzu",
+  "allNotesCreateFirst": "Erstelle zuerst eine Cluster",
+  "editorNewTitle": "Neue Erinnerung",
   "editorEditTitle": "Bearbeitung",
   "editorSaving": "Wird gespeichert…",
   "editorSavedAt": "Gespeichert {time}",
-  "@editorSavedAt": { "placeholders": { "time": {} } },
+  "@editorSavedAt": {
+    "placeholders": {
+      "time": {}
+    }
+  },
   "editorTitleHint": "Titel",
   "editorBodyHint": "Schreibe los…",
-  "editorChangeCategory": "Kategorie ändern",
-  "editorNewCategoryEntry": "Neue Kategorie…",
+  "editorChangeCategory": "Cluster ändern",
+  "editorNewCategoryEntry": "Neue Cluster…",
   "editorTooltipPublic": "Öffentlich",
   "editorTooltipPrivate": "Privat",
-  "editorTooltipDelete": "Notiz löschen",
-  "editorTooltipEdit": "Notiz bearbeiten",
-  "editorTooltipCopy": "Notiz kopieren",
-  "editorCopyMenuItem": "Notiz kopieren",
-  "editorCopiedSnack": "Notiz kopiert",
-  "editorSttRecord": "Sprache aufnehmen",
+  "editorTooltipDelete": "Erinnerung löschen",
+  "editorTooltipEdit": "Erinnerung bearbeiten",
+  "editorTooltipCopy": "Erinnerung kopieren",
+  "editorCopyMenuItem": "Erinnerung kopieren",
+  "editorCopiedSnack": "Erinnerung kopiert",
   "editorSttStop": "Aufnahme beenden",
-
-  "searchHint": "Notizen durchsuchen…",
-  "searchIdleTitle": "Durchsuche deine Notizen",
-  "searchIdleBody": "Stichwörter eingeben oder eine Frage stellen. \nPrivate Notizen werden ignoriert.",
+  "searchHint": "Erinnerungen durchsuchen…",
+  "searchIdleTitle": "Durchsuche deine Erinnerungen",
+  "searchIdleBody": "Stichwörter eingeben oder eine Frage stellen. \nPrivate Erinnerungen werden ignoriert.",
   "searchNoResults": "Keine Ergebnisse für \"{query}\"",
-  "@searchNoResults": { "placeholders": { "query": {} } },
+  "@searchNoResults": {
+    "placeholders": {
+      "query": {}
+    }
+  },
   "searchTryDifferent": "Versuche andere Stichwörter",
   "searchMoreLines": "+{count} weitere Zeilen",
-  "@searchMoreLines": { "placeholders": { "count": { "type": "int" } } },
-  "searchTryAiHint": "Nicht gefunden? KI-Suche ausprobieren",
-  "searchNoResultsAiCta": "Keine Ergebnisse. KI-Suche starten",
+  "@searchMoreLines": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchTryAiHint": "Nicht gefunden? KI-Abruf ausprobieren",
+  "searchNoResultsAiCta": "Keine Ergebnisse. KI-Abruf starten",
   "searchHistoryButtonTooltip": "KI-Suchverlauf",
   "searchBackToResults": "Zurück zu Ergebnissen",
-  "widgetSearchTitle": "Notizen durchsuchen",
-
-  "aiSearchTitle": "KI-Suche",
-  "aiSearchHint": "Frage etwas zu deinen Notizen…",
-  "aiSearchLoading": "Notizen werden durchsucht…",
-  "aiSearchIdleTitle": "Stelle eine Frage zu deinen Notizen",
-  "aiSearchIdleBody": "Die KI durchsucht deine Notizen und fasst eine Antwort zusammen",
-  "aiSearchSuggestion1": "Fasse meine Trainingsnotizen zusammen",
+  "widgetSearchTitle": "Erinnerungen durchsuchen",
+  "aiSearchTitle": "KI-Abruf",
+  "aiSearchHint": "Frage etwas zu deinen Erinnerungen…",
+  "aiSearchLoading": "Erinnerungen werden durchsucht…",
+  "aiSearchIdleTitle": "Stelle eine Frage zu deinen Erinnerungen",
+  "aiSearchIdleBody": "Die KI durchsucht deine Erinnerungen und fasst eine Antwort zusammen",
+  "aiSearchSuggestion1": "Fasse meine TrainingsErinnerungen zusammen",
   "aiSearchSuggestion2": "Was habe ich über die Arbeit geschrieben?",
-  "aiSearchSuggestion3": "Finde Notizen zu meinen Zielen",
+  "aiSearchSuggestion3": "Finde Erinnerungen zu meinen Zielen",
   "aiSearchSuggestion4": "Was sind meine Reisepläne?",
   "aiSearchSources": "Quellen",
   "aiSearchFromCache": "Aus dem Cache",
   "aiSearchRateTitle": "Anfragelimit erreicht",
   "aiSearchRateSeconds": "Erneut versuchen in {seconds} s",
-  "@aiSearchRateSeconds": { "placeholders": { "seconds": { "type": "int" } } },
+  "@aiSearchRateSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "aiSearchRateMinutes": "Erneut versuchen in {minutes} min",
-  "@aiSearchRateMinutes": { "placeholders": { "minutes": { "type": "int" } } },
+  "@aiSearchRateMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "aiSearchRateResetsAt": "Zurückgesetzt um {time}",
-  "@aiSearchRateResetsAt": { "placeholders": { "time": {} } },
-  "aiSearchRateDefault": "Bitte warte vor der nächsten Suche",
+  "@aiSearchRateResetsAt": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "aiSearchRateDefault": "Bitte warte vor der nächsten Abruf",
   "aiSearchErrorDailyLimit": "Tägliches KI-Limit erreicht. Versuche es morgen erneut.",
   "aiSearchErrorSessionExpired": "Sitzung abgelaufen. Bitte melde dich erneut an.",
   "aiSearchErrorUnavailable": "KI ist derzeit nicht verfügbar.",
   "aiSearchErrorNetwork": "Keine Verbindung. Prüfe deine Internetverbindung und versuche es erneut.",
   "aiSearchErrorGeneric": "KI-Anfrage fehlgeschlagen. Bitte versuche es erneut.",
-  "aiInfoTitle": "Über die KI-Suche",
-  "aiInfoBody": "Die KI-Suche liest deine Notizen, um deine Frage zu beantworten.\n\n🔒 Private Notizen werden nie an die KI gesendet.\n\n📄 Sehr lange Notizen werden vor dem Senden gekürzt.",
+  "aiInfoTitle": "Über die KI-Abruf",
+  "aiInfoBody": "Die KI-Abruf liest deine Erinnerungen, um deine Frage zu beantworten.\n\n🔒 Private Erinnerungen werden nie an die KI gesendet.\n\n📄 Sehr lange Erinnerungen werden vor dem Senden gekürzt.",
   "aiInfoDismiss": "Verstanden",
   "aiAnswerCopied": "In die Zwischenablage kopiert",
-
   "aiHistoryTitle": "KI-Suchverlauf",
   "aiHistoryEmpty": "Noch kein Suchverlauf",
   "aiHistoryRelativeNow": "Gerade eben",
   "aiHistoryRelativeMinutes": "{count,plural, =1{Vor 1 Minute} other{Vor {count} Minuten}}",
-  "@aiHistoryRelativeMinutes": { "placeholders": { "count": { "type": "int" } } },
+  "@aiHistoryRelativeMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "aiHistoryRelativeHours": "{count,plural, =1{Vor 1 Stunde} other{Vor {count} Stunden}}",
-  "@aiHistoryRelativeHours": { "placeholders": { "count": { "type": "int" } } },
+  "@aiHistoryRelativeHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "aiHistoryRelativeDays": "{count,plural, =1{Vor 1 Tag} other{Vor {count} Tagen}}",
-  "@aiHistoryRelativeDays": { "placeholders": { "count": { "type": "int" } } },
-
+  "@aiHistoryRelativeDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "settingsTitle": "Einstellungen",
   "settingsSectionAccount": "Konto",
   "settingsSectionUsage": "Nutzung",
@@ -236,13 +299,13 @@
   "settingsUnknownUser": "Unbekannt",
   "settingsTierFree": "Kostenlos",
   "settingsTierPro": "Pro",
-  "settingsUsageAi": "KI-Suchen heute",
-  "settingsUsageJotsAi": "Jots-KI-Organisationen heute",
-  "settingsUsageNotes": "Notizen",
-  "settingsUsageCategories": "Kategorien",
+  "settingsUsageAi": "KI-Abrufn heute",
+  "settingsUsageJotsAi": "Funken-KI-Organisationen heute",
+  "settingsUsageNotes": "Erinnerungen",
+  "settingsUsageCategories": "Cluster",
   "settingsUpgradeTitle": "Auf Pro upgraden",
-  "settingsUpgradeSubtitle": "50 KI-Suchen/Tag · 1000 Notizen · 50 Kategorien",
-  "settingsUpgradeDialogBody": "Pro bietet dir 50 KI-Suchen pro Tag, bis zu 1000 Notizen, 50 Kategorien und 20.000 Zeichen pro Notiz.",
+  "settingsUpgradeSubtitle": "30 KI-Abrufn/Tag · 1000 Erinnerungen · 50 Cluster",
+  "settingsUpgradeDialogBody": "Pro bietet dir 30 KI-Abrufn pro Tag, bis zu 1000 Erinnerungen, 50 Cluster und 20.000 Zeichen pro Erinnerung.",
   "contactUsMessageHint": "Deine Nachricht (optional)…",
   "contactUsNoEmailApp": "Keine E-Mail-App gefunden. Schreib uns an:",
   "contactUsCopied": "E-Mail-Adresse kopiert",
@@ -254,89 +317,117 @@
   "settingsLanguageHindi": "हिन्दी",
   "settingsLanguageSpanish": "Español",
   "settingsLanguageFrench": "Français",
-
-  "jotsAddTooltip": "Jot hinzufügen",
-  "jotAddDialogTitle": "Neuer Jot",
+  "jotsAddTooltip": "Funke hinzuf?gen",
+  "jotAddDialogTitle": "Neuer Funke",
   "jotInputHint": "Schnellen Gedanken festhalten",
   "jotSavedSnack": "Gedanke gespeichert",
   "jotSaveUnavailable": "Gedanke konnte nicht gespeichert werden. Bitte versuche es erneut.",
   "jotCharCounter": "{count}/{max} Zeichen",
-  "@jotCharCounter": {"placeholders":{"count":{"type":"int"},"max":{"type":"int"}}},
-  "jotsEmptyTitle": "Keine Jots in der Warteschlange",
+  "@jotCharCounter": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "jotsEmptyTitle": "Keine Funken offen",
   "jotsEmptyBody": "Tippe auf +, sobald dir ein Gedanke kommt.",
   "jotsSortOldestFirst": "Älteste zuerst",
   "jotsSortNewestFirst": "Neueste zuerst",
   "jotsOrganizeAi": "Mit KI organisieren",
   "jotsAcceptAll": "Alle Vorschläge annehmen",
-  "jotsAiInfoTitle": "Über Jots KI",
-  "jotsAiInfoBody": "Jots KI schlägt vor, wie nicht bearbeitete Gedanken organisiert werden können. Es werden nur noch nicht gesendete Jots, Kategorienamen und Notiztitel gesendet. Notiztexte und private Notizen werden nicht gesendet, und lange Listen können begrenzt werden.",
+  "jotsAiInfoTitle": "?ber Funken-KI",
+  "jotsAiInfoBody": "Funken KI schlägt vor, wie nicht bearbeitete Gedanken organisiert werden können. Es werden nur noch nicht gesendete Funken, Clusteramen und Erinnerungtitel gesendet. Erinnerungtexte und private Erinnerungen werden nicht gesendet, und lange Listen können begrenzt werden.",
   "jotsAiNoNew": "Keine neuen Gedanken zum Organisieren.",
-  "jotsAiQuota": "Tägliches Jots-KI-Limit erreicht.",
-  "jotsAiFailed": "Jots konnten nicht organisiert werden. Versuche es erneut.",
+  "jotsAiQuota": "T?gliches Funken-KI-Limit erreicht.",
+  "jotsAiFailed": "Funken konnten nicht organisiert werden.",
   "jotsAiSuggestionsProvided": "{count,plural, =0{0 Vorschläge wurden bereitgestellt. Versuche nächstes Mal, konkretere Gedanken zu schreiben.} =1{1 Vorschlag wurde bereitgestellt.} other{{count} Vorschläge wurden bereitgestellt.}}",
-  "@jotsAiSuggestionsProvided": {"placeholders":{"count":{"type":"int"}}},
-  "jotsAiLimitedTo30": "Nur die ältesten 30 neuen Jots wurden gesendet.",
+  "@jotsAiSuggestionsProvided": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jotsAiLimitedTo30": "Nur die ältesten 30 neuen Funken wurden gesendet.",
   "jotsSelectedCount": "{count} ausgewählt",
-  "@jotsSelectedCount": {"placeholders":{"count":{"type":"int"}}},
-  "jotsDeleteSelectedTitle": "Ausgewählte Jots löschen?",
+  "@jotsSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jotsDeleteSelectedTitle": "Ausgewählte Funken löschen?",
   "jotsDeleteSelectedBody": "Ausgewählte Gedanken werden dauerhaft gelöscht.",
   "jotCreatedAt": "Erstellt: {time}",
-  "@jotCreatedAt": {"placeholders":{"time":{}}},
-  "jotActionsTooltip": "Jot bearbeiten",
+  "@jotCreatedAt": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "jotActionsTooltip": "Funke bearbeiten",
   "jotActionsTitle": "Gedanken bearbeiten",
-  "jotActionCreateNote": "Neue Notiz erstellen",
-  "jotActionAddToNote": "Zu bestehender Notiz hinzufügen",
+  "jotActionCreateNote": "Neue Erinnerung erstellen",
+  "jotActionAddToNote": "Zu bestehender Erinnerung hinzufügen",
   "jotActionCreateAlert": "Erinnerung erstellen",
   "jotActionDeleteThought": "Gedanken löschen",
   "jotActionSuggestedByAi": "Diese Aktionen wurden von der KI vorgeschlagen.",
   "jotActionUpdateThought": "Gedankentext aktualisieren",
   "jotActionUpdatedThoughtText": "Aktualisierter Gedanke",
   "jotActionUpdatedThoughtHint": "Beispiel: Der Herr der Ringe",
-  "jotActionNewNoteTitle": "Notiztitel",
-  "jotActionCategory": "Kategorie",
-  "jotActionNewCategory": "Neue Kategorie",
-  "jotActionNote": "Notiz",
-  "jotActionNoNotes": "Keine Notizen in dieser Kategorie",
-  "jotActionLock": "Notiz sperren",
+  "jotActionNewNoteTitle": "Erinnerungtitel",
+  "jotActionCategory": "Cluster",
+  "jotActionNewCategory": "Neue Cluster",
+  "jotActionNote": "Erinnerung",
+  "jotActionNoNotes": "Keine Erinnerungen in dieser Cluster",
+  "jotActionLock": "Erinnerung sperren",
   "jotActionReminderWhen": "Erinnerung um {time}",
-  "@jotActionReminderWhen": {"placeholders":{"time":{}}},
+  "@jotActionReminderWhen": {
+    "placeholders": {
+      "time": {}
+    }
+  },
   "jotActionPickReminder": "Datum und Uhrzeit auswählen",
   "jotActionAccept": "Annehmen",
   "jotActionChooseFuture": "Wähle ein Datum und eine Uhrzeit in der Zukunft.",
   "jotNotificationBody": "Tippen, um diesen Gedanken zu organisieren",
-  "jotReminderNotFound": "Dieser Jot ist nicht mehr verfügbar.",
-  "widgetAddNoteTooltip": "Notiz hinzufügen",
-  "widgetComposeTitle": "Neue Notiz",
-  "widgetComposeDiscardTitle": "Notiz verwerfen?",
-  "widgetComposeDiscardBody": "Deine Notiz wird nicht gespeichert.",
-  "widgetComposeNoCategories": "Keine Kategorien gefunden.\nÖffne MindVault, um zuerst eine zu erstellen.",
-  "widgetComposeCategoryLabel": "Kategorie",
+  "jotReminderNotFound": "Dieser Funke ist nicht mehr verfügbar.",
+  "widgetAddNoteTooltip": "Erinnerung hinzuf?gen",
+  "widgetComposeTitle": "Neue Erinnerung",
+  "widgetComposeDiscardTitle": "Erinnerung verwerfen?",
+  "widgetComposeDiscardBody": "Deine Erinnerung wird nicht gespeichert.",
+  "widgetComposeNoCategories": "Keine Cluster gefunden.\n?ffne MindVault, um zuerst einen zu erstellen.",
+  "widgetComposeCategoryLabel": "Cluster",
   "noteTypeLabel": "Typ",
-  "noteTypeText": "Text",
-  "noteTypeChecklist": "Checkliste",
+  "noteTypeText": "Aufzeichnung",
+  "noteTypeChecklist": "Plan",
   "reminderTooltipSet": "Erinnerung festlegen",
   "reminderTooltipActive": "Erinnerung eingestellt",
   "reminderDialogTitle": "Erinnerung",
   "reminderScheduledFor": "Geplant für {time}",
   "reminderEdit": "Bearbeiten",
   "reminderRemove": "Entfernen",
-  "reminderSaveNoteFirst": "Füge einen Titel oder Notiztext hinzu, bevor du eine Erinnerung festlegst.",
+  "reminderSaveNoteFirst": "Füge einen Titel oder Erinnerungtext hinzu, bevor du eine Erinnerung festlegst.",
   "reminderMayBeDelayed": "Exakte Alarme sind nicht aktiviert. Diese Erinnerung kann sich verzögern.",
   "reminderMustBeFuture": "Wähle ein zukünftiges Datum und eine zukünftige Uhrzeit.",
-  "reminderNoteNotFound": "Diese Erinnerungsnotiz wurde nicht gefunden.",
+  "reminderNoteNotFound": "Diese ErinnerungsErinnerung wurde nicht gefunden.",
   "removeDoneTasksLabel": "Erledigte Aufgaben entfernen",
   "removeDoneTasksTitle": "Erledigte Aufgaben entfernen?",
   "removeDoneTasksBody": "Abgeschlossene Aufgaben werden dauerhaft entfernt.",
-  "widgetViewEditTitle": "Notiz bearbeiten",
+  "widgetViewEditTitle": "Erinnerung bearbeiten",
   "widgetViewEdit": "Bearbeiten",
   "widgetViewDelete": "Löschen",
   "widgetViewUnlocking": "Wird entsperrt…",
   "widgetViewNoContent": "Kein Inhalt",
-  "widgetViewNotFound": "Notiz nicht gefunden",
+  "widgetViewNotFound": "Erinnerung nicht gefunden",
   "widgetViewDiscardTitle": "Änderungen verwerfen?",
   "widgetViewDiscardBody": "Deine Änderungen werden nicht gespeichert.",
-  "widgetViewKeepEditing": "Weiter bearbeiten"
-  ,
-  "reminderNotificationBody": "Tippen, um diese Notiz zu öffnen",
-  "reminderNotificationsRequired": "Die Benachrichtigungsberechtigung muss für Erinnerungen erteilt werden."
+  "widgetViewKeepEditing": "Weiter bearbeiten",
+  "reminderNotificationBody": "Tippen, um diese Erinnerung zu öffnen",
+  "reminderNotificationsRequired": "Die Benachrichtigungsberechtigung muss für Erinnerungen erteilt werden.",
+  "editorSttRecord": "Sprache aufnehmen"
 }

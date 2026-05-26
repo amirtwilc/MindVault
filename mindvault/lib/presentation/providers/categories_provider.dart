@@ -11,11 +11,13 @@ import 'auth_provider.dart';
 import 'database_provider.dart';
 import 'notes_provider.dart';
 
-final categoriesDatasourceProvider = Provider<SupabaseCategoriesDatasource>((ref) {
+final categoriesDatasourceProvider =
+    Provider<SupabaseCategoriesDatasource>((ref) {
   return SupabaseCategoriesDatasource(ref.watch(supabaseClientProvider));
 });
 
-final categoriesProvider = AsyncNotifierProvider<CategoriesNotifier, List<Category>>(
+final categoriesProvider =
+    AsyncNotifierProvider<CategoriesNotifier, List<Category>>(
   CategoriesNotifier.new,
 );
 
@@ -102,7 +104,13 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
 
       // Don't delete categories that have a pending upsert (created offline).
       final pendingCatIds = (await db.getPendingOps())
-          .where((op) => op.opType == 'upsert_category')
+          .where((op) =>
+              op.opType == 'upsert_cluster' ||
+              op.opType == 'create_cluster' ||
+              op.opType == 'update_cluster' ||
+              op.opType == 'upsert_category' ||
+              op.opType == 'create_category' ||
+              op.opType == 'update_category')
           .map((op) => op.recordId)
           .toSet();
 
@@ -218,7 +226,7 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
           .read(categoriesDatasourceProvider)
           .insertCategory(kGeneralCategoryName, sortOrder, id: id);
     } catch (_) {
-      await db.upsertPendingOp('cat_$id', 'upsert_category', id);
+      await db.upsertPendingOp('cat_$id', 'upsert_cluster', id);
     }
   }
 
@@ -249,7 +257,7 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
     try {
       await datasource.insertCategory(name, sortOrder, color: color, id: id);
     } catch (_) {
-      await db.upsertPendingOp('cat_$id', 'upsert_category', id);
+      await db.upsertPendingOp('cat_$id', 'upsert_cluster', id);
     }
     return id;
   }
@@ -292,7 +300,7 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
       await datasource.updateSortOrders(updates);
     } catch (_) {
       for (final c in withOrder) {
-        await db.upsertPendingOp('cat_${c.id}', 'upsert_category', c.id);
+        await db.upsertPendingOp('cat_${c.id}', 'upsert_cluster', c.id);
       }
     }
   }
@@ -316,9 +324,11 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
     await _reloadFromDrift();
 
     try {
-      await ref.read(categoriesDatasourceProvider).updateCategoryName(id, newName);
+      await ref
+          .read(categoriesDatasourceProvider)
+          .updateCategoryName(id, newName);
     } catch (_) {
-      await db.upsertPendingOp('cat_$id', 'upsert_category', id);
+      await db.upsertPendingOp('cat_$id', 'upsert_cluster', id);
     }
   }
 
@@ -341,9 +351,11 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
     await _reloadFromDrift();
 
     try {
-      await ref.read(categoriesDatasourceProvider).updateCategoryColor(id, color);
+      await ref
+          .read(categoriesDatasourceProvider)
+          .updateCategoryColor(id, color);
     } catch (_) {
-      await db.upsertPendingOp('cat_$id', 'upsert_category', id);
+      await db.upsertPendingOp('cat_$id', 'upsert_cluster', id);
     }
   }
 
@@ -354,7 +366,10 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
 
     final db = ref.read(appDatabaseProvider);
 
-    await ref.read(notesDatasourceProvider).deleteNotesByCategoryId(id).catchError((_) {});
+    await ref
+        .read(notesDatasourceProvider)
+        .deleteNotesByCategoryId(id)
+        .catchError((_) {});
     await db.deleteNotesByCategoryId(id);
     await db.removePendingOpsForRecord(id);
     await db.deletePendingOp('cat_$id');
@@ -364,7 +379,7 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
     try {
       await ref.read(categoriesDatasourceProvider).deleteCategory(id);
     } catch (_) {
-      await db.upsertPendingOp('catdel_$id', 'delete_category', id);
+      await db.upsertPendingOp('catdel_$id', 'delete_cluster', id);
     }
   }
 
@@ -375,12 +390,19 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
     final datasource = ref.read(categoriesDatasourceProvider);
     final ops = await db.getPendingOps();
     final catOps = ops.where((o) =>
-        o.opType == 'upsert_category' || o.opType == 'delete_category');
+        o.opType == 'upsert_cluster' ||
+        o.opType == 'create_cluster' ||
+        o.opType == 'update_cluster' ||
+        o.opType == 'upsert_category' ||
+        o.opType == 'create_category' ||
+        o.opType == 'update_category' ||
+        o.opType == 'delete_cluster' ||
+        o.opType == 'delete_category');
 
     final justSyncedIds = <String>{};
     for (final op in catOps) {
       try {
-        if (op.opType == 'delete_category') {
+        if (op.opType == 'delete_cluster' || op.opType == 'delete_category') {
           await datasource.deleteCategory(op.recordId);
         } else {
           final rows = await (db.select(db.categoriesTable)
@@ -395,8 +417,8 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
               'created_at': r.createdAt.toIso8601String(),
               'last_used_at': r.lastUsedAt.toIso8601String(),
             };
-            await datasource
-                .upsertCategory({...base, if (r.color != null) 'color': r.color});
+            await datasource.upsertCategory(
+                {...base, if (r.color != null) 'color': r.color});
             justSyncedIds.add(r.id);
           }
         }

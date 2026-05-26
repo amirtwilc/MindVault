@@ -21,7 +21,8 @@ import '../../../services/widget_data_service.dart';
   return EncryptionService.wrapKeyStatic(keyBytes, pin);
 }
 
-Uint8List _unwrapKeyCompute((String wrappedKeyB64, String saltB64, String pin) args) {
+Uint8List _unwrapKeyCompute(
+    (String wrappedKeyB64, String saltB64, String pin) args) {
   final (wrappedKeyB64, saltB64, pin) = args;
   return EncryptionService.unwrapKeyStatic(wrappedKeyB64, saltB64, pin);
 }
@@ -79,17 +80,18 @@ class _PinSetupScreenState extends ConsumerState<PinSetupScreen> {
     final client = Supabase.instance.client;
     final userId = client.auth.currentUser!.id;
     try {
-      await client
-          .from(SupabaseConstants.profilesTable)
-          .insert({'id': userId});
+      await client.from(SupabaseConstants.profilesTable).insert({'id': userId});
     } on PostgrestException catch (e) {
-      if (e.code != '23505') rethrow; // 23505 = unique_violation: profile already exists
+      if (e.code != '23505')
+        rethrow; // 23505 = unique_violation: profile already exists
     }
   }
 
   String _formatLockout(AppStrings l, Duration remaining) {
     final secs = remaining.inSeconds + 1;
-    return secs < 60 ? l.pinLockedSeconds(secs) : l.pinLockedMinutes((secs / 60).ceil());
+    return secs < 60
+        ? l.pinLockedSeconds(secs)
+        : l.pinLockedMinutes((secs / 60).ceil());
   }
 
   Future<void> _recover() async {
@@ -107,7 +109,10 @@ class _PinSetupScreenState extends ConsumerState<PinSetupScreen> {
       return;
     }
 
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
 
     try {
       // Run PBKDF2 on a background isolate so the spinner paints immediately.
@@ -195,7 +200,10 @@ class _PinSetupScreenState extends ConsumerState<PinSetupScreen> {
       return;
     }
 
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
 
     try {
       // "Start fresh" path: wipe locally cached plaintext notes and any
@@ -231,12 +239,13 @@ class _PinSetupScreenState extends ConsumerState<PinSetupScreen> {
       ref.read(aesKeyProvider.notifier).state = aesKey;
       ref.invalidate(encryptionReadyProvider);
     } catch (e) {
-      if (mounted) setState(() {
-        _error = e is PostgrestException
-            ? l.pinServerError(e.message)
-            : l.pinSetupError;
-        _loading = false;
-      });
+      if (mounted)
+        setState(() {
+          _error = e is PostgrestException
+              ? l.pinServerError(e.message)
+              : l.pinSetupError;
+          _loading = false;
+        });
     }
   }
 
@@ -257,7 +266,8 @@ class _PinSetupScreenState extends ConsumerState<PinSetupScreen> {
     final isRecovery = _mode == _Mode.recovery;
 
     return Scaffold(
-      appBar: AppBar(title: Text(isRecovery ? l.pinRecoveryAppBar : l.pinSetupAppBar)),
+      appBar: AppBar(
+          title: Text(isRecovery ? l.pinRecoveryAppBar : l.pinSetupAppBar)),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -309,7 +319,9 @@ class _PinSetupScreenState extends ConsumerState<PinSetupScreen> {
               ],
               if (_error != null) ...[
                 const SizedBox(height: 12),
-                Text(_error!, style: TextStyle(color: cs.error), textAlign: TextAlign.center),
+                Text(_error!,
+                    style: TextStyle(color: cs.error),
+                    textAlign: TextAlign.center),
               ],
               const SizedBox(height: 24),
               FilledButton(
@@ -320,7 +332,9 @@ class _PinSetupScreenState extends ConsumerState<PinSetupScreen> {
                         width: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : Text(isRecovery ? l.actionRecoverContinue : l.actionSetupContinue),
+                    : Text(isRecovery
+                        ? l.actionRecoverContinue
+                        : l.actionSetupContinue),
               ),
               const SizedBox(height: 16),
               Text(

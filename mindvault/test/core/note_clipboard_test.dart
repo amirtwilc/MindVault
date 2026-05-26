@@ -56,7 +56,8 @@ void main() {
   tearDown(() => clip.reset());
 
   testWidgets('copies body to system clipboard', (tester) async {
-    await tester.pumpWidget(_harness((ctx) => copyNoteBody(ctx, 'line one\nline two')));
+    await tester
+        .pumpWidget(_harness((ctx) => copyNoteBody(ctx, 'line one\nline two')));
     await tester.tap(find.byType(ElevatedButton));
     await tester.pump();
     expect(clip.lastText, 'line one\nline two');
@@ -67,7 +68,7 @@ void main() {
     await tester.tap(find.byType(ElevatedButton));
     await tester.pump(); // start the snackbar animation
     await tester.pump(const Duration(milliseconds: 200));
-    expect(find.text('Note copied'), findsOneWidget);
+    expect(find.text('Memory copied'), findsOneWidget);
   });
 
   testWidgets('no-op when body is empty', (tester) async {
@@ -75,6 +76,6 @@ void main() {
     await tester.tap(find.byType(ElevatedButton));
     await tester.pump();
     expect(clip.lastText, isNull);
-    expect(find.text('Note copied'), findsNothing);
+    expect(find.text('Memory copied'), findsNothing);
   });
 }

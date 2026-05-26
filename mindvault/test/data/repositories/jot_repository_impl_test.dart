@@ -123,22 +123,22 @@ void main() {
       expect((await db.getJot(jot.id))!.jotText, equals('Secret thought'));
     });
 
-    test('queues create_jot when Supabase fails', () async {
+    test('queues create_spark when Supabase fails', () async {
       when(() => remote.insertJot(any())).thenThrow(Exception('offline'));
 
       final jot = await repo.createJot(text: 'Offline thought');
 
       final ops = await db.getPendingOps();
-      expect(ops.single.opType, equals('create_jot'));
+      expect(ops.single.opType, equals('create_spark'));
       expect(ops.single.recordId, equals(jot.id));
       expect((await db.getJot(jot.id))!.jotText, equals('Offline thought'));
     });
   });
 
   group('syncPendingOps', () {
-    test('replays pending create_jot with encrypted payload', () async {
+    test('replays pending create_spark with encrypted payload', () async {
       await db.upsertJot(_localJot(id: 'pending', text: 'Queued thought'));
-      await db.upsertPendingOp('pending', 'create_jot', 'pending');
+      await db.upsertPendingOp('pending', 'create_spark', 'pending');
 
       Map<String, dynamic>? payload;
       when(() => remote.upsertJot(any())).thenAnswer((inv) async {
@@ -160,10 +160,10 @@ void main() {
       expect(await db.getPendingOps(), isEmpty);
     });
 
-    test('delete_jot removes remote and local rows after realtime reinsert',
+    test('delete_spark removes remote and local rows after realtime reinsert',
         () async {
       await db.upsertJot(_localJot(id: 'deleted'));
-      await db.upsertPendingOp('del_deleted', 'delete_jot', 'deleted');
+      await db.upsertPendingOp('del_deleted', 'delete_spark', 'deleted');
       when(() => remote.deleteJot('deleted')).thenAnswer((_) async {});
 
       await repo.syncPendingOps();

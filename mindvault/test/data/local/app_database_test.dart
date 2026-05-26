@@ -215,28 +215,28 @@ void main() {
 
   group('upsertPendingOp', () {
     test('inserts a pending op', () async {
-      await db.upsertPendingOp('op-1', 'create_note', 'note-1');
+      await db.upsertPendingOp('op-1', 'create_memory', 'note-1');
       final ops = await db.getPendingOps();
       expect(ops.length, equals(1));
-      expect(ops.first.opType, equals('create_note'));
+      expect(ops.first.opType, equals('create_memory'));
       expect(ops.first.recordId, equals('note-1'));
     });
 
     test('replaces op with same id', () async {
-      await db.upsertPendingOp('op-1', 'create_note', 'note-1');
-      await db.upsertPendingOp('op-1', 'update_note', 'note-1');
+      await db.upsertPendingOp('op-1', 'create_memory', 'note-1');
+      await db.upsertPendingOp('op-1', 'update_memory', 'note-1');
       final ops = await db.getPendingOps();
       expect(ops.length, equals(1));
-      expect(ops.first.opType, equals('update_note'));
+      expect(ops.first.opType, equals('update_memory'));
     });
   });
 
   group('getPendingOps', () {
     test('returns ops ordered by createdAt ascending', () async {
       // Insert in reverse order and verify sorting
-      await db.upsertPendingOp('op-b', 'create_note', 'n2');
+      await db.upsertPendingOp('op-b', 'create_memory', 'n2');
       await Future.delayed(const Duration(milliseconds: 5));
-      await db.upsertPendingOp('op-a', 'create_note', 'n1');
+      await db.upsertPendingOp('op-a', 'create_memory', 'n1');
       final ops = await db.getPendingOps();
       expect(ops.first.id, equals('op-b'));
       expect(ops.last.id, equals('op-a'));
@@ -245,7 +245,7 @@ void main() {
 
   group('deletePendingOp', () {
     test('removes op by id', () async {
-      await db.upsertPendingOp('op-1', 'create_note', 'note-1');
+      await db.upsertPendingOp('op-1', 'create_memory', 'note-1');
       await db.deletePendingOp('op-1');
       expect(await db.getPendingOps(), isEmpty);
     });
@@ -253,9 +253,9 @@ void main() {
 
   group('removePendingOpsForRecord', () {
     test('removes all ops for a given recordId', () async {
-      await db.upsertPendingOp('op-1', 'create_note', 'note-1');
-      await db.upsertPendingOp('op-2', 'update_note', 'note-1');
-      await db.upsertPendingOp('op-3', 'create_note', 'note-2');
+      await db.upsertPendingOp('op-1', 'create_memory', 'note-1');
+      await db.upsertPendingOp('op-2', 'update_memory', 'note-1');
+      await db.upsertPendingOp('op-3', 'create_memory', 'note-2');
       await db.removePendingOpsForRecord('note-1');
       final ops = await db.getPendingOps();
       expect(ops.length, equals(1));
@@ -278,7 +278,7 @@ void main() {
 
   group('jots', () {
     test('schema version includes jots migration', () {
-      expect(db.schemaVersion, equals(10));
+      expect(db.schemaVersion, equals(12));
     });
 
     test('upsertJot inserts and updates a jot', () async {
@@ -354,7 +354,7 @@ void main() {
     test('notes default to text type', () async {
       await db.upsertNote(_note());
       final row = await db.getNote('note-1');
-      expect(row!.noteType, equals('text'));
+      expect(row!.noteType, equals('record'));
     });
 
     test('inserts and orders checklist items with completed items last',

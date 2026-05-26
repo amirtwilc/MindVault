@@ -47,7 +47,8 @@ class AiQueryBar extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14),
-              child: Icon(Icons.psychology_rounded, size: 20, color: cs.primary),
+              child:
+                  Icon(Icons.psychology_rounded, size: 20, color: cs.primary),
             ),
             Expanded(
               child: TextField(
@@ -55,7 +56,8 @@ class AiQueryBar extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: AppStrings.of(context).aiSearchHint,
                   border: InputBorder.none,
-                  hintStyle: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+                  hintStyle:
+                      tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
                   isDense: true,
                   contentPadding: EdgeInsets.zero,
                 ),
@@ -66,7 +68,10 @@ class AiQueryBar extends StatelessWidget {
               ),
             ),
             if (hasText)
-              _IconBtn(icon: Icons.close_rounded, color: cs.onSurfaceVariant, onTap: onClear)
+              _IconBtn(
+                  icon: Icons.close_rounded,
+                  color: cs.onSurfaceVariant,
+                  onTap: onClear)
             else if (sttAvailable)
               _IconBtn(
                 icon: listening ? Icons.mic_rounded : Icons.mic_none_rounded,
@@ -92,7 +97,8 @@ class _IconBtn extends StatelessWidget {
   final IconData icon;
   final Color color;
   final VoidCallback onTap;
-  const _IconBtn({required this.icon, required this.color, required this.onTap});
+  const _IconBtn(
+      {required this.icon, required this.color, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +139,8 @@ class AiIdleHint extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
       child: Column(
         children: [
-          Icon(Icons.auto_awesome_rounded, size: 56, color: cs.primary.withOpacity(0.6)),
+          Icon(Icons.auto_awesome_rounded,
+              size: 56, color: cs.primary.withOpacity(0.6)),
           const SizedBox(height: 16),
           Text(
             l.searchIdleTitle,
@@ -150,7 +157,8 @@ class AiIdleHint extends StatelessWidget {
           ...suggestions.map(
             (s) => Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: AiSuggestionChip(label: s, cs: cs, tt: tt, onTap: () => onSuggestion(s)),
+              child: AiSuggestionChip(
+                  label: s, cs: cs, tt: tt, onTap: () => onSuggestion(s)),
             ),
           ),
         ],
@@ -189,7 +197,9 @@ class AiSuggestionChip extends StatelessWidget {
           children: [
             Icon(Icons.north_east_rounded, size: 16, color: cs.primary),
             const SizedBox(width: 12),
-            Expanded(child: Text(label, style: tt.bodyMedium?.copyWith(color: cs.onSurface))),
+            Expanded(
+                child: Text(label,
+                    style: tt.bodyMedium?.copyWith(color: cs.onSurface))),
           ],
         ),
       ),
@@ -213,7 +223,10 @@ class AiLoadingView extends StatelessWidget {
           const SizedBox(height: 20),
           Text(
             AppStrings.of(context).aiSearchLoading,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(color: cs.onSurfaceVariant),
           ),
         ],
       ),
@@ -256,10 +269,13 @@ class AiAnswerView extends ConsumerWidget {
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       child: Column(
-        crossAxisAlignment: hasAnswer ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+        crossAxisAlignment:
+            hasAnswer ? CrossAxisAlignment.start : CrossAxisAlignment.center,
         children: [
           Row(
-            mainAxisAlignment: hasAnswer ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
+            mainAxisAlignment: hasAnswer
+                ? MainAxisAlignment.spaceBetween
+                : MainAxisAlignment.center,
             children: [
               if (fromCache)
                 Row(
@@ -267,7 +283,8 @@ class AiAnswerView extends ConsumerWidget {
                   children: [
                     Icon(Icons.history_rounded, size: 14, color: cs.outline),
                     const SizedBox(width: 4),
-                    Text(l.aiSearchFromCache, style: tt.labelSmall?.copyWith(color: cs.outline)),
+                    Text(l.aiSearchFromCache,
+                        style: tt.labelSmall?.copyWith(color: cs.outline)),
                   ],
                 )
               else
@@ -299,7 +316,8 @@ class AiAnswerView extends ConsumerWidget {
             const SizedBox(height: 10),
             Row(
               children: [
-                Icon(Icons.article_outlined, size: 14, color: cs.onSurfaceVariant),
+                Icon(Icons.article_outlined,
+                    size: 14, color: cs.onSurfaceVariant),
                 const SizedBox(width: 6),
                 Text(
                   l.aiSearchSources,
@@ -374,7 +392,8 @@ class AiSourceChip extends StatelessWidget {
 
     if (note != null) {
       return GestureDetector(
-        onTap: () => context.push('/home/categories/${note!.categoryId}/edit/${note!.id}'),
+        onTap: () =>
+            context.push('/home/clusters/${note!.categoryId}/edit/${note!.id}'),
         child: chip,
       );
     }
@@ -419,12 +438,15 @@ class AiRateLimitedView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.hourglass_top_rounded, size: 56, color: cs.outlineVariant),
+            Icon(Icons.hourglass_top_rounded,
+                size: 56, color: cs.outlineVariant),
             const SizedBox(height: 16),
-            Text(l.aiSearchRateTitle, style: tt.titleMedium?.copyWith(color: cs.onSurface)),
+            Text(l.aiSearchRateTitle,
+                style: tt.titleMedium?.copyWith(color: cs.onSurface)),
             const SizedBox(height: 8),
             Text(detail,
-                style: tt.bodySmall?.copyWith(color: cs.outline), textAlign: TextAlign.center),
+                style: tt.bodySmall?.copyWith(color: cs.outline),
+                textAlign: TextAlign.center),
           ],
         ),
       ),
@@ -459,11 +481,15 @@ class AiErrorView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline_rounded, size: 56, color: cs.error.withOpacity(0.7)),
+            Icon(Icons.error_outline_rounded,
+                size: 56, color: cs.error.withOpacity(0.7)),
             const SizedBox(height: 16),
             Text(
               message,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: cs.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
