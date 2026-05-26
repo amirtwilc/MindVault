@@ -36,9 +36,7 @@ void main() {
     final container = makeContainer(prefs);
     addTearDown(container.dispose);
 
-    await container
-        .read(localeProvider.notifier)
-        .setLocale(const Locale('de'));
+    await container.read(localeProvider.notifier).setLocale(const Locale('de'));
 
     expect(container.read(localeProvider), const Locale('de'));
     expect(prefs.getString('app_locale'), 'de');

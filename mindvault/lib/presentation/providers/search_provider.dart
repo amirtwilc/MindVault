@@ -58,7 +58,8 @@ List<SearchResult> filterNotesForSearch(
     final bodyAllTokens = tokens.every((t) => bodyLow.contains(t));
 
     // Exclude notes where no single field covers every token (no OR hits)
-    if (!exactTitle && !exactBody && !titleAllTokens && !bodyAllTokens) continue;
+    if (!exactTitle && !exactBody && !titleAllTokens && !bodyAllTokens)
+      continue;
 
     // Tier 2 — all tokens AND (only when tier 1 didn't already match that field)
     if (!exactTitle && titleAllTokens) score += 40;
@@ -74,7 +75,8 @@ List<SearchResult> filterNotesForSearch(
     if (note.isPinned) score += 15;
 
     // Recency boost — mirrors widget_data_service.dart "most recently touched" logic
-    final touched = (note.lastOpenedAt != null && note.lastOpenedAt!.isAfter(note.createdAt))
+    final touched = (note.lastOpenedAt != null &&
+            note.lastOpenedAt!.isAfter(note.createdAt))
         ? note.lastOpenedAt!
         : note.createdAt;
     final ageDays = ref.difference(touched).inDays;
@@ -103,10 +105,12 @@ List<SearchResult> filterNotesForSearch(
     final cmp = b.score.compareTo(a.score);
     if (cmp != 0) return cmp;
     // Tie-break: most recently touched first
-    final aT = (a.note.lastOpenedAt != null && a.note.lastOpenedAt!.isAfter(a.note.createdAt))
+    final aT = (a.note.lastOpenedAt != null &&
+            a.note.lastOpenedAt!.isAfter(a.note.createdAt))
         ? a.note.lastOpenedAt!
         : a.note.createdAt;
-    final bT = (b.note.lastOpenedAt != null && b.note.lastOpenedAt!.isAfter(b.note.createdAt))
+    final bT = (b.note.lastOpenedAt != null &&
+            b.note.lastOpenedAt!.isAfter(b.note.createdAt))
         ? b.note.lastOpenedAt!
         : b.note.createdAt;
     return bT.compareTo(aT);

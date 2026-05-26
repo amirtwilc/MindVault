@@ -26,7 +26,7 @@ class NoteModel {
   final String? pinnedAt;
   @JsonKey(name: 'pin_order')
   final int? pinOrder;
-  @JsonKey(name: 'note_type', defaultValue: 'text')
+  @JsonKey(name: 'note_type', defaultValue: 'record')
   final String noteType;
 
   const NoteModel({
@@ -42,7 +42,7 @@ class NoteModel {
     this.isPinned = false,
     this.pinnedAt,
     this.pinOrder,
-    this.noteType = 'text',
+    this.noteType = 'record',
   });
 
   factory NoteModel.fromJson(Map<String, dynamic> json) =>

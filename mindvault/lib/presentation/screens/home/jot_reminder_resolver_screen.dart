@@ -83,7 +83,7 @@ class _JotReminderResolverScreenState
       return;
     }
     context.go(Uri(
-      path: '/home/jots',
+      path: '/home/sparks',
       queryParameters: {'highlight': widget.jotId},
     ).toString());
   }
@@ -119,7 +119,7 @@ class _JotReminderResolverScreenState
               Text(l.jotReminderNotFound),
               const SizedBox(height: 16),
               FilledButton(
-                onPressed: () => context.go('/home/jots'),
+                onPressed: () => context.go('/home/sparks'),
                 child: Text(l.navJots),
               ),
             ],

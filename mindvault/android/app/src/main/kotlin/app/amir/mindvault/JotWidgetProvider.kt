@@ -29,7 +29,7 @@ class JotWidgetProvider : AppWidgetProvider() {
 
             val intent = Intent(context, TransparentActivity::class.java).apply {
                 action = Intent.ACTION_VIEW
-                data = Uri.parse("mindvault://widget/new-jot")
+                data = Uri.parse("mindvault://widget/new-spark")
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
             }
             val pi = PendingIntent.getActivity(

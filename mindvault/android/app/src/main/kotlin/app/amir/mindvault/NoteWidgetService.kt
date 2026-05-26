@@ -80,7 +80,7 @@ private class NoteWidgetFactory(
             val uriBuilder = Uri.Builder()
                 .scheme("mindvault")
                 .authority("widget")
-                .path("/view-note")
+                .path("/view-memory")
                 .appendQueryParameter("id", item.id)
             uriBuilder.appendQueryParameter("title", item.title)
             it.setOnClickFillInIntent(

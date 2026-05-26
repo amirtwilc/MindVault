@@ -52,8 +52,7 @@ class WidgetDataService {
     required List<Category> categories,
     required List<Note> allNotes,
   }) {
-    final sorted = [...allNotes]
-      ..sort((a, b) {
+    final sorted = [...allNotes]..sort((a, b) {
         if (a.isPinned != b.isPinned) return a.isPinned ? -1 : 1;
         if (a.isPinned && b.isPinned) {
           return (a.pinOrder ?? 0).compareTo(b.pinOrder ?? 0);
@@ -61,10 +60,8 @@ class WidgetDataService {
         return _noteKey(b).compareTo(_noteKey(a));
       });
 
-    final notes = sorted
-        .take(_maxNotes)
-        .map((n) => _noteEntry(n, categories))
-        .toList();
+    final notes =
+        sorted.take(_maxNotes).map((n) => _noteEntry(n, categories)).toList();
 
     return {
       'notes': notes,
@@ -87,7 +84,8 @@ class WidgetDataService {
   }) async {
     try {
       final payload = buildPayload(categories: categories, allNotes: allNotes);
-      await HomeWidget.saveWidgetData<String>('widget_data', jsonEncode(payload));
+      await HomeWidget.saveWidgetData<String>(
+          'widget_data', jsonEncode(payload));
       await _broadcastUpdate();
     } catch (e, st) {
       debugPrint('[WidgetDataService] updateWidget failed: $e\n$st');
@@ -165,7 +163,8 @@ class WidgetDataService {
       final raw = await HomeWidget.getWidgetData<String>('widget_data') ?? '{}';
       final current = (jsonDecode(raw) as Map?)?.cast<String, dynamic>() ?? {};
       final updated = applyNewNote(current, note, categories);
-      await HomeWidget.saveWidgetData<String>('widget_data', jsonEncode(updated));
+      await HomeWidget.saveWidgetData<String>(
+          'widget_data', jsonEncode(updated));
       await _broadcastUpdate();
     } catch (e, st) {
       debugPrint('[WidgetDataService] patchWithNewNote failed: $e\n$st');
@@ -193,7 +192,8 @@ class WidgetDataService {
         // Pinned note not yet in list — insert in pin-order position.
         final insertAt = notes.where((e) => e['is_pinned'] == true).length;
         notes.insert(insertAt, entry);
-        if (notes.length > _maxNotes) notes.removeRange(_maxNotes, notes.length);
+        if (notes.length > _maxNotes)
+          notes.removeRange(_maxNotes, notes.length);
       }
     } else {
       notes.removeWhere((e) => e['id'] == note.id);
@@ -217,7 +217,8 @@ class WidgetDataService {
       final raw = await HomeWidget.getWidgetData<String>('widget_data') ?? '{}';
       final current = (jsonDecode(raw) as Map?)?.cast<String, dynamic>() ?? {};
       final updated = applyNoteOpened(current, note, categories);
-      await HomeWidget.saveWidgetData<String>('widget_data', jsonEncode(updated));
+      await HomeWidget.saveWidgetData<String>(
+          'widget_data', jsonEncode(updated));
       await _broadcastUpdate();
     } catch (e, st) {
       debugPrint('[WidgetDataService] patchNoteOpened failed: $e\n$st');
@@ -237,7 +238,8 @@ class WidgetDataService {
       final existingNotes = ((current['notes'] as List?) ?? [])
           .map((e) => Map<String, dynamic>.from(e as Map))
           .toList();
-      final oldEntry = existingNotes.where((e) => e['id'] == note.id).firstOrNull;
+      final oldEntry =
+          existingNotes.where((e) => e['id'] == note.id).firstOrNull;
       final notes = existingNotes
           .map((e) => e['id'] == note.id ? updatedEntry : e)
           .toList();
@@ -245,7 +247,8 @@ class WidgetDataService {
       // Adjust category counts if the note moved between categories.
       var cats = current['categories'] as List?;
       if (oldEntry != null && oldEntry['category_id'] != note.categoryId) {
-        cats = _adjustCategoryCount(cats, oldEntry['category_id'] as String, -1);
+        cats =
+            _adjustCategoryCount(cats, oldEntry['category_id'] as String, -1);
         cats = _adjustCategoryCount(cats, note.categoryId, 1);
       }
 
@@ -256,7 +259,8 @@ class WidgetDataService {
         'last_updated': DateTime.now().toUtc().toIso8601String(),
       };
 
-      await HomeWidget.saveWidgetData<String>('widget_data', jsonEncode(updated));
+      await HomeWidget.saveWidgetData<String>(
+          'widget_data', jsonEncode(updated));
       await _broadcastUpdate();
     } catch (e, st) {
       debugPrint('[WidgetDataService] patchWithUpdatedNote failed: $e\n$st');
@@ -277,7 +281,8 @@ class WidgetDataService {
       final raw = await HomeWidget.getWidgetData<String>('widget_data') ?? '{}';
       final current = (jsonDecode(raw) as Map?)?.cast<String, dynamic>() ?? {};
       final updated = applyUpsertNote(current, note, categories);
-      await HomeWidget.saveWidgetData<String>('widget_data', jsonEncode(updated));
+      await HomeWidget.saveWidgetData<String>(
+          'widget_data', jsonEncode(updated));
       await _broadcastUpdate();
     } catch (e, st) {
       debugPrint('[WidgetDataService] patchWithUpsertedNote failed: $e\n$st');
@@ -308,7 +313,8 @@ class WidgetDataService {
         .toList();
 
     final idx = notes.indexWhere((e) => e['id'] == note.id);
-    final oldCategoryId = idx >= 0 ? notes[idx]['category_id'] as String? : null;
+    final oldCategoryId =
+        idx >= 0 ? notes[idx]['category_id'] as String? : null;
     if (idx >= 0) {
       notes[idx] = entry;
     } else {
@@ -356,7 +362,8 @@ class WidgetDataService {
         'last_updated': DateTime.now().toUtc().toIso8601String(),
       };
 
-      await HomeWidget.saveWidgetData<String>('widget_data', jsonEncode(updated));
+      await HomeWidget.saveWidgetData<String>(
+          'widget_data', jsonEncode(updated));
       await _broadcastUpdate();
     } catch (e, st) {
       debugPrint('[WidgetDataService] patchNoteRemoved failed: $e\n$st');

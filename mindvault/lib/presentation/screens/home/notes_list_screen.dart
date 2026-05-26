@@ -44,9 +44,8 @@ class NotesListScreen extends ConsumerWidget {
         title: Text(categoryName, style: TextStyle(color: fg)),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: fg),
-          onPressed: () => context.canPop()
-              ? context.pop()
-              : context.go('/home/categories'),
+          onPressed: () =>
+              context.canPop() ? context.pop() : context.go('/home/clusters'),
         ),
         actions: [
           if (!isGeneralCategoryName(categoryName))
@@ -127,7 +126,7 @@ class NotesListScreen extends ConsumerWidget {
             );
             return;
           }
-          context.push('/home/categories/$categoryId/edit');
+          context.push('/home/clusters/$categoryId/edit');
         },
         child: const Icon(Icons.add),
       ),
@@ -170,8 +169,8 @@ class NotesListScreen extends ConsumerWidget {
                   return;
                 }
                 final cats = ref.read(categoriesProvider).valueOrNull ?? [];
-                if (cats.any((c) =>
-                    c.name.toLowerCase() == name.toLowerCase())) {
+                if (cats
+                    .any((c) => c.name.toLowerCase() == name.toLowerCase())) {
                   setDialogState(() => nameError = l.categoryNameInUse);
                   return;
                 }
@@ -254,7 +253,7 @@ class NotesListScreen extends ConsumerWidget {
     );
     if (confirmed == true) {
       await ref.read(categoriesProvider.notifier).deleteCategory(categoryId);
-      if (context.mounted) context.go('/home/categories');
+      if (context.mounted) context.go('/home/clusters');
     }
   }
 }
@@ -283,7 +282,8 @@ class _NoteCard extends StatelessWidget {
     final isRtl = Directionality.of(context) == TextDirection.rtl;
     return Dismissible(
       key: ValueKey(note.id),
-      direction: isRtl ? DismissDirection.endToStart : DismissDirection.startToEnd,
+      direction:
+          isRtl ? DismissDirection.endToStart : DismissDirection.startToEnd,
       background: Container(
         alignment: isRtl
             ? AlignmentDirectional.centerEnd
@@ -322,8 +322,7 @@ class _NoteCard extends StatelessWidget {
               if (note.isPrivate)
                 Icon(Icons.lock, size: 14, color: fg.withOpacity(0.9)),
               Text(
-                DateFormat('MMM d',
-                        Localizations.localeOf(context).toString())
+                DateFormat('MMM d', Localizations.localeOf(context).toString())
                     .format(note.updatedAt.toLocal()),
                 style: tt.labelSmall?.copyWith(color: fg.withOpacity(0.75)),
               ),
@@ -347,7 +346,7 @@ class _NoteCard extends StatelessWidget {
       ref.read(privateNotesUnlockedProvider.notifier).state = true;
     }
     if (context.mounted) {
-      context.push('/home/categories/$categoryId/edit/${note.id}');
+      context.push('/home/clusters/$categoryId/edit/${note.id}');
     }
   }
 

@@ -56,7 +56,7 @@ class $CategoriesTableTable extends CategoriesTable
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'categories_table';
+  static const String $name = 'clusters';
   @override
   VerificationContext validateIntegrity(
       Insertable<CategoriesTableData> instance,
@@ -463,7 +463,7 @@ class $NotesTableTable extends NotesTable
       'note_type', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
-      defaultValue: const Constant('text'));
+      defaultValue: const Constant('record'));
   static const VerificationMeta _isPinnedMeta =
       const VerificationMeta('isPinned');
   @override
@@ -507,7 +507,7 @@ class $NotesTableTable extends NotesTable
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'notes_table';
+  static const String $name = 'memories';
   @override
   VerificationContext validateIntegrity(Insertable<NotesTableData> instance,
       {bool isInserting = false}) {
@@ -1086,8 +1086,7 @@ class $ChecklistItemsTableTable extends ChecklistItemsTable
       'note_id', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
-      $customConstraints:
-          'NOT NULL REFERENCES notes_table(id) ON DELETE CASCADE');
+      $customConstraints: 'NOT NULL REFERENCES memories(id) ON DELETE CASCADE');
   static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
   @override
   late final GeneratedColumn<String> userId = GeneratedColumn<String>(
@@ -1151,7 +1150,7 @@ class $ChecklistItemsTableTable extends ChecklistItemsTable
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'checklist_items_table';
+  static const String $name = 'plan_items';
   @override
   VerificationContext validateIntegrity(
       Insertable<ChecklistItemsTableData> instance,
@@ -2460,7 +2459,7 @@ class $NoteRemindersTableTable extends NoteRemindersTable
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'note_reminders_table';
+  static const String $name = 'memory_reminders';
   @override
   VerificationContext validateIntegrity(
       Insertable<NoteRemindersTableData> instance,
@@ -2808,7 +2807,7 @@ class $ReminderDeviceStateTableTable extends ReminderDeviceStateTable
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'reminder_device_state_table';
+  static const String $name = 'memory_reminder_device_state';
   @override
   VerificationContext validateIntegrity(
       Insertable<ReminderDeviceStateTableData> instance,
@@ -3176,7 +3175,7 @@ class $JotsTableTable extends JotsTable
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'jots_table';
+  static const String $name = 'sparks';
   @override
   VerificationContext validateIntegrity(Insertable<JotsTableData> instance,
       {bool isInserting = false}) {
@@ -3671,10 +3670,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules(
         [
           WritePropagation(
-            on: TableUpdateQuery.onTableName('notes_table',
+            on: TableUpdateQuery.onTableName('memories',
                 limitUpdateKind: UpdateKind.delete),
             result: [
-              TableUpdate('checklist_items_table', kind: UpdateKind.delete),
+              TableUpdate('plan_items', kind: UpdateKind.delete),
             ],
           ),
         ],

@@ -60,10 +60,9 @@ class HomeScreen extends ConsumerWidget {
                 child: ListTile(
                   leading: Icon(Icons.folder, color: fg),
                   title: Text(category.name,
-                      style: TextStyle(
-                          color: fg, fontWeight: FontWeight.w600)),
+                      style: TextStyle(color: fg, fontWeight: FontWeight.w600)),
                   trailing: Icon(Icons.drag_handle, color: fg.withOpacity(0.7)),
-                  onTap: () => context.push('/home/categories/${category.id}'),
+                  onTap: () => context.push('/home/clusters/${category.id}'),
                 ),
               );
             },
@@ -138,8 +137,8 @@ class HomeScreen extends ConsumerWidget {
                 final name = controller.text.trim();
                 if (name.isEmpty) return;
                 final cats = ref.read(categoriesProvider).valueOrNull ?? [];
-                if (cats.any((c) =>
-                    c.name.toLowerCase() == name.toLowerCase())) {
+                if (cats
+                    .any((c) => c.name.toLowerCase() == name.toLowerCase())) {
                   setDialogState(() => nameError = l.categoryNameInUse);
                   return;
                 }
@@ -158,7 +157,7 @@ class HomeScreen extends ConsumerWidget {
       final id = await ref
           .read(categoriesProvider.notifier)
           .createCategory(name, color: selectedColor);
-      if (id != null && context.mounted) context.push('/home/categories/$id');
+      if (id != null && context.mounted) context.push('/home/clusters/$id');
     }
   }
 }

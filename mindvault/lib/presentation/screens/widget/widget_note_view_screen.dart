@@ -622,17 +622,8 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Expanded(
-              child: Text(
-                _note!.title,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const SizedBox(width: 4),
             IconButton(
               icon: const Icon(Icons.copy_outlined),
               tooltip: l.editorTooltipCopy,
@@ -665,6 +656,18 @@ class _WidgetNoteViewScreenState extends ConsumerState<WidgetNoteViewScreen>
               onPressed: _closeFromView,
             ),
           ],
+        ),
+        const SizedBox(height: 4),
+        Directionality(
+          textDirection:
+              firstStrongOf(_note!.title) ?? Directionality.of(context),
+          child: Text(
+            _note!.title,
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.start,
+          ),
         ),
         const SizedBox(height: 12),
         if (_noteType == NoteType.checklist)

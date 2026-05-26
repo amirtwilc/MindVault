@@ -82,7 +82,7 @@ class _ReminderNoteResolverScreenState
       return;
     }
     context.go(Uri(
-      path: '/home/categories/${note.categoryId}/edit/${note.id}',
+      path: '/home/clusters/${note.categoryId}/edit/${note.id}',
       queryParameters: {'fromReminder': 'true'},
     ).toString());
   }
@@ -117,7 +117,7 @@ class _ReminderNoteResolverScreenState
               Text(l.reminderNoteNotFound),
               const SizedBox(height: 16),
               FilledButton(
-                onPressed: () => context.go('/home/all-notes'),
+                onPressed: () => context.go('/home/archive'),
                 child: Text(l.navAllNotes),
               ),
             ],

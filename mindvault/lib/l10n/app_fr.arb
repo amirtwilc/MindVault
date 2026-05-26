@@ -4,9 +4,7 @@
   "reminderBackgroundPermissionTitle": "Autoriser les rappels en arrière-plan",
   "reminderBackgroundPermissionBody": "Certains appareils exigent que MindVault soit autorisé à fonctionner en arrière-plan ou au démarrage automatique afin que les rappels précis se déclenchent quand l’application est fermée. Si une page de paramètres s’ouvre, active MindVault puis reviens dans l’application.",
   "reminderBackgroundPermissionOpenSettings": "Ouvrir les paramètres",
-
   "appBrand": "MindVault",
-
   "actionCancel": "Annuler",
   "actionSave": "Enregistrer",
   "actionDelete": "Supprimer",
@@ -22,11 +20,9 @@
   "actionStartFresh": "Recommencer",
   "actionContactUs": "Nous contacter",
   "actionOk": "OK",
-
   "splashTagline": "Vos pensées, chiffrées en toute sécurité.",
   "splashLoading": "Sécurisation de votre coffre…",
-
-  "authSubtitle": "Vos notes chiffrées propulsées par l'IA",
+  "authSubtitle": "Vos souvenirs chiffrées propulsées par l'IA",
   "authEmailLabel": "E-mail",
   "authPasswordLabel": "Mot de passe",
   "authEmailRequired": "L'e-mail est requis.",
@@ -80,14 +76,13 @@
   "authPasswordUpdated": "Mot de passe mis à jour. Finalisation de la connexion...",
   "authSignInGoogle": "Se connecter avec Google",
   "authSigningIn": "Connexion en cours...",
-  "authDisclaimer": "Vos notes sont chiffrées de bout en bout.\nSeul vous pouvez les lire.",
-
+  "authDisclaimer": "Vos souvenirs sont chiffrées de bout en bout.\nSeul vous pouvez les lire.",
   "pinSetupAppBar": "Configurer le chiffrement",
   "pinRecoveryAppBar": "Récupérer la clé de chiffrement",
   "pinSetupHeading": "Créer un code PIN de récupération",
   "pinRecoveryHeading": "Saisissez votre code PIN de récupération",
-  "pinSetupBody": "Ce code PIN empêche que vos notes soient lues par quelqu’un d’autre que vous. Vous en aurez besoin si vous vous connectez sur un nouvel appareil.",
-  "pinRecoveryBody": "Vos notes sont chiffrées. Saisissez votre code PIN de récupération pour les déverrouiller sur cet appareil.",
+  "pinSetupBody": "Ce code PIN empêche que vos souvenirs soient lues par quelqu’un d’autre que vous. Vous en aurez besoin si vous vous connectez sur un nouvel appareil.",
+  "pinRecoveryBody": "Vos souvenirs sont chiffrées. Saisissez votre code PIN de récupération pour les déverrouiller sur cet appareil.",
   "pinLabel": "Code PIN de récupération (4–8 chiffres)",
   "pinConfirmLabel": "Confirmer le PIN",
   "pinSetupDisclaimer": "Votre code PIN ne quitte jamais cet appareil. Votre clé chiffrée est stockée sur nos serveurs pour que vous puissiez la récupérer après une réinstallation, mais elle ne peut pas être lue sans le code PIN.",
@@ -98,9 +93,13 @@
   "pinMismatch": "Les codes PIN ne correspondent pas.",
   "pinRecoverError": "PIN incorrect. Impossible de récupérer la clé de chiffrement.",
   "pinServerError": "Erreur serveur : {message}",
-  "@pinServerError": { "placeholders": { "message": {} } },
+  "@pinServerError": {
+    "placeholders": {
+      "message": {}
+    }
+  },
   "pinStartFreshTitle": "Recommencer ?",
-  "pinStartFreshBody": "Cela générera une nouvelle clé de chiffrement. Vos notes existantes seront perdues.\n\nCette action est irréversible.",
+  "pinStartFreshBody": "Cela générera une nouvelle clé de chiffrement. Vos souvenirs existantes seront perdues.\n\nCette action est irréversible.",
   "pinEntryAppBar": "Saisir le code PIN de récupération",
   "pinEntryHeading": "Saisissez votre code PIN de récupération",
   "pinEntryLabel": "Code PIN de récupération",
@@ -108,16 +107,26 @@
   "pinEntryIncorrect": "PIN incorrect. Veuillez réessayer.",
   "pinSetupError": "Échec de la configuration du chiffrement. Veuillez réessayer.",
   "pinLockedSeconds": "Trop de tentatives échouées. Réessayez dans {seconds}s.",
-  "@pinLockedSeconds": { "placeholders": { "seconds": { "type": "int" } } },
+  "@pinLockedSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "pinLockedMinutes": "Trop de tentatives échouées. Réessayez dans {minutes}m.",
-  "@pinLockedMinutes": { "placeholders": { "minutes": { "type": "int" } } },
-
-  "navAllNotes": "Toutes les notes",
-  "navJots": "Jots",
-  "navCategories": "Catégories",
-  "navSearch": "Rechercher",
+  "@pinLockedMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "navAllNotes": "Archives",
+  "nav?tincelles": "?tincelles",
+  "navCategories": "Groupes",
+  "navSearch": "Reminiscence",
   "navSettings": "Paramètres",
-
   "homeNoCategoriesTitle": "Aucune catégorie.\nAppuyez sur + pour en créer une.",
   "newCategoryDialogTitle": "Nouvelle catégorie",
   "categoryNameHint": "Nom de la catégorie",
@@ -125,108 +134,162 @@
   "categoryNameInUse": "Nom déjà utilisé",
   "categoryLimitReached": "Limite de catégories atteinte ({max}). {upgradeHint}",
   "@categoryLimitReached": {
-    "placeholders": { "max": { "type": "int" }, "upgradeHint": {} }
+    "placeholders": {
+      "max": {
+        "type": "int"
+      },
+      "upgradeHint": {}
+    }
   },
-  "noteLimitReached": "Limite de notes atteinte ({max}). {upgradeHint}",
+  "noteLimitReached": "Limite de souvenirs atteinte ({max}). {upgradeHint}",
   "@noteLimitReached": {
-    "placeholders": { "max": { "type": "int" }, "upgradeHint": {} }
+    "placeholders": {
+      "max": {
+        "type": "int"
+      },
+      "upgradeHint": {}
+    }
   },
   "upgradeHintFree": "Passez à Pro pour plus.",
   "upgradeHintNone": "",
-
-  "notesListTitleFallback": "Notes",
-  "notesListEmptyTitle": "Aucune note pour l'instant",
-  "notesListEmptyBody": "Appuyez sur + pour créer votre première note",
+  "notesListTitleFallback": "Souvenirs",
+  "notesListEmptyTitle": "Aucune souvenir pour l'instant",
+  "notesListEmptyBody": "Appuyez sur + pour créer votre première souvenir",
   "noteUntitled": "(sans titre)",
-  "noteDeletedSnack": "Note supprimée",
-  "deleteNoteTitle": "Supprimer la note ?",
+  "noteDeletedSnack": "Souvenir supprimée",
+  "deleteNoteTitle": "Supprimer la souvenir ?",
   "deleteNoteBody": "Cette action est irréversible.",
-  "privateAuthReason": "Authentifiez-vous pour voir cette note privée",
+  "privateAuthReason": "Authentifiez-vous pour voir cette souvenir privée",
   "renameCategory": "Renommer",
   "changeCategoryColor": "Changer la couleur",
   "deleteCategoryAction": "Supprimer la catégorie",
   "renameCategoryDialog": "Renommer la catégorie",
   "categoryColorDialog": "Couleur de la catégorie",
   "deleteCategoryConfirmTitle": "Supprimer \"{name}\" ?",
-  "@deleteCategoryConfirmTitle": { "placeholders": { "name": {} } },
-  "deleteCategoryConfirmBody": "Toutes les notes de cette catégorie seront également supprimées.",
-
-  "allNotesEmptyTitle": "Aucune note pour l'instant",
-  "allNotesEmptyBody": "Créez une catégorie et ajoutez votre première note",
+  "@deleteCategoryConfirmTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "deleteCategoryConfirmBody": "Archives de cette catégorie seront également supprimées.",
+  "allNotesEmptyTitle": "Aucune souvenir pour l'instant",
+  "allNotesEmptyBody": "Créez une catégorie et ajoutez votre première souvenir",
   "allNotesCreateFirst": "Créez d'abord une catégorie",
-
-  "editorNewTitle": "Nouvelle note",
-  "editorEditTitle": "Modifier la note",
+  "editorNewTitle": "Nouvelle souvenir",
+  "editorEditTitle": "Modifier la souvenir",
   "editorSaving": "Enregistrement…",
   "editorSavedAt": "Enregistré {time}",
-  "@editorSavedAt": { "placeholders": { "time": {} } },
+  "@editorSavedAt": {
+    "placeholders": {
+      "time": {}
+    }
+  },
   "editorTitleHint": "Titre",
   "editorBodyHint": "Commencez à écrire…",
   "editorChangeCategory": "Changer de catégorie",
   "editorNewCategoryEntry": "Nouvelle catégorie…",
   "editorTooltipPublic": "Publique",
   "editorTooltipPrivate": "Privée",
-  "editorTooltipDelete": "Supprimer la note",
-  "editorTooltipEdit": "Modifier la note",
-  "editorTooltipCopy": "Copier la note",
-  "editorCopyMenuItem": "Copier la note",
-  "editorCopiedSnack": "Note copiée",
-  "editorSttRecord": "Enregistrer la voix",
+  "editorTooltipDelete": "Supprimer la souvenir",
+  "editorTooltipEdit": "Modifier la souvenir",
+  "editorTooltipCopy": "Copier la souvenir",
+  "editorCopyMenuItem": "Copier la souvenir",
+  "editorCopiedSnack": "Souvenir copiée",
   "editorSttStop": "Arrêter l'enregistrement",
-
-  "searchHint": "Rechercher dans les notes…",
-  "searchIdleTitle": "Recherchez dans vos notes",
-  "searchIdleBody": "Tapez des mots-clés ou posez une question. \nLes notes privées sont ignorées.",
+  "searchHint": "Rechercher des souvenirs…",
+  "searchIdleTitle": "Recherchez dans vos souvenirs",
+  "searchIdleBody": "Tapez des mots-clés ou posez une question. \nLes souvenirs privées sont ignorées.",
   "searchNoResults": "Aucun résultat pour \"{query}\"",
-  "@searchNoResults": { "placeholders": { "query": {} } },
+  "@searchNoResults": {
+    "placeholders": {
+      "query": {}
+    }
+  },
   "searchTryDifferent": "Essayez d'autres mots-clés",
   "searchMoreLines": "+{count} lignes supplémentaires",
-  "@searchMoreLines": { "placeholders": { "count": { "type": "int" } } },
-  "searchTryAiHint": "Pas ce que vous cherchiez ? Essayez la recherche IA",
-  "searchNoResultsAiCta": "Aucun résultat. Cliquez pour effectuer une recherche IA",
-  "searchHistoryButtonTooltip": "Historique de recherche IA",
+  "@searchMoreLines": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchTryAiHint": "Pas ce que vous cherchiez ? Essayez la r?miniscence IA",
+  "searchNoResultsAiCta": "Aucun résultat. Cliquez pour effectuer une r?miniscence IA",
+  "searchHistoryButtonTooltip": "Historique de r?miniscence IA",
   "searchBackToResults": "Retour aux résultats",
-  "widgetSearchTitle": "Recherchez dans vos notes",
-
-  "aiSearchTitle": "Recherche IA",
-  "aiSearchHint": "Posez une question sur vos notes…",
-  "aiSearchLoading": "Recherche dans vos notes…",
-  "aiSearchIdleTitle": "Posez n'importe quelle question sur vos notes",
-  "aiSearchIdleBody": "L'IA recherche dans vos notes et synthétise une réponse",
-  "aiSearchSuggestion1": "Résumé de mes notes d'entraînement",
+  "widgetSearchTitle": "Recherchez dans vos souvenirs",
+  "aiSearchTitle": "Reminiscence IA",
+  "aiSearchHint": "Posez une question sur vos souvenirs…",
+  "aiSearchLoading": "Recherche dans vos souvenirs…",
+  "aiSearchIdleTitle": "Posez n'importe quelle question sur vos souvenirs",
+  "aiSearchIdleBody": "L'IA recherche dans vos souvenirs et synthétise une réponse",
+  "aiSearchSuggestion1": "Résumé de mes souvenirs d'entraînement",
   "aiSearchSuggestion2": "Qu'ai-je écrit sur le travail ?",
-  "aiSearchSuggestion3": "Trouver des notes sur mes objectifs",
+  "aiSearchSuggestion3": "Trouver des souvenirs sur mes objectifs",
   "aiSearchSuggestion4": "Quels sont mes plans de voyage ?",
   "aiSearchSources": "Sources",
   "aiSearchFromCache": "Depuis le cache",
   "aiSearchRateTitle": "Limite atteinte",
   "aiSearchRateSeconds": "Réessayez dans {seconds}s",
-  "@aiSearchRateSeconds": { "placeholders": { "seconds": { "type": "int" } } },
+  "@aiSearchRateSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "aiSearchRateMinutes": "Réessayez dans {minutes}m",
-  "@aiSearchRateMinutes": { "placeholders": { "minutes": { "type": "int" } } },
+  "@aiSearchRateMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "aiSearchRateResetsAt": "Réinitialisation à {time}",
-  "@aiSearchRateResetsAt": { "placeholders": { "time": {} } },
+  "@aiSearchRateResetsAt": {
+    "placeholders": {
+      "time": {}
+    }
+  },
   "aiSearchRateDefault": "Veuillez patienter avant de relancer une recherche",
   "aiSearchErrorDailyLimit": "Limite quotidienne d'IA atteinte. Réessayez demain.",
   "aiSearchErrorSessionExpired": "Session expirée. Veuillez vous reconnecter.",
   "aiSearchErrorUnavailable": "L'IA n'est pas disponible pour le moment.",
   "aiSearchErrorNetwork": "Aucune connexion. Vérifiez votre connexion internet et réessayez.",
   "aiSearchErrorGeneric": "La requête IA a échoué. Veuillez réessayer.",
-  "aiInfoTitle": "À propos de la recherche IA",
-  "aiInfoBody": "La recherche IA lit vos notes pour répondre à votre question.\n\n🔒 Les notes privées ne sont jamais envoyées à l'IA.\n\n📄 Les notes très longues sont raccourcies avant l'envoi.",
+  "aiInfoTitle": "À propos de la r?miniscence IA",
+  "aiInfoBody": "La r?miniscence IA lit vos souvenirs pour répondre à votre question.\n\n🔒 Les souvenirs privées ne sont jamais envoyées à l'IA.\n\n📄 Les souvenirs très longues sont raccourcies avant l'envoi.",
   "aiInfoDismiss": "Compris",
   "aiAnswerCopied": "Copié dans le presse-papiers",
-
-  "aiHistoryTitle": "Historique de recherche IA",
+  "aiHistoryTitle": "Historique de r?miniscence IA",
   "aiHistoryEmpty": "Aucun historique de recherche pour l'instant",
   "aiHistoryRelativeNow": "À l'instant",
   "aiHistoryRelativeMinutes": "{count,plural, =1{il y a 1 minute} other{il y a {count} minutes}}",
-  "@aiHistoryRelativeMinutes": { "placeholders": { "count": { "type": "int" } } },
+  "@aiHistoryRelativeMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "aiHistoryRelativeHours": "{count,plural, =1{il y a 1 heure} other{il y a {count} heures}}",
-  "@aiHistoryRelativeHours": { "placeholders": { "count": { "type": "int" } } },
+  "@aiHistoryRelativeHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "aiHistoryRelativeDays": "{count,plural, =1{il y a 1 jour} other{il y a {count} jours}}",
-  "@aiHistoryRelativeDays": { "placeholders": { "count": { "type": "int" } } },
-
+  "@aiHistoryRelativeDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "settingsTitle": "Paramètres",
   "settingsSectionAccount": "Compte",
   "settingsSectionUsage": "Utilisation",
@@ -237,12 +300,12 @@
   "settingsTierFree": "Gratuit",
   "settingsTierPro": "Pro",
   "settingsUsageAi": "Recherches IA aujourd'hui",
-  "settingsUsageJotsAi": "Organisations Jots IA aujourd'hui",
-  "settingsUsageNotes": "Notes",
-  "settingsUsageCategories": "Catégories",
+  "settingsUsage?tincellesAi": "Organisations ?tincelles IA aujourd'hui",
+  "settingsUsageNotes": "Souvenirs",
+  "settingsUsageCategories": "Groupes",
   "settingsUpgradeTitle": "Passer à Pro",
-  "settingsUpgradeSubtitle": "50 recherches IA/jour · 1000 notes · 50 catégories",
-  "settingsUpgradeDialogBody": "Pro vous offre 50 recherches IA/jour, jusqu'à 1000 notes, 50 catégories et 20 000 caractères par note.",
+  "settingsUpgradeSubtitle": "30 recherches IA/jour · 1000 souvenirs · 50 catégories",
+  "settingsUpgradeDialogBody": "Pro vous offre 30 recherches IA/jour, jusqu'à 1000 souvenirs, 50 catégories et 20 000 caractères par souvenir.",
   "contactUsMessageHint": "Votre message (facultatif)…",
   "contactUsNoEmailApp": "Aucune application de messagerie trouvée. Veuillez nous écrire à :",
   "contactUsCopied": "Adresse e-mail copiée",
@@ -254,89 +317,198 @@
   "settingsLanguageHindi": "हिन्दी",
   "settingsLanguageSpanish": "Español",
   "settingsLanguageFrench": "Français",
-
-  "jotsAddTooltip": "Ajouter un jot",
-  "jotAddDialogTitle": "Nouveau jot",
-  "jotInputHint": "Capturez une pensée rapide",
-  "jotSavedSnack": "Pensée enregistrée",
-  "jotSaveUnavailable": "La pensée n'a pas pu être enregistrée. Réessayez.",
-  "jotCharCounter": "{count}/{max} caractères",
-  "@jotCharCounter": {"placeholders":{"count":{"type":"int"},"max":{"type":"int"}}},
-  "jotsEmptyTitle": "Aucun jot en attente",
-  "jotsEmptyBody": "Touchez + dès qu’une pensée vous vient.",
-  "jotsSortOldestFirst": "Plus anciens d’abord",
-  "jotsSortNewestFirst": "Plus récents d’abord",
-  "jotsOrganizeAi": "Organiser avec l’IA",
-  "jotsAcceptAll": "Accepter toutes les suggestions",
-  "jotsAiInfoTitle": "À propos de Jots IA",
-  "jotsAiInfoBody": "Jots IA suggère comment organiser les pensées non traitées. Seuls les jots non envoyés, les noms de catégories et les titres de notes sont envoyés. Le contenu des notes et les notes privées ne sont pas envoyés, et les longues listes peuvent être limitées.",
-  "jotsAiNoNew": "Aucune nouvelle pensée à organiser.",
-  "jotsAiQuota": "Limite quotidienne de Jots IA atteinte.",
-  "jotsAiFailed": "Impossible d’organiser les jots. Réessayez.",
-  "jotsAiSuggestionsProvided": "{count,plural, =0{0 suggestion fournie. Essayez d’écrire des pensées plus précises la prochaine fois.} =1{1 suggestion fournie.} other{{count} suggestions fournies.}}",
-  "@jotsAiSuggestionsProvided": {"placeholders":{"count":{"type":"int"}}},
-  "jotsAiLimitedTo30": "Seuls les 30 nouveaux jots les plus anciens ont été envoyés.",
-  "jotsSelectedCount": "{count} sélectionné(s)",
-  "@jotsSelectedCount": {"placeholders":{"count":{"type":"int"}}},
-  "jotsDeleteSelectedTitle": "Supprimer les jots sélectionnés ?",
-  "jotsDeleteSelectedBody": "Les pensées sélectionnées seront supprimées définitivement.",
-  "jotCreatedAt": "Créé : {time}",
-  "@jotCreatedAt": {"placeholders":{"time":{}}},
-  "jotActionsTooltip": "Traiter le jot",
-  "jotActionsTitle": "Traiter la pensée",
-  "jotActionCreateNote": "Créer une nouvelle note",
-  "jotActionAddToNote": "Ajouter à une note existante",
-  "jotActionCreateAlert": "Créer une alerte",
-  "jotActionDeleteThought": "Supprimer la pensée",
-  "jotActionSuggestedByAi": "Ces actions ont été suggérées par l’IA.",
-  "jotActionUpdateThought": "Mettre à jour le texte de la pensée",
-  "jotActionUpdatedThoughtText": "Pensée mise à jour",
-  "jotActionUpdatedThoughtHint": "Exemple : Le Seigneur des anneaux",
-  "jotActionNewNoteTitle": "Titre de la note",
-  "jotActionCategory": "Catégorie",
-  "jotActionNewCategory": "Nouvelle catégorie",
-  "jotActionNote": "Note",
-  "jotActionNoNotes": "Aucune note dans cette catégorie",
-  "jotActionLock": "Verrouiller la note",
-  "jotActionReminderWhen": "Alerte à {time}",
-  "@jotActionReminderWhen": {"placeholders":{"time":{}}},
-  "jotActionPickReminder": "Choisir la date et l’heure",
-  "jotActionAccept": "Accepter",
-  "jotActionChooseFuture": "Choisissez une date et une heure futures.",
-  "jotNotificationBody": "Touchez pour organiser cette pensée",
-  "jotReminderNotFound": "Ce jot n’est plus disponible.",
-  "widgetAddNoteTooltip": "Ajouter une note",
-  "widgetComposeTitle": "Nouvelle note",
-  "widgetComposeDiscardTitle": "Ignorer la note ?",
-  "widgetComposeDiscardBody": "Votre note ne sera pas enregistrée.",
-  "widgetComposeNoCategories": "Aucune catégorie trouvée.\nOuvrez MindVault pour en créer une d'abord.",
-  "widgetComposeCategoryLabel": "Catégorie",
+  "?tincellesAddTooltip": "Ajouter un ?tincelle",
+  "?tincelleAddDialogTitle": "Nouveau ?tincelle",
+  "?tincelleInputHint": "Capturez une pensée rapide",
+  "?tincelleSavedSnack": "Pensée enregistrée",
+  "?tincelleSaveUnavailable": "La pensée n'a pas pu être enregistrée. Réessayez.",
+  "?tincelleCharCounter": "{count}/{max} caractères",
+  "@?tincelleCharCounter": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "?tincellesEmptyTitle": "Aucun ?tincelle en attente",
+  "?tincellesEmptyBody": "Touchez + dès qu’une pensée vous vient.",
+  "?tincellesSortOldestFirst": "Plus anciens d’abord",
+  "?tincellesSortNewestFirst": "Plus récents d’abord",
+  "?tincellesOrganizeAi": "Organiser avec l’IA",
+  "?tincellesAcceptAll": "Accepter toutes les suggestions",
+  "?tincellesAiInfoTitle": "À propos de ?tincelles IA",
+  "?tincellesAiInfoBody": "?tincelles IA suggère comment organiser les pensées non traitées. Seuls les ?tincelles non envoyés, les noms de catégories et les titres de souvenirs sont envoyés. Le contenu des souvenirs et les souvenirs privées ne sont pas envoyés, et les longues plans peuvent être limitées.",
+  "?tincellesAiNoNew": "Aucune nouvelle pensée à organiser.",
+  "?tincellesAiQuota": "Limite quotidienne de ?tincelles IA atteinte.",
+  "?tincellesAiFailed": "Impossible d’organiser les ?tincelles. Réessayez.",
+  "?tincellesAiSuggestionsProvided": "{count,plural, =0{0 suggestion fournie. Essayez d’écrire des pensées plus précises la prochaine fois.} =1{1 suggestion fournie.} other{{count} suggestions fournies.}}",
+  "@?tincellesAiSuggestionsProvided": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "?tincellesAiLimitedTo30": "Seuls les 30 nouveaux ?tincelles les plus anciens ont été envoyés.",
+  "?tincellesSelectedCount": "{count} sélectionné(s)",
+  "@?tincellesSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "?tincellesDeleteSelectedTitle": "Supprimer les ?tincelles sélectionnés ?",
+  "?tincellesDeleteSelectedBody": "Les pensées sélectionnées seront supprimées définitivement.",
+  "?tincelleCreatedAt": "Créé : {time}",
+  "@?tincelleCreatedAt": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "?tincelleActionsTooltip": "Traiter le ?tincelle",
+  "?tincelleActionsTitle": "Traiter la pensée",
+  "?tincelleActionCreateNote": "Créer une nouvelle souvenir",
+  "?tincelleActionAddToNote": "Ajouter à une souvenir existante",
+  "?tincelleActionCreateAlert": "Créer une alerte",
+  "?tincelleActionDeleteThought": "Supprimer la pensée",
+  "?tincelleActionSuggestedByAi": "Ces actions ont été suggérées par l’IA.",
+  "?tincelleActionUpdateThought": "Mettre à jour le trace de la pensée",
+  "?tincelleActionUpdatedThoughtText": "Pensée mise à jour",
+  "?tincelleActionUpdatedThoughtHint": "Exemple : Le Seigneur des anneaux",
+  "?tincelleActionNewNoteTitle": "Titre de la souvenir",
+  "?tincelleActionCategory": "Catégorie",
+  "?tincelleActionNewCategory": "Nouvelle catégorie",
+  "?tincelleActionNote": "Souvenir",
+  "?tincelleActionNoNotes": "Aucune souvenir dans cette catégorie",
+  "?tincelleActionLock": "Verrouiller la souvenir",
+  "?tincelleActionReminderWhen": "Alerte à {time}",
+  "@?tincelleActionReminderWhen": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "?tincelleActionPickReminder": "Choisir la date et l’heure",
+  "?tincelleActionAccept": "Accepter",
+  "?tincelleActionChooseFuture": "Choisissez une date et une heure futures.",
+  "?tincelleNotificationBody": "Touchez pour organiser cette pensée",
+  "?tincelleReminderNotFound": "Ce ?tincelle n’est plus disponible.",
+  "widgetAddNoteTooltip": "Ajouter un souvenir",
+  "widgetComposeTitle": "Nouveau souvenir",
+  "widgetComposeDiscardTitle": "Ignorer le souvenir ?",
+  "widgetComposeDiscardBody": "Votre souvenir ne sera pas enregistr?.",
+  "widgetComposeNoCategories": "Aucun groupe trouv?.\nOuvrez MindVault pour en cr?er un d?abord.",
+  "widgetComposeCategoryLabel": "Groupe",
   "noteTypeLabel": "Type",
-  "noteTypeText": "Texte",
-  "noteTypeChecklist": "Liste",
+  "noteTypeText": "Trace",
+  "noteTypeChecklist": "Plan",
   "reminderTooltipSet": "Définir un rappel",
   "reminderTooltipActive": "Rappel défini",
   "reminderDialogTitle": "Rappel",
   "reminderScheduledFor": "Planifié pour {time}",
   "reminderEdit": "Modifier",
   "reminderRemove": "Supprimer",
-  "reminderSaveNoteFirst": "Ajoutez un titre ou du texte à la note avant de définir un rappel.",
+  "reminderSaveNoteFirst": "Ajoutez un titre ou du trace à la souvenir avant de définir un rappel.",
   "reminderMayBeDelayed": "Les alarmes exactes ne sont pas activées. Ce rappel peut être retardé.",
   "reminderMustBeFuture": "Choisissez une date et une heure futures.",
-  "reminderNoteNotFound": "Cette note de rappel est introuvable.",
+  "reminderNoteNotFound": "Cette souvenir de rappel est introuvable.",
   "removeDoneTasksLabel": "Supprimer les tâches terminées",
   "removeDoneTasksTitle": "Supprimer les tâches terminées ?",
   "removeDoneTasksBody": "Les tâches terminées seront supprimées définitivement.",
-  "widgetViewEditTitle": "Modifier la note",
+  "widgetViewEditTitle": "Modifier le souvenir",
   "widgetViewEdit": "Modifier",
   "widgetViewDelete": "Supprimer",
   "widgetViewUnlocking": "Déverrouillage…",
   "widgetViewNoContent": "Aucun contenu",
-  "widgetViewNotFound": "Note introuvable",
+  "widgetViewNotFound": "Souvenir introuvable",
   "widgetViewDiscardTitle": "Ignorer les modifications ?",
   "widgetViewDiscardBody": "Vos modifications ne seront pas enregistrées.",
-  "widgetViewKeepEditing": "Continuer à modifier"
-  ,
-  "reminderNotificationBody": "Touchez pour ouvrir cette note",
-  "reminderNotificationsRequired": "L’autorisation des notifications doit être accordée pour les rappels."
+  "widgetViewKeepEditing": "Continuer à modifier",
+  "reminderNotificationBody": "Touchez pour ouvrir cette souvenir",
+  "reminderNotificationsRequired": "L’autorisation des notifications doit être accordée pour les rappels.",
+  "navJots": "Etincelles",
+  "settingsUsageJotsAi": "Organisations Etincelles IA aujourd hui",
+  "jotsAddTooltip": "Ajouter une etincelle",
+  "jotAddDialogTitle": "Nouvelle etincelle",
+  "jotsEmptyTitle": "Aucune etincelle en attente",
+  "jotsAiInfoTitle": "A propos d Etincelles IA",
+  "jotsAiQuota": "Limite quotidienne d Etincelles IA atteinte.",
+  "jotsAiFailed": "Impossible d organiser les etincelles.",
+  "jotInputHint": "Capturez une pensée rapide",
+  "jotSavedSnack": "Pensée enregistrée",
+  "jotSaveUnavailable": "La pensée n'a pas pu être enregistrée. Réessayez.",
+  "jotCharCounter": "{count}/{max} caractères",
+  "@jotCharCounter": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "jotsEmptyBody": "Appuyez sur + pour créer votre première souvenir",
+  "jotsSortOldestFirst": "Plus anciens d’abord",
+  "jotsSortNewestFirst": "Plus récents d’abord",
+  "jotsOrganizeAi": "Organiser avec l’IA",
+  "jotsAcceptAll": "Accepter toutes les suggestions",
+  "jotsAiInfoBody": "?tincelles IA suggère comment organiser les pensées non traitées. Seuls les ?tincelles non envoyés, les noms de catégories et les titres de souvenirs sont envoyés. Le contenu des souvenirs et les souvenirs privées ne sont pas envoyés, et les longues plans peuvent être limitées.",
+  "jotsAiNoNew": "Aucune nouvelle pensée à organiser.",
+  "jotsAiSuggestionsProvided": "{count,plural, =0{0 suggestion fournie. Essayez d’écrire des pensées plus précises la prochaine fois.} =1{1 suggestion fournie.} other{{count} suggestions fournies.}}",
+  "@jotsAiSuggestionsProvided": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jotsAiLimitedTo30": "Seuls les 30 nouveaux ?tincelles les plus anciens ont été envoyés.",
+  "jotsSelectedCount": "{count} sélectionné(s)",
+  "@jotsSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jotsDeleteSelectedTitle": "Supprimer les ?tincelles sélectionnés ?",
+  "jotsDeleteSelectedBody": "Les pensées sélectionnées seront supprimées définitivement.",
+  "jotCreatedAt": "Créé : {time}",
+  "@jotCreatedAt": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "jotActionsTooltip": "Traiter le ?tincelle",
+  "jotActionsTitle": "Traiter la pensée",
+  "jotActionCreateNote": "Créer une nouvelle souvenir",
+  "jotActionAddToNote": "Ajouter à une souvenir existante",
+  "jotActionCreateAlert": "Créer une alerte",
+  "jotActionDeleteThought": "Supprimer la pensée",
+  "jotActionSuggestedByAi": "Ces actions ont été suggérées par l’IA.",
+  "jotActionUpdateThought": "Mettre à jour le trace de la pensée",
+  "jotActionUpdatedThoughtText": "Pensée mise à jour",
+  "jotActionUpdatedThoughtHint": "Exemple : Le Seigneur des anneaux",
+  "jotActionNewNoteTitle": "Titre de la souvenir",
+  "jotActionCategory": "Catégorie",
+  "jotActionNewCategory": "Nouvelle catégorie",
+  "jotActionNote": "Souvenir",
+  "jotActionNoNotes": "Aucune souvenir dans cette catégorie",
+  "jotActionLock": "Verrouiller la souvenir",
+  "jotActionReminderWhen": "Alerte à {time}",
+  "@jotActionReminderWhen": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "jotActionPickReminder": "Choisir la date et l’heure",
+  "jotActionAccept": "Accepter",
+  "jotActionChooseFuture": "Choisissez une date et une heure futures.",
+  "jotNotificationBody": "Touchez pour organiser cette pensée",
+  "jotReminderNotFound": "Ce ?tincelle n’est plus disponible.",
+  "editorSttRecord": "Enregistrer la voix"
 }

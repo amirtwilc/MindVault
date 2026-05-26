@@ -15,9 +15,13 @@ import 'package:mindvault/services/analytics_service.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class MockCategoriesDatasource extends Mock implements SupabaseCategoriesDatasource {}
+class MockCategoriesDatasource extends Mock
+    implements SupabaseCategoriesDatasource {}
+
 class MockNotesDatasource extends Mock implements SupabaseNotesDatasource {}
+
 class MockRealtimeChannel extends Mock implements RealtimeChannel {}
+
 class MockUser extends Mock implements User {
   @override
   String get id => 'user-1';
@@ -59,7 +63,8 @@ void main() {
     when(() => channel.unsubscribe()).thenAnswer((_) async => 'ok');
     when(() => remoteCats.subscribeToCategories(any())).thenReturn(channel);
     when(() => remoteCats.fetchCategories()).thenAnswer((_) async => []);
-    when(() => remoteNotes.deleteNotesByCategoryId(any())).thenAnswer((_) async {});
+    when(() => remoteNotes.deleteNotesByCategoryId(any()))
+        .thenAnswer((_) async {});
 
     container = ProviderContainer(overrides: [
       currentUserProvider.overrideWithValue(user),
@@ -81,13 +86,15 @@ void main() {
   // ── build() ───────────────────────────────────────────────────────────────
 
   group('build()', () {
-    test('auto-creates General when Drift and Supabase are both empty', () async {
+    test('auto-creates General when Drift and Supabase are both empty',
+        () async {
       final cats = await readCategories();
       expect(cats.length, 1);
       expect(cats.first.name, 'General');
     });
 
-    test('returns existing Drift data immediately before catch-up sync', () async {
+    test('returns existing Drift data immediately before catch-up sync',
+        () async {
       // Pre-populate Drift directly
       final now = DateTime.now().toUtc();
       await db.upsertCategory(CategoriesTableCompanion(
@@ -167,8 +174,8 @@ void main() {
       ));
 
       // Supabase returns the category but with null color (column missing / not set).
-      when(() => remoteCats.fetchCategories())
-          .thenAnswer((_) async => [_model(id: 'cat-colored', name: 'Colored', color: null)]);
+      when(() => remoteCats.fetchCategories()).thenAnswer((_) async =>
+          [_model(id: 'cat-colored', name: 'Colored', color: null)]);
 
       await readCategories();
       await Future.delayed(const Duration(milliseconds: 50));
@@ -227,13 +234,16 @@ void main() {
       ));
 
       // Queue a pending op and make upsertCategory succeed.
-      await db.upsertPendingOp('cat_just-pushed', 'upsert_category', 'just-pushed');
+      await db.upsertPendingOp(
+          'cat_just-pushed', 'upsert_cluster', 'just-pushed');
       when(() => remoteCats.upsertCategory(any())).thenAnswer((_) async {});
 
       // syncPendingCategoryOps should push 'just-pushed', add it to justSyncedIds,
       // then call _catchUpSync({'just-pushed'}). Supabase returns [] but the row
       // is in justSyncedIds so it must NOT be deleted from Drift.
-      await container.read(categoriesProvider.notifier).syncPendingCategoryOps();
+      await container
+          .read(categoriesProvider.notifier)
+          .syncPendingCategoryOps();
       await Future.delayed(const Duration(milliseconds: 50));
 
       final rows = await db.select(db.categoriesTable).get();
@@ -244,7 +254,8 @@ void main() {
   // ── syncPendingCategoryOps ────────────────────────────────────────────────
 
   group('syncPendingCategoryOps', () {
-    test('continues processing remaining ops after a single op fails', () async {
+    test('continues processing remaining ops after a single op fails',
+        () async {
       // Stub General creation so it doesn't queue a stray pending op.
       when(() => remoteCats.insertCategory(any(), any(), id: any(named: 'id')))
           .thenAnswer((_) async => _model());
@@ -262,7 +273,7 @@ void main() {
           lastUsedAt: Value(now),
           createdAt: Value(now),
         ));
-        await db.upsertPendingOp('cat_$id', 'upsert_category', id);
+        await db.upsertPendingOp('cat_$id', 'upsert_cluster', id);
       }
 
       // First upsert fails, second succeeds.
@@ -272,12 +283,15 @@ void main() {
         if (callCount == 1) throw Exception('transient error');
       });
 
-      await container.read(categoriesProvider.notifier).syncPendingCategoryOps();
+      await container
+          .read(categoriesProvider.notifier)
+          .syncPendingCategoryOps();
 
       final ops = await db.getPendingOps();
-      final catOps = ops.where((o) => o.opType == 'upsert_category').toList();
+      final catOps = ops.where((o) => o.opType == 'upsert_cluster').toList();
       expect(catOps.length, equals(1),
-          reason: 'only the failed op should remain; successful op must be cleared');
+          reason:
+              'only the failed op should remain; successful op must be cleared');
       expect(catOps.first.recordId, equals('cat-fail'));
     });
   });
@@ -287,11 +301,13 @@ void main() {
   group('createCategory', () {
     test('appears in state immediately (Drift-first)', () async {
       when(() => remoteCats.insertCategory(any(), any(),
-              color: any(named: 'color'), id: any(named: 'id')))
-          .thenAnswer((_) async => _model());
+          color: any(named: 'color'),
+          id: any(named: 'id'))).thenAnswer((_) async => _model());
 
       await readCategories(); // initialise
-      await container.read(categoriesProvider.notifier).createCategory('New Cat');
+      await container
+          .read(categoriesProvider.notifier)
+          .createCategory('New Cat');
 
       final cats = container.read(categoriesProvider).valueOrNull ?? [];
       expect(cats.any((c) => c.name == 'New Cat'), isTrue);
@@ -307,8 +323,7 @@ void main() {
       await readCategories();
       await Future.delayed(const Duration(milliseconds: 50));
 
-      when(() => remoteCats.insertCategory(any(), any(),
-              id: any(named: 'id')))
+      when(() => remoteCats.insertCategory(any(), any(), id: any(named: 'id')))
           .thenAnswer((inv) async {
         final order = inv.positionalArguments[1] as int;
         return _model(id: 'c', sortOrder: order);
@@ -324,20 +339,22 @@ void main() {
 
     test('queues pending op when Supabase fails', () async {
       when(() => remoteCats.insertCategory(any(), any(),
-              color: any(named: 'color'), id: any(named: 'id')))
-          .thenThrow(Exception('offline'));
+          color: any(named: 'color'),
+          id: any(named: 'id'))).thenThrow(Exception('offline'));
 
       await readCategories();
-      await container.read(categoriesProvider.notifier).createCategory('Offline Cat');
+      await container
+          .read(categoriesProvider.notifier)
+          .createCategory('Offline Cat');
 
       final ops = await db.getPendingOps();
-      expect(ops.any((o) => o.opType == 'upsert_category'), isTrue);
+      expect(ops.any((o) => o.opType == 'upsert_cluster'), isTrue);
     });
 
     test('category persists in Drift even when Supabase fails', () async {
       when(() => remoteCats.insertCategory(any(), any(),
-              color: any(named: 'color'), id: any(named: 'id')))
-          .thenThrow(Exception('offline'));
+          color: any(named: 'color'),
+          id: any(named: 'id'))).thenThrow(Exception('offline'));
 
       await readCategories();
       await container
@@ -394,7 +411,7 @@ void main() {
           .renameCategory('cat-1', 'Offline Rename');
 
       final ops = await db.getPendingOps();
-      expect(ops.any((o) => o.opType == 'upsert_category'), isTrue);
+      expect(ops.any((o) => o.opType == 'upsert_cluster'), isTrue);
     });
   });
 
@@ -426,14 +443,14 @@ void main() {
       expect(rows.any((r) => r.id == 'cat-1'), isFalse);
     });
 
-    test('queues delete_category pending op when Supabase fails', () async {
+    test('queues delete_cluster pending op when Supabase fails', () async {
       when(() => remoteCats.deleteCategory(any()))
           .thenThrow(Exception('offline'));
 
       await container.read(categoriesProvider.notifier).deleteCategory('cat-1');
 
       final ops = await db.getPendingOps();
-      expect(ops.any((o) => o.opType == 'delete_category'), isTrue);
+      expect(ops.any((o) => o.opType == 'delete_cluster'), isTrue);
     });
   });
 
@@ -474,7 +491,8 @@ void main() {
       // Check only the ops for the reordered categories (General creation op is unrelated).
       final ops = await db.getPendingOps();
       final reorderOps = ops.where((o) =>
-          o.opType == 'upsert_category' && {'a', 'b', 'c'}.contains(o.recordId));
+          o.opType == 'upsert_cluster' &&
+          {'a', 'b', 'c'}.contains(o.recordId));
       expect(reorderOps.length, equals(3));
     });
   });
@@ -515,10 +533,9 @@ void main() {
 
       // Capture the callback registered with subscribeToCategories
       void Function(bool, Map<String, dynamic>)? captured;
-      when(() => remoteCats.subscribeToCategories(any()))
-          .thenAnswer((inv) {
-        captured = inv.positionalArguments.first
-            as void Function(bool, Map<String, dynamic>);
+      when(() => remoteCats.subscribeToCategories(any())).thenAnswer((inv) {
+        captured = inv.positionalArguments.first as void Function(
+            bool, Map<String, dynamic>);
         return channel;
       });
 
@@ -567,8 +584,8 @@ void main() {
 
       void Function(bool, Map<String, dynamic>)? captured;
       when(() => remoteCats.subscribeToCategories(any())).thenAnswer((inv) {
-        captured = inv.positionalArguments.first
-            as void Function(bool, Map<String, dynamic>);
+        captured = inv.positionalArguments.first as void Function(
+            bool, Map<String, dynamic>);
         return channel;
       });
 

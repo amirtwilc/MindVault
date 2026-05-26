@@ -335,16 +335,16 @@ class AppStringsHi extends AppStrings {
   }
 
   @override
-  String get navAllNotes => 'सभी नोट्स';
+  String get navAllNotes => 'संग्रह';
 
   @override
-  String get navJots => 'Jots';
+  String get navJots => 'चिंगारियाँ';
 
   @override
-  String get navCategories => 'श्रेणियाँ';
+  String get navCategories => 'समूह';
 
   @override
-  String get navSearch => 'खोजें';
+  String get navSearch => 'स्मरण';
 
   @override
   String get navSettings => 'सेटिंग्स';
@@ -538,16 +538,13 @@ class AppStringsHi extends AppStrings {
   String get editorCopiedSnack => 'नोट कॉपी किया गया';
 
   @override
-  String get editorSttRecord => 'आवाज़ रिकॉर्ड करें';
-
-  @override
   String get editorSttStop => 'रिकॉर्डिंग बंद करें';
 
   @override
-  String get searchHint => 'नोट्स खोजें…';
+  String get searchHint => 'स्मृतियाँ खोजें…';
 
   @override
-  String get searchIdleTitle => 'अपने नोट्स खोजें';
+  String get searchIdleTitle => 'अपनी स्मृतियाँ खोजें';
 
   @override
   String get searchIdleBody =>
@@ -583,7 +580,7 @@ class AppStringsHi extends AppStrings {
   String get widgetSearchTitle => 'अपने नोट्स खोजें';
 
   @override
-  String get aiSearchTitle => 'AI खोज';
+  String get aiSearchTitle => 'AI स्मरण';
 
   @override
   String get aiSearchHint => 'अपने नोट्स के बारे में पूछें…';
@@ -742,24 +739,24 @@ class AppStringsHi extends AppStrings {
   String get settingsUsageAi => 'आज की AI खोजें';
 
   @override
-  String get settingsUsageJotsAi => 'आज के Jots AI संगठन';
+  String get settingsUsageJotsAi => 'आज के चिंगारियाँ AI आयोजन';
 
   @override
-  String get settingsUsageNotes => 'नोट्स';
+  String get settingsUsageNotes => 'स्मृतियाँ';
 
   @override
-  String get settingsUsageCategories => 'श्रेणियाँ';
+  String get settingsUsageCategories => 'समूह';
 
   @override
   String get settingsUpgradeTitle => 'Pro में अपग्रेड करें';
 
   @override
   String get settingsUpgradeSubtitle =>
-      '50 AI खोजें/दिन · 1000 नोट्स · 50 श्रेणियाँ';
+      '30 AI खोजें/दिन · 1000 नोट्स · 50 श्रेणियाँ';
 
   @override
   String get settingsUpgradeDialogBody =>
-      'Pro आपको 50 AI खोजें/दिन, 1000 नोट्स, 50 श्रेणियाँ और प्रति नोट 20,000 अक्षर देता है।';
+      'Pro आपको 30 AI खोजें/दिन, 1000 नोट्स, 50 श्रेणियाँ और प्रति नोट 20,000 अक्षर देता है।';
 
   @override
   String get contactUsMessageHint => 'आपका संदेश (वैकल्पिक)…';
@@ -796,10 +793,10 @@ class AppStringsHi extends AppStrings {
   String get settingsLanguageFrench => 'Français';
 
   @override
-  String get jotsAddTooltip => 'Jot जोड़ें';
+  String get jotsAddTooltip => 'चिंगारी जोड़ें';
 
   @override
-  String get jotAddDialogTitle => 'नया jot';
+  String get jotAddDialogTitle => 'नई चिंगारी';
 
   @override
   String get jotInputHint => 'एक त्वरित विचार लिखें';
@@ -817,10 +814,10 @@ class AppStringsHi extends AppStrings {
   }
 
   @override
-  String get jotsEmptyTitle => 'कोई jot लंबित नहीं';
+  String get jotsEmptyTitle => 'कोई चिंगारी लंबित नहीं';
 
   @override
-  String get jotsEmptyBody => '+ पर टैप करें जब कोई विचार आए।';
+  String get jotsEmptyBody => 'अपना पहला नोट बनाने के लिए + टैप करें';
 
   @override
   String get jotsSortOldestFirst => 'सबसे पुराने पहले';
@@ -835,20 +832,20 @@ class AppStringsHi extends AppStrings {
   String get jotsAcceptAll => 'सभी सुझाव स्वीकार करें';
 
   @override
-  String get jotsAiInfoTitle => 'Jots AI के बारे में';
+  String get jotsAiInfoTitle => 'चिंगारियाँ AI के बारे में';
 
   @override
   String get jotsAiInfoBody =>
-      'Jots AI बताता है कि अधूरे विचारों को कैसे व्यवस्थित करें। केवल न भेजे गए jots, श्रेणी नाम और नोट शीर्षक भेजे जाते हैं। नोट की सामग्री और निजी नोट नहीं भेजे जाते, और लंबी सूचियाँ सीमित की जा सकती हैं।';
+      '?????????????????????????? AI बताता है कि अधूरे विचारों को कैसे व्यवस्थित करें। केवल न भेजे गए ??????????????????????????, श्रेणी नाम और नोट शीर्षक भेजे जाते हैं। नोट की सामग्री और निजी नोट नहीं भेजे जाते, और लंबी सूचियाँ सीमित की जा सकती हैं।';
 
   @override
   String get jotsAiNoNew => 'व्यवस्थित करने के लिए कोई नया विचार नहीं है।';
 
   @override
-  String get jotsAiQuota => 'दैनिक Jots AI सीमा पूरी हो गई।';
+  String get jotsAiQuota => 'दैनिक चिंगारियाँ AI सीमा पूरी हो गई।';
 
   @override
-  String get jotsAiFailed => 'Jots व्यवस्थित नहीं हो सके। फिर से कोशिश करें।';
+  String get jotsAiFailed => 'चिंगारियाँ व्यवस्थित नहीं हो सकीं।';
 
   @override
   String jotsAiSuggestionsProvided(int count) {
@@ -863,7 +860,8 @@ class AppStringsHi extends AppStrings {
   }
 
   @override
-  String get jotsAiLimitedTo30 => 'केवल सबसे पुराने 30 नए jots भेजे गए।';
+  String get jotsAiLimitedTo30 =>
+      'केवल सबसे पुराने 30 नए ?????????????????????????? भेजे गए।';
 
   @override
   String jotsSelectedCount(int count) {
@@ -871,7 +869,8 @@ class AppStringsHi extends AppStrings {
   }
 
   @override
-  String get jotsDeleteSelectedTitle => 'चुने गए jots हटाएँ?';
+  String get jotsDeleteSelectedTitle =>
+      'चुने गए ?????????????????????????? हटाएँ?';
 
   @override
   String get jotsDeleteSelectedBody =>
@@ -883,7 +882,7 @@ class AppStringsHi extends AppStrings {
   }
 
   @override
-  String get jotActionsTooltip => 'Jot संभालें';
+  String get jotActionsTooltip => '?????????????????????????? संभालें';
 
   @override
   String get jotActionsTitle => 'विचार संभालें';
@@ -949,35 +948,36 @@ class AppStringsHi extends AppStrings {
       'इस विचार को व्यवस्थित करने के लिए टैप करें';
 
   @override
-  String get jotReminderNotFound => 'यह jot अब उपलब्ध नहीं है।';
+  String get jotReminderNotFound =>
+      'यह ?????????????????????????? अब उपलब्ध नहीं है।';
 
   @override
-  String get widgetAddNoteTooltip => 'नोट जोड़ें';
+  String get widgetAddNoteTooltip => 'स्मृति जोड़ें';
 
   @override
-  String get widgetComposeTitle => 'नया नोट';
+  String get widgetComposeTitle => 'नई स्मृति';
 
   @override
-  String get widgetComposeDiscardTitle => 'नोट त्यागें?';
+  String get widgetComposeDiscardTitle => 'स्मृति छोड़ें?';
 
   @override
-  String get widgetComposeDiscardBody => 'आपका नोट सहेजा नहीं जाएगा।';
+  String get widgetComposeDiscardBody => 'आपकी स्मृति सहेजी नहीं जाएगी।';
 
   @override
   String get widgetComposeNoCategories =>
-      'कोई श्रेणी नहीं मिली।\nपहले एक बनाने के लिए MindVault खोलें।';
+      'कोई समूह नहीं मिला।\\nपहले एक बनाने के लिए MindVault खोलें।';
 
   @override
-  String get widgetComposeCategoryLabel => 'श्रेणी';
+  String get widgetComposeCategoryLabel => 'समूह';
 
   @override
   String get noteTypeLabel => 'प्रकार';
 
   @override
-  String get noteTypeText => 'पाठ';
+  String get noteTypeText => 'अभिलेख';
 
   @override
-  String get noteTypeChecklist => 'चेकलिस्ट';
+  String get noteTypeChecklist => 'योजना';
 
   @override
   String get removeDoneTasksLabel => 'पूर्ण कार्य हटाएं';
@@ -990,7 +990,7 @@ class AppStringsHi extends AppStrings {
       'पूर्ण किए गए कार्य स्थायी रूप से हटा दिए जाएंगे।';
 
   @override
-  String get widgetViewEditTitle => 'नोट संपादित करें';
+  String get widgetViewEditTitle => 'स्मृति संपादित करें';
 
   @override
   String get widgetViewEdit => 'संपादित करें';
@@ -1005,7 +1005,7 @@ class AppStringsHi extends AppStrings {
   String get widgetViewNoContent => 'कोई सामग्री नहीं';
 
   @override
-  String get widgetViewNotFound => 'नोट नहीं मिला';
+  String get widgetViewNotFound => 'स्मृति नहीं मिली';
 
   @override
   String get widgetViewDiscardTitle => 'परिवर्तन त्यागें?';
@@ -1015,4 +1015,7 @@ class AppStringsHi extends AppStrings {
 
   @override
   String get widgetViewKeepEditing => 'संपादन जारी रखें';
+
+  @override
+  String get editorSttRecord => 'आवाज़ रिकॉर्ड करें';
 }

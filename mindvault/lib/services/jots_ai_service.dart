@@ -236,7 +236,9 @@ class JotsAiService {
         }
         if (suggestion.noteType != null &&
             suggestion.noteType != 'text' &&
-            suggestion.noteType != 'checklist') {
+            suggestion.noteType != 'record' &&
+            suggestion.noteType != 'checklist' &&
+            suggestion.noteType != 'plan') {
           continue;
         }
         final updatedText = suggestion.updatedText?.trim();

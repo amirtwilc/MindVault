@@ -18,6 +18,7 @@ import '../../providers/notes_provider.dart';
 import '../../providers/reminder_provider.dart';
 import '../../widgets/category_color_picker.dart';
 import '../../widgets/reminder_background_permission_prompt.dart';
+import '_ai_search_widgets.dart' show SttMixin;
 
 class JotsScreen extends ConsumerStatefulWidget {
   final String? highlightJotId;
@@ -28,10 +29,23 @@ class JotsScreen extends ConsumerStatefulWidget {
   ConsumerState<JotsScreen> createState() => _JotsScreenState();
 }
 
-class _JotsScreenState extends ConsumerState<JotsScreen> {
+class _JotsScreenState extends ConsumerState<JotsScreen>
+    with SttMixin<JotsScreen> {
   final Set<String> _selectedIds = {};
 
   bool get _selecting => _selectedIds.isNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    initStt();
+  }
+
+  @override
+  void dispose() {
+    stopStt();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -243,6 +257,23 @@ class _JotsScreenState extends ConsumerState<JotsScreen> {
                   decoration: InputDecoration(
                     hintText: l.jotInputHint,
                     counterText: '',
+                    suffixIcon: sttAvailable
+                        ? IconButton(
+                            tooltip:
+                                listening ? l.editorSttStop : l.editorSttRecord,
+                            icon: Icon(listening ? Icons.mic : Icons.mic_none),
+                            color: listening
+                                ? Theme.of(context).colorScheme.error
+                                : null,
+                            onPressed: () async {
+                              await toggleListen((text) {
+                                _insertSparkText(controller, text);
+                                setDialogState(() {});
+                              });
+                              setDialogState(() {});
+                            },
+                          )
+                        : null,
                   ),
                   textCapitalization: TextCapitalization.sentences,
                   onChanged: (_) => setDialogState(() {}),
@@ -280,6 +311,27 @@ class _JotsScreenState extends ConsumerState<JotsScreen> {
     if (saved == true && text.isNotEmpty) {
       await ref.read(jotRepositoryProvider)?.createJot(text: text);
       _snack(l.jotSavedSnack);
+    }
+  }
+
+  void _insertSparkText(TextEditingController controller, String text) {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return;
+    final insertText = '$trimmed ';
+    final sel = controller.selection;
+    final raw = controller.text;
+    if (sel.isValid) {
+      final start = sel.start.clamp(0, raw.length);
+      final end = sel.end.clamp(0, raw.length);
+      final next = raw.replaceRange(start, end, insertText);
+      controller.value = controller.value.copyWith(
+        text: next,
+        selection: TextSelection.collapsed(offset: start + insertText.length),
+      );
+    } else {
+      controller.text = raw.isEmpty ? trimmed : '$raw $trimmed';
+      controller.selection =
+          TextSelection.collapsed(offset: controller.text.length);
     }
   }
 
@@ -412,7 +464,7 @@ class _JotsScreenState extends ConsumerState<JotsScreen> {
           createAlert: suggestion.reminderAt != null,
           newNoteTitle: suggestion.title,
           newNoteCategoryId: categoryId,
-          newNoteType: NoteType.fromStorage(suggestion.noteType ?? 'text'),
+          newNoteType: NoteType.fromStorage(suggestion.noteType ?? 'record'),
           newNoteLocked: suggestion.isPrivate ?? false,
           reminderAt: suggestion.reminderAt,
           updatedText: suggestion.updatedText,
@@ -661,7 +713,7 @@ class _JotActionSheetState extends ConsumerState<JotActionSheet> {
     _existingNoteId = suggestion?.noteId;
     _reminderAt = (suggestion?.reminderAt ?? widget.jot.reminderAt)?.toLocal();
     _locked = suggestion?.isPrivate ?? false;
-    _noteType = NoteType.fromStorage(suggestion?.noteType ?? 'text');
+    _noteType = NoteType.fromStorage(suggestion?.noteType ?? 'record');
     if (suggestion != null) {
       _createNote = suggestion.action == JotSuggestedAction.createNote;
       _addToNote = suggestion.action == JotSuggestedAction.addToNote;

@@ -6,6 +6,32 @@
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
+-- One-time vocabulary migration for existing installs. The new app uses
+-- memories/clusters/sparks/plan_items table names, while compatibility views
+-- later in this file keep older REST clients mostly functional during rollout.
+DO $$ BEGIN
+  IF to_regclass('public.clusters') IS NULL AND to_regclass('public.categories') IS NOT NULL THEN
+    ALTER TABLE public.categories RENAME TO clusters;
+  END IF;
+  IF to_regclass('public.memories') IS NULL AND to_regclass('public.notes') IS NOT NULL THEN
+    ALTER TABLE public.notes RENAME TO memories;
+  END IF;
+  IF to_regclass('public.memory_reminders') IS NULL AND to_regclass('public.note_reminders') IS NOT NULL THEN
+    ALTER TABLE public.note_reminders RENAME TO memory_reminders;
+  END IF;
+  IF to_regclass('public.sparks') IS NULL AND to_regclass('public.jots') IS NOT NULL THEN
+    ALTER TABLE public.jots RENAME TO sparks;
+  END IF;
+  IF to_regclass('public.plan_items') IS NULL AND to_regclass('public.checklist_items') IS NOT NULL THEN
+    ALTER TABLE public.checklist_items RENAME TO plan_items;
+  END IF;
+  IF to_regclass('public.spark_ai_usage') IS NULL AND to_regclass('public.jot_ai_usage') IS NOT NULL THEN
+    ALTER TABLE public.jot_ai_usage RENAME TO spark_ai_usage;
+  END IF;
+END $$;
+
+
+
 -- ── tier_limits ─────────────────────────────────────────────
 -- Single source of truth for per-tier quota values.
 -- The Flutter client and the ai-search edge function both read
@@ -74,8 +100,8 @@ DROP POLICY IF EXISTS "Users insert own profile" ON profiles;
 CREATE POLICY "Users insert own profile" ON profiles
   FOR INSERT WITH CHECK (auth.uid() = id);
 
--- ── categories ──────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS categories (
+-- ── clusters ──────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS clusters (
   id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id      UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   name         TEXT NOT NULL,
@@ -86,60 +112,55 @@ CREATE TABLE IF NOT EXISTS categories (
   UNIQUE (user_id, name)
 );
 
-ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE clusters ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Users manage own categories" ON categories;
-CREATE POLICY "Users manage own categories" ON categories
+DROP POLICY IF EXISTS "Users manage own clusters" ON clusters;
+CREATE POLICY "Users manage own clusters" ON clusters
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
--- ── notes ───────────────────────────────────────────────────
+-- ── memories ───────────────────────────────────────────────────
 -- title and body are AES-256-GCM ciphertext (Base64). The server
 -- stores only ciphertext; the AES key never leaves the device.
-CREATE TABLE IF NOT EXISTS notes (
+CREATE TABLE IF NOT EXISTS memories (
   id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id      UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
-  category_id  UUID NOT NULL REFERENCES categories(id) ON DELETE CASCADE,
+  category_id  UUID NOT NULL REFERENCES clusters(id) ON DELETE CASCADE,
   title        TEXT NOT NULL,
   body         TEXT NOT NULL DEFAULT '',
   is_private   BOOLEAN NOT NULL DEFAULT FALSE,
   last_used_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
-  note_type    TEXT NOT NULL DEFAULT 'text' CHECK (note_type IN ('text', 'checklist')),
+  note_type    TEXT NOT NULL DEFAULT 'record' CHECK (note_type IN ('record', 'plan', 'text', 'checklist')),
   is_pinned    BOOLEAN NOT NULL DEFAULT FALSE,
   pinned_at    TIMESTAMPTZ,
   pin_order    INTEGER
 );
 
-ALTER TABLE notes ADD COLUMN IF NOT EXISTS note_type TEXT NOT NULL DEFAULT 'text';
+ALTER TABLE memories ADD COLUMN IF NOT EXISTS note_type TEXT NOT NULL DEFAULT 'record';
 
-DO $$ BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.table_constraints
-    WHERE table_name = 'notes' AND constraint_name = 'notes_note_type_check'
-  ) THEN
-    ALTER TABLE notes ADD CONSTRAINT notes_note_type_check
-      CHECK (note_type IN ('text', 'checklist'));
-  END IF;
-END $$;
+ALTER TABLE memories DROP CONSTRAINT IF EXISTS notes_note_type_check;
+ALTER TABLE memories DROP CONSTRAINT IF EXISTS memories_note_type_check;
+ALTER TABLE memories ADD CONSTRAINT memories_note_type_check
+  CHECK (note_type IN ('record', 'plan', 'text', 'checklist'));
 
-CREATE INDEX IF NOT EXISTS idx_notes_user_updated
-  ON notes (user_id, updated_at DESC);
+CREATE INDEX IF NOT EXISTS idx_memories_user_updated
+  ON memories (user_id, updated_at DESC);
 
-CREATE INDEX IF NOT EXISTS idx_notes_user_pin
-  ON notes (user_id, is_pinned DESC, pin_order ASC NULLS LAST, updated_at DESC);
+CREATE INDEX IF NOT EXISTS idx_memories_user_pin
+  ON memories (user_id, is_pinned DESC, pin_order ASC NULLS LAST, updated_at DESC);
 
-ALTER TABLE notes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE memories ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Users manage own notes" ON notes;
-CREATE POLICY "Users manage own notes" ON notes
+DROP POLICY IF EXISTS "Users manage own memories" ON memories;
+CREATE POLICY "Users manage own memories" ON memories
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
 -- Note reminders are metadata used to schedule local device notifications.
 -- Reminder title/body are not stored here; devices resolve note content locally
 -- when scheduling and when opening a fired notification.
-CREATE TABLE IF NOT EXISTS note_reminders (
-  note_id    UUID PRIMARY KEY REFERENCES notes(id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS memory_reminders (
+  note_id    UUID PRIMARY KEY REFERENCES memories(id) ON DELETE CASCADE,
   user_id    UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   remind_at  TIMESTAMPTZ NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -147,19 +168,19 @@ CREATE TABLE IF NOT EXISTS note_reminders (
   deleted_at TIMESTAMPTZ
 );
 
-CREATE INDEX IF NOT EXISTS idx_note_reminders_user_time
-  ON note_reminders (user_id, remind_at);
+CREATE INDEX IF NOT EXISTS idx_memory_reminders_user_time
+  ON memory_reminders (user_id, remind_at);
 
-ALTER TABLE note_reminders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE memory_reminders ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Users manage own note reminders" ON note_reminders;
-CREATE POLICY "Users manage own note reminders" ON note_reminders
+DROP POLICY IF EXISTS "Users manage own note reminders" ON memory_reminders;
+CREATE POLICY "Users manage own note reminders" ON memory_reminders
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
--- ── jots ────────────────────────────────────────────────────
+-- ── sparks ────────────────────────────────────────────────────
 -- Short unhandled thoughts. `text` and `ai_suggestion_json` are
 -- AES-256-GCM ciphertext (Base64); the server stores only ciphertext.
-CREATE TABLE IF NOT EXISTS jots (
+CREATE TABLE IF NOT EXISTS sparks (
   id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id              UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   text                 TEXT NOT NULL,
@@ -172,30 +193,30 @@ CREATE TABLE IF NOT EXISTS jots (
   reminder_at          TIMESTAMPTZ
 );
 
-ALTER TABLE jots
+ALTER TABLE sparks
   ADD COLUMN IF NOT EXISTS handled_at TIMESTAMPTZ,
   ADD COLUMN IF NOT EXISTS ai_processed_at TIMESTAMPTZ,
   ADD COLUMN IF NOT EXISTS ai_suggestion_json TEXT,
   ADD COLUMN IF NOT EXISTS ai_suggestion_run_id UUID,
   ADD COLUMN IF NOT EXISTS reminder_at TIMESTAMPTZ;
 
-CREATE INDEX IF NOT EXISTS idx_jots_user_unhandled_created
-  ON jots (user_id, handled_at, created_at ASC);
+CREATE INDEX IF NOT EXISTS idx_sparks_user_unhandled_created
+  ON sparks (user_id, handled_at, created_at ASC);
 
-CREATE INDEX IF NOT EXISTS idx_jots_user_reminder
-  ON jots (user_id, reminder_at)
+CREATE INDEX IF NOT EXISTS idx_sparks_user_reminder
+  ON sparks (user_id, reminder_at)
   WHERE reminder_at IS NOT NULL AND handled_at IS NULL;
 
-ALTER TABLE jots ENABLE ROW LEVEL SECURITY;
+ALTER TABLE sparks ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Users manage own jots" ON jots;
-CREATE POLICY "Users manage own jots" ON jots
+DROP POLICY IF EXISTS "Users manage own sparks" ON sparks;
+CREATE POLICY "Users manage own sparks" ON sparks
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
--- Checklist item text is AES-256-GCM ciphertext (Base64), matching notes.body.
-CREATE TABLE IF NOT EXISTS checklist_items (
+-- Checklist item text is AES-256-GCM ciphertext (Base64), matching memories.body.
+CREATE TABLE IF NOT EXISTS plan_items (
   id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  note_id      UUID NOT NULL REFERENCES notes(id) ON DELETE CASCADE,
+  note_id      UUID NOT NULL REFERENCES memories(id) ON DELETE CASCADE,
   user_id      UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   text         TEXT NOT NULL,
   is_completed BOOLEAN NOT NULL DEFAULT FALSE,
@@ -205,21 +226,21 @@ CREATE TABLE IF NOT EXISTS checklist_items (
   updated_at   TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX IF NOT EXISTS idx_checklist_items_note_order
-  ON checklist_items (note_id, is_completed ASC, sort_order ASC, created_at ASC);
+CREATE INDEX IF NOT EXISTS idx_plan_items_note_order
+  ON plan_items (note_id, is_completed ASC, sort_order ASC, created_at ASC);
 
-CREATE INDEX IF NOT EXISTS idx_checklist_items_user_updated
-  ON checklist_items (user_id, updated_at DESC);
+CREATE INDEX IF NOT EXISTS idx_plan_items_user_updated
+  ON plan_items (user_id, updated_at DESC);
 
-ALTER TABLE checklist_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE plan_items ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Users manage own checklist items" ON checklist_items;
-CREATE POLICY "Users manage own checklist items" ON checklist_items
+DROP POLICY IF EXISTS "Users manage own checklist items" ON plan_items;
+CREATE POLICY "Users manage own checklist items" ON plan_items
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
 -- ── user_keys ───────────────────────────────────────────────
 -- Stores the wrapped AES note-encryption key per user, so users
--- can recover encrypted notes after reinstall by entering their PIN.
+-- can recover encrypted memories after reinstall by entering their PIN.
 -- The PIN itself never leaves the device.
 CREATE TABLE IF NOT EXISTS user_keys (
   user_id     UUID PRIMARY KEY REFERENCES profiles(id) ON DELETE CASCADE,
@@ -263,24 +284,24 @@ DROP POLICY IF EXISTS "Users manage own ai_usage" ON ai_usage;
 CREATE POLICY "Users manage own ai_usage" ON ai_usage
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
--- ── jot_ai_usage ────────────────────────────────────────────
--- One row per user per day. Consumed atomically by the organize-jots edge
+-- ── spark_ai_usage ────────────────────────────────────────────
+-- One row per user per day. Consumed atomically by the organize-sparks edge
 -- function and refunded if the upstream model request fails.
-CREATE TABLE IF NOT EXISTS jot_ai_usage (
+CREATE TABLE IF NOT EXISTS spark_ai_usage (
   user_id        UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   usage_date     DATE NOT NULL DEFAULT CURRENT_DATE,
   organize_count INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (user_id, usage_date)
 );
 
-ALTER TABLE jot_ai_usage ENABLE ROW LEVEL SECURITY;
+ALTER TABLE spark_ai_usage ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Users manage own jot_ai_usage" ON jot_ai_usage;
-DROP POLICY IF EXISTS "Users read own jot_ai_usage" ON jot_ai_usage;
-CREATE POLICY "Users read own jot_ai_usage" ON jot_ai_usage
+DROP POLICY IF EXISTS "Users manage own spark_ai_usage" ON spark_ai_usage;
+DROP POLICY IF EXISTS "Users read own spark_ai_usage" ON spark_ai_usage;
+CREATE POLICY "Users read own spark_ai_usage" ON spark_ai_usage
   FOR SELECT USING (auth.uid() = user_id);
 
-CREATE OR REPLACE FUNCTION public.consume_jot_ai_usage(
+CREATE OR REPLACE FUNCTION public.consume_spark_ai_usage(
   p_user_id UUID,
   p_usage_date DATE DEFAULT CURRENT_DATE
 )
@@ -314,23 +335,58 @@ BEGIN
     RETURN;
   END IF;
 
-  INSERT INTO jot_ai_usage (user_id, usage_date, organize_count)
+  INSERT INTO spark_ai_usage (user_id, usage_date, organize_count)
   VALUES (p_user_id, p_usage_date, 1)
   ON CONFLICT (user_id, usage_date) DO UPDATE
-    SET organize_count = jot_ai_usage.organize_count + 1
-    WHERE jot_ai_usage.organize_count < v_limit
-  RETURNING jot_ai_usage.organize_count INTO v_count;
+    SET organize_count = spark_ai_usage.organize_count + 1
+    WHERE spark_ai_usage.organize_count < v_limit
+  RETURNING spark_ai_usage.organize_count INTO v_count;
 
   IF FOUND THEN
     v_allowed := true;
   ELSE
     SELECT jau.organize_count INTO v_count
-    FROM jot_ai_usage jau
+    FROM spark_ai_usage jau
     WHERE jau.user_id = p_user_id AND jau.usage_date = p_usage_date;
   END IF;
 
   RETURN QUERY SELECT v_allowed, COALESCE(v_count, 0), v_limit, v_tier;
 END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.refund_spark_ai_usage(
+  p_user_id UUID,
+  p_usage_date DATE DEFAULT CURRENT_DATE
+)
+RETURNS VOID
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  UPDATE spark_ai_usage
+  SET organize_count = GREATEST(organize_count - 1, 0)
+  WHERE user_id = p_user_id
+    AND usage_date = p_usage_date
+    AND organize_count > 0;
+$$;
+
+-- Compatibility wrappers for the currently deployed organize-jots edge
+-- function and any old clients during the rename rollout.
+CREATE OR REPLACE FUNCTION public.consume_jot_ai_usage(
+  p_user_id UUID,
+  p_usage_date DATE DEFAULT CURRENT_DATE
+)
+RETURNS TABLE (
+  allowed BOOLEAN,
+  organize_count INTEGER,
+  daily_limit INTEGER,
+  tier TEXT
+)
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT * FROM public.consume_spark_ai_usage(p_user_id, p_usage_date);
 $$;
 
 CREATE OR REPLACE FUNCTION public.refund_jot_ai_usage(
@@ -342,15 +398,15 @@ LANGUAGE sql
 SECURITY DEFINER
 SET search_path = public
 AS $$
-  UPDATE jot_ai_usage
-  SET organize_count = GREATEST(organize_count - 1, 0)
-  WHERE user_id = p_user_id
-    AND usage_date = p_usage_date
-    AND organize_count > 0;
+  SELECT public.refund_spark_ai_usage(p_user_id, p_usage_date);
 $$;
 
+REVOKE ALL ON FUNCTION public.consume_spark_ai_usage(UUID, DATE) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.refund_spark_ai_usage(UUID, DATE) FROM PUBLIC;
 REVOKE ALL ON FUNCTION public.consume_jot_ai_usage(UUID, DATE) FROM PUBLIC;
 REVOKE ALL ON FUNCTION public.refund_jot_ai_usage(UUID, DATE) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.consume_spark_ai_usage(UUID, DATE) TO service_role;
+GRANT EXECUTE ON FUNCTION public.refund_spark_ai_usage(UUID, DATE) TO service_role;
 GRANT EXECUTE ON FUNCTION public.consume_jot_ai_usage(UUID, DATE) TO service_role;
 GRANT EXECUTE ON FUNCTION public.refund_jot_ai_usage(UUID, DATE) TO service_role;
 
@@ -386,7 +442,7 @@ CREATE POLICY "Users insert own error logs" ON error_logs
 
 -- ── analytics_events ────────────────────────────────────────
 -- Fire-and-forget behavioural event log written by the Flutter app.
--- Tracks structural events only (session_started, note_created, etc.) —
+-- Tracks structural events only (session_started, memory_created, etc.) —
 -- never note content (which is E2EE client-side anyway).
 -- RLS: authenticated users may INSERT their own events; no SELECT policy
 -- so regular users cannot read any rows. Service role (Supabase Studio)
@@ -423,11 +479,11 @@ SELECT
   (SELECT COUNT(*) FROM profiles WHERE created_at >= NOW() - INTERVAL '30 days')                         AS signups_30d,
   (SELECT COUNT(*) FROM ai_usage WHERE usage_date = CURRENT_DATE)                                        AS ai_queries_today,
   (SELECT COUNT(*) FROM ai_usage WHERE usage_date >= CURRENT_DATE - INTERVAL '7 days')                  AS ai_queries_7d,
-  (SELECT COUNT(*) FROM jot_ai_usage WHERE usage_date = CURRENT_DATE)                                    AS jot_ai_users_today,
-  (SELECT COALESCE(SUM(organize_count), 0) FROM jot_ai_usage WHERE usage_date = CURRENT_DATE)            AS jot_ai_organizes_today,
+  (SELECT COUNT(*) FROM spark_ai_usage WHERE usage_date = CURRENT_DATE)                                    AS jot_ai_users_today,
+  (SELECT COALESCE(SUM(organize_count), 0) FROM spark_ai_usage WHERE usage_date = CURRENT_DATE)            AS jot_ai_organizes_today,
   (SELECT COUNT(DISTINCT user_id) FROM analytics_events WHERE created_at::date = CURRENT_DATE)           AS dau_today,
-  (SELECT COUNT(*) FROM analytics_events WHERE event_type = 'note_created' AND created_at::date = CURRENT_DATE) AS notes_created_today,
-  (SELECT COUNT(*) FROM analytics_events WHERE event_type = 'note_created' AND created_at >= NOW() - INTERVAL '7 days') AS notes_created_7d,
+  (SELECT COUNT(*) FROM analytics_events WHERE event_type = 'memory_created' AND created_at::date = CURRENT_DATE) AS memories_created_today,
+  (SELECT COUNT(*) FROM analytics_events WHERE event_type = 'memory_created' AND created_at >= NOW() - INTERVAL '7 days') AS memories_created_7d,
   (SELECT COUNT(*) FROM error_logs WHERE occurred_at::date = CURRENT_DATE)                               AS errors_today;
 
 -- Signups per day (last 30 days), broken down by tier
@@ -470,7 +526,7 @@ AS $$
 BEGIN
   INSERT INTO public.profiles (id) VALUES (NEW.id)
     ON CONFLICT (id) DO NOTHING;
-  INSERT INTO public.categories (user_id, name, sort_order)
+  INSERT INTO public.clusters (user_id, name, sort_order)
     VALUES (NEW.id, 'General', 0)
     ON CONFLICT DO NOTHING;
   RETURN NEW;
@@ -482,38 +538,62 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE PROCEDURE handle_new_user();
 
+-- Backfill profiles for users that existed before this trigger/schema version
+-- was installed. Without this, FK checks on clusters/memories can reject
+-- app writes for existing users while local offline writes still appear to work.
+INSERT INTO public.profiles (id)
+SELECT id FROM auth.users
+ON CONFLICT (id) DO NOTHING;
+
 -- ── Realtime ────────────────────────────────────────────────
--- The Flutter app subscribes to notes + categories changes to
+-- The Flutter app subscribes to memories + clusters changes to
 -- keep multiple devices in sync.
 DO $$ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_publication_tables
-    WHERE pubname = 'supabase_realtime' AND tablename = 'notes'
+    WHERE pubname = 'supabase_realtime' AND tablename = 'memories'
   ) THEN
-    ALTER PUBLICATION supabase_realtime ADD TABLE notes;
+    ALTER PUBLICATION supabase_realtime ADD TABLE memories;
   END IF;
   IF NOT EXISTS (
     SELECT 1 FROM pg_publication_tables
-    WHERE pubname = 'supabase_realtime' AND tablename = 'categories'
+    WHERE pubname = 'supabase_realtime' AND tablename = 'clusters'
   ) THEN
-    ALTER PUBLICATION supabase_realtime ADD TABLE categories;
+    ALTER PUBLICATION supabase_realtime ADD TABLE clusters;
   END IF;
   IF NOT EXISTS (
     SELECT 1 FROM pg_publication_tables
-    WHERE pubname = 'supabase_realtime' AND tablename = 'checklist_items'
+    WHERE pubname = 'supabase_realtime' AND tablename = 'plan_items'
   ) THEN
-    ALTER PUBLICATION supabase_realtime ADD TABLE checklist_items;
+    ALTER PUBLICATION supabase_realtime ADD TABLE plan_items;
   END IF;
   IF NOT EXISTS (
     SELECT 1 FROM pg_publication_tables
-    WHERE pubname = 'supabase_realtime' AND tablename = 'note_reminders'
+    WHERE pubname = 'supabase_realtime' AND tablename = 'memory_reminders'
   ) THEN
-    ALTER PUBLICATION supabase_realtime ADD TABLE note_reminders;
+    ALTER PUBLICATION supabase_realtime ADD TABLE memory_reminders;
   END IF;
   IF NOT EXISTS (
     SELECT 1 FROM pg_publication_tables
-    WHERE pubname = 'supabase_realtime' AND tablename = 'jots'
+    WHERE pubname = 'supabase_realtime' AND tablename = 'sparks'
   ) THEN
-    ALTER PUBLICATION supabase_realtime ADD TABLE jots;
+    ALTER PUBLICATION supabase_realtime ADD TABLE sparks;
   END IF;
 END $$;
+-- Temporary REST compatibility for old app versions. Realtime subscriptions
+-- should move to the new tables; these views mainly protect short rollout gaps.
+CREATE OR REPLACE VIEW categories WITH (security_invoker = true) AS
+  SELECT * FROM clusters;
+CREATE OR REPLACE VIEW notes WITH (security_invoker = true) AS
+  SELECT * FROM memories;
+CREATE OR REPLACE VIEW note_reminders WITH (security_invoker = true) AS
+  SELECT * FROM memory_reminders;
+CREATE OR REPLACE VIEW jots WITH (security_invoker = true) AS
+  SELECT * FROM sparks;
+CREATE OR REPLACE VIEW checklist_items WITH (security_invoker = true) AS
+  SELECT * FROM plan_items;
+CREATE OR REPLACE VIEW jot_ai_usage WITH (security_invoker = true) AS
+  SELECT * FROM spark_ai_usage;
+
+-- Ask PostgREST/Supabase API to reload relation metadata after renames/views.
+NOTIFY pgrst, 'reload schema';

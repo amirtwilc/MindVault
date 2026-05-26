@@ -63,7 +63,9 @@ void main() {
       // Manually write a past timestamp
       await storage.write(
         key: 'pin_locked_until',
-        value: DateTime.now().subtract(const Duration(seconds: 1)).toIso8601String(),
+        value: DateTime.now()
+            .subtract(const Duration(seconds: 1))
+            .toIso8601String(),
       );
       expect(await tracker.getLockoutRemaining(), isNull);
     });

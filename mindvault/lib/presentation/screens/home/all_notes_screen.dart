@@ -13,6 +13,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../providers/biometric_provider.dart';
 import '../../providers/categories_provider.dart';
 import '../../providers/notes_provider.dart';
+import '../../providers/widget_sync_provider.dart';
 
 class AllNotesScreen extends ConsumerStatefulWidget {
   const AllNotesScreen({super.key});
@@ -36,12 +37,14 @@ class _AllNotesScreenState extends ConsumerState<AllNotesScreen> {
           final bOrder = b.pinOrder ?? 0;
           if (aOrder != bOrder) return aOrder.compareTo(bOrder);
         }
-        final aTime = a.lastOpenedAt != null && a.lastOpenedAt!.isAfter(a.createdAt)
-            ? a.lastOpenedAt!
-            : a.createdAt;
-        final bTime = b.lastOpenedAt != null && b.lastOpenedAt!.isAfter(b.createdAt)
-            ? b.lastOpenedAt!
-            : b.createdAt;
+        final aTime =
+            a.lastOpenedAt != null && a.lastOpenedAt!.isAfter(a.createdAt)
+                ? a.lastOpenedAt!
+                : a.createdAt;
+        final bTime =
+            b.lastOpenedAt != null && b.lastOpenedAt!.isAfter(b.createdAt)
+                ? b.lastOpenedAt!
+                : b.createdAt;
         return bTime.compareTo(aTime);
       });
   }
@@ -75,14 +78,15 @@ class _AllNotesScreenState extends ConsumerState<AllNotesScreen> {
           final general = categories
               .where((c) => isGeneralCategoryName(c.name))
               .firstOrNull;
-          final target = general ?? (categories.isEmpty ? null : categories.first);
+          final target =
+              general ?? (categories.isEmpty ? null : categories.first);
           if (target == null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(l.allNotesCreateFirst)),
             );
             return;
           }
-          context.push('/home/categories/${target.id}/edit');
+          context.push('/home/clusters/${target.id}/edit');
         },
         child: const Icon(Icons.add),
       ),
@@ -94,8 +98,7 @@ class _AllNotesScreenState extends ConsumerState<AllNotesScreen> {
           final source = _optimisticNotes ?? streamNotes;
           final valid = _sorted(source
               .where((n) =>
-                  categoryMap.isEmpty ||
-                  categoryMap.containsKey(n.categoryId))
+                  categoryMap.isEmpty || categoryMap.containsKey(n.categoryId))
               .toList());
 
           if (valid.isEmpty) return _EmptyState(cs: cs);
@@ -129,8 +132,8 @@ class _AllNotesScreenState extends ConsumerState<AllNotesScreen> {
                 _reorderPending = true;
               });
 
-              ref.read(noteRepositoryProvider)
-                  ?.reorderPinnedNotes(reorderedPinned.map((n) => n.id).toList());
+              ref.read(noteRepositoryProvider)?.reorderPinnedNotes(
+                  reorderedPinned.map((n) => n.id).toList());
             },
             itemBuilder: (context, i) => _NoteCard(
               key: ValueKey(valid[i].id),
@@ -167,7 +170,8 @@ class _NoteCard extends StatelessWidget {
     final bg = categoryColor(category?.color);
     final fg = categoryTextColor(bg);
     final locale = Localizations.localeOf(context).toString();
-    final dateStr = DateFormat('MMM d', locale).format(note.updatedAt.toLocal());
+    final dateStr =
+        DateFormat('MMM d', locale).format(note.updatedAt.toLocal());
     final timeStr = DateFormat('HH:mm').format(note.updatedAt.toLocal());
     final displayTitle = NotePreview.displayTitle(note.title, note.body);
     final previewBody = NotePreview.previewBody(note.title, note.body);
@@ -208,7 +212,8 @@ class _NoteCard extends StatelessWidget {
               if (note.isPinned)
                 Padding(
                   padding: const EdgeInsets.only(right: 2),
-                  child: Icon(Icons.drag_handle, size: 16, color: fg.withOpacity(0.7)),
+                  child: Icon(Icons.drag_handle,
+                      size: 16, color: fg.withOpacity(0.7)),
                 ),
               IconButton(
                 icon: Icon(
@@ -290,7 +295,7 @@ class _NoteCard extends StatelessWidget {
       ref.read(privateNotesUnlockedProvider.notifier).state = true;
     }
     if (context.mounted) {
-      context.push('/home/categories/${note.categoryId}/edit/${note.id}');
+      context.push('/home/clusters/${note.categoryId}/edit/${note.id}');
     }
   }
 
@@ -325,6 +330,7 @@ class _NoteCard extends StatelessWidget {
     final repo = ref.read(noteRepositoryProvider);
     if (repo == null) return;
     await repo.deleteNote(note.id);
+    await ref.read(widgetDataServiceProvider).patchNoteRemoved(noteId: note.id);
     if (context.mounted) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(l.noteDeletedSnack)));

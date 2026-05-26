@@ -6,11 +6,8 @@ class AutoTitleGenerator {
   /// Returns an empty string only if [body] contains no non-whitespace content.
   static String fromBody(String body) {
     for (final line in body.split('\n')) {
-      final words = line
-          .trim()
-          .split(RegExp(r'\s+'))
-          .where((w) => w.isNotEmpty)
-          .toList();
+      final words =
+          line.trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
       if (words.isEmpty) continue;
       return words.take(4).join(' ');
     }

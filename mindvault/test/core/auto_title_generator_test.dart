@@ -4,8 +4,8 @@ import 'package:mindvault/core/utils/auto_title_generator.dart';
 void main() {
   group('AutoTitleGenerator.fromBody', () {
     test('takes first 4 words of a longer line', () {
-      final result = AutoTitleGenerator.fromBody(
-          'one two three four five six seven');
+      final result =
+          AutoTitleGenerator.fromBody('one two three four five six seven');
       expect(result, equals('one two three four'));
     });
 

@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/constants/supabase_constants.dart';
 import '../../models/category_model.dart';
+import 'supabase_profile_bootstrap.dart';
 
 class SupabaseCategoriesDatasource {
   final SupabaseClient _client;
@@ -22,6 +23,7 @@ class SupabaseCategoriesDatasource {
 
   Future<CategoryModel> insertCategory(String name, int sortOrder,
       {String? color, String? id}) async {
+    await ensureSupabaseProfile(_client);
     final payload = <String, dynamic>{
       'user_id': _userId,
       'name': name,
@@ -38,6 +40,7 @@ class SupabaseCategoriesDatasource {
   }
 
   Future<void> upsertCategory(Map<String, dynamic> data) async {
+    await ensureSupabaseProfile(_client);
     await _client
         .from(SupabaseConstants.categoriesTable)
         .upsert({...data, 'user_id': _userId});

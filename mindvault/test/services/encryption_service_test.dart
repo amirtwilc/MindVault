@@ -13,8 +13,8 @@ import '../helpers/fake_secure_storage.dart';
 String _encryptLegacy(String plaintext, Key key) {
   const legacyIvLen = 16;
   final random = Random.secure();
-  final ivBytes =
-      Uint8List.fromList(List.generate(legacyIvLen, (_) => random.nextInt(256)));
+  final ivBytes = Uint8List.fromList(
+      List.generate(legacyIvLen, (_) => random.nextInt(256)));
   final iv = IV(ivBytes);
   final encrypter = Encrypter(AES(key, mode: AESMode.gcm));
   final encrypted = encrypter.encrypt(plaintext, iv: iv);
@@ -87,7 +87,9 @@ void main() {
       expect(service.decrypt(cipher, key), equals(plaintext));
     });
 
-    test('encrypting the same text twice gives different ciphertexts (random IV)', () {
+    test(
+        'encrypting the same text twice gives different ciphertexts (random IV)',
+        () {
       const plaintext = 'same text';
       final c1 = service.encrypt(plaintext, key);
       final c2 = service.encrypt(plaintext, key);
@@ -96,7 +98,8 @@ void main() {
 
     test('ciphertext is Base64-encoded', () {
       final cipher = service.encrypt('test', key);
-      expect(() => RegExp(r'^[A-Za-z0-9+/=]+$').hasMatch(cipher), returnsNormally);
+      expect(
+          () => RegExp(r'^[A-Za-z0-9+/=]+$').hasMatch(cipher), returnsNormally);
     });
 
     test('decrypting with wrong key throws', () {

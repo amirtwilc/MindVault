@@ -687,7 +687,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
     await _onPop();
     if (!mounted) return;
     if (widget.returnToAllNotesOnBack || !context.canPop()) {
-      context.go('/home/all-notes');
+      context.go('/home/archive');
     } else {
       context.pop();
     }
@@ -729,11 +729,11 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
     }
     if (mounted) {
       if (widget.returnToAllNotesOnBack) {
-        context.go('/home/all-notes');
+        context.go('/home/archive');
       } else if (context.canPop()) {
         context.pop();
       } else {
-        context.go('/home/all-notes');
+        context.go('/home/archive');
       }
     }
   }

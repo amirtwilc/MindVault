@@ -32,7 +32,8 @@ class AiSearchHistoryScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.history_rounded, size: 64, color: cs.outlineVariant),
+                  Icon(Icons.history_rounded,
+                      size: 64, color: cs.outlineVariant),
                   const SizedBox(height: 16),
                   Text(
                     l.aiHistoryEmpty,
@@ -103,13 +104,15 @@ class _HistoryCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 SelectableText(
                   entry.answer,
-                  style: tt.bodyMedium?.copyWith(color: cs.onSurface, height: 1.6),
+                  style:
+                      tt.bodyMedium?.copyWith(color: cs.onSurface, height: 1.6),
                 ),
                 if (entry.citedTitles.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      Icon(Icons.article_outlined, size: 14, color: cs.onSurfaceVariant),
+                      Icon(Icons.article_outlined,
+                          size: 14, color: cs.onSurfaceVariant),
                       const SizedBox(width: 6),
                       Text(
                         AppStrings.of(context).aiSearchSources,
@@ -203,7 +206,8 @@ class _CitedChip extends StatelessWidget {
 
     if (exists) {
       return GestureDetector(
-        onTap: () => context.push('/home/categories/${note!.categoryId}/edit/${note!.id}'),
+        onTap: () =>
+            context.push('/home/clusters/${note!.categoryId}/edit/${note!.id}'),
         child: chip,
       );
     }

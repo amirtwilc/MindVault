@@ -103,7 +103,8 @@ class _WidgetSearchScreenState extends ConsumerState<WidgetSearchScreen>
                         padding: const EdgeInsets.fromLTRB(20, 16, 8, 0),
                         child: Row(
                           children: [
-                            Icon(Icons.search_rounded, size: 20, color: cs.primary),
+                            Icon(Icons.search_rounded,
+                                size: 20, color: cs.primary),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
@@ -130,8 +131,8 @@ class _WidgetSearchScreenState extends ConsumerState<WidgetSearchScreen>
                         onClear: _clearSearch,
                         onMic: () => toggleListen((words) {
                           _controller.text = words;
-                          _controller.selection = TextSelection.collapsed(
-                              offset: words.length);
+                          _controller.selection =
+                              TextSelection.collapsed(offset: words.length);
                           _triggerAiSearch();
                         }),
                       ),
@@ -305,8 +306,8 @@ class _WidgetResults extends StatelessWidget {
             child: OutlinedButton.icon(
               onPressed: onAiSearch,
               icon: const Icon(Icons.auto_awesome_rounded, size: 14),
-              label: Text(l.searchTryAiHint,
-                  style: const TextStyle(fontSize: 12)),
+              label:
+                  Text(l.searchTryAiHint, style: const TextStyle(fontSize: 12)),
             ),
           );
         }

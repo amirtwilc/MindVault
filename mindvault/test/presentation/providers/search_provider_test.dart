@@ -72,7 +72,9 @@ void main() {
     });
 
     test('returns multiple matching lines from one note', () {
-      final notes = [makeNote(body: 'dart is great\nflutter uses dart\nother line')];
+      final notes = [
+        makeNote(body: 'dart is great\nflutter uses dart\nother line')
+      ];
       final results = filterNotesForSearch('dart', notes, catMap);
       expect(results.first.matchingLines, hasLength(2));
     });
@@ -105,9 +107,12 @@ void main() {
   // ── Scoring tier tests ────────────────────────────────────────────────────
 
   group('filterNotesForSearch – scoring tiers', () {
-    test('exact-phrase title match scores higher than exact-phrase body match', () {
-      final titleNote = makeNote(id: 'a', title: 'banana sandwich', body: 'other');
-      final bodyNote = makeNote(id: 'b', title: 'other', body: 'banana sandwich');
+    test('exact-phrase title match scores higher than exact-phrase body match',
+        () {
+      final titleNote =
+          makeNote(id: 'a', title: 'banana sandwich', body: 'other');
+      final bodyNote =
+          makeNote(id: 'b', title: 'other', body: 'banana sandwich');
       final results = filterNotesForSearch(
         'banana sandwich',
         [bodyNote, titleNote],
@@ -118,7 +123,8 @@ void main() {
     });
 
     test('OR-only note is excluded; AND note is included', () {
-      final andNote = makeNote(id: 'and', title: 'sandwich with banana', body: '');
+      final andNote =
+          makeNote(id: 'and', title: 'sandwich with banana', body: '');
       final orNote = makeNote(id: 'or', title: 'banana cake', body: '');
       final results = filterNotesForSearch(
         'banana sandwich',
@@ -143,8 +149,10 @@ void main() {
     });
 
     test('pinned note ranks above unpinned note with same tier-3 hits', () {
-      final pinned = makeNote(id: 'pinned', title: 'apple note', isPinned: true);
-      final unpinned = makeNote(id: 'unpinned', title: 'apple info', isPinned: false);
+      final pinned =
+          makeNote(id: 'pinned', title: 'apple note', isPinned: true);
+      final unpinned =
+          makeNote(id: 'unpinned', title: 'apple info', isPinned: false);
       final results = filterNotesForSearch(
         'apple',
         [unpinned, pinned],
@@ -180,15 +188,19 @@ void main() {
       expect(filterNotesForSearch('secret', notes, catMap), isEmpty);
     });
 
-    test('multi-token "banana sandwich" matches "sandwich with banana" (AND tier)', () {
+    test(
+        'multi-token "banana sandwich" matches "sandwich with banana" (AND tier)',
+        () {
       final notes = [makeNote(title: 'sandwich with banana')];
-      final results = filterNotesForSearch('banana sandwich', notes, catMap, now: base);
+      final results =
+          filterNotesForSearch('banana sandwich', notes, catMap, now: base);
       expect(results, hasLength(1));
     });
 
     test('exact-phrase title beat AND title for same query', () {
       final exact = makeNote(id: 'exact', title: 'banana sandwich recipe');
-      final andMatch = makeNote(id: 'and', title: 'sandwich with banana inside');
+      final andMatch =
+          makeNote(id: 'and', title: 'sandwich with banana inside');
       final results = filterNotesForSearch(
         'banana sandwich',
         [andMatch, exact],

@@ -66,7 +66,7 @@ class AppStringsHe extends AppStrings {
   String get splashLoading => 'מאבטח את הכספת שלך…';
 
   @override
-  String get authSubtitle => 'פתקים מוצפנים מבוססי בינה מלאכותית';
+  String get authSubtitle => 'זיכרונות מוצפנים מבוססי בינה מלאכותית';
 
   @override
   String get authEmailLabel => 'אימייל';
@@ -232,7 +232,7 @@ class AppStringsHe extends AppStrings {
 
   @override
   String get authDisclaimer =>
-      'הפתקים שלך מוצפנים מקצה לקצה.\nרק אתה יכול לקרוא אותם.';
+      'הזיכרונות שלך מוצפנים מקצה לקצה.\nרק אתה יכול לקרוא אותם.';
 
   @override
   String get pinSetupAppBar => 'הגדרת הצפנה';
@@ -248,11 +248,11 @@ class AppStringsHe extends AppStrings {
 
   @override
   String get pinSetupBody =>
-      'הקוד הזה מגן על ההערות שלך כך שאף אחד מלבדך לא יוכל לקרוא אותן. תזדקק לו אם תתחבר ממכשיר חדש.';
+      'הקוד הזה מגן על הזיכרונות שלך כך שאף אחד מלבדך לא יוכל לקרוא אותן. תזדקק לו אם תתחבר ממכשיר חדש.';
 
   @override
   String get pinRecoveryBody =>
-      'הפתקים שלך מוצפנים. הזן את קוד השחזור כדי לפתוח אותם במכשיר זה.';
+      'הזיכרונות שלך מוצפנים. הזן את קוד השחזור כדי לפתוח אותם במכשיר זה.';
 
   @override
   String get pinLabel => 'קוד שחזור (4–8 ספרות)';
@@ -293,7 +293,7 @@ class AppStringsHe extends AppStrings {
 
   @override
   String get pinStartFreshBody =>
-      'פעולה זו תיצור מפתח הצפנה חדש. הפתקים הקיימים שלך יאבדו.\n\nלא ניתן לבטל פעולה זו.';
+      'פעולה זו תיצור מפתח הצפנה חדש. הזיכרונות הקיימים שלך יאבדו.\n\nלא ניתן לבטל פעולה זו.';
 
   @override
   String get pinEntryAppBar => 'הזן קוד שחזור';
@@ -324,28 +324,28 @@ class AppStringsHe extends AppStrings {
   }
 
   @override
-  String get navAllNotes => 'כל הפתקים';
+  String get navAllNotes => 'ארכיון';
 
   @override
-  String get navJots => 'Jots';
+  String get navJots => 'ניצוצות';
 
   @override
-  String get navCategories => 'קטגוריות';
+  String get navCategories => 'אשכולות';
 
   @override
-  String get navSearch => 'חיפוש';
+  String get navSearch => 'שליפה';
 
   @override
   String get navSettings => 'הגדרות';
 
   @override
-  String get homeNoCategoriesTitle => 'אין עדיין קטגוריות.\nהקש + ליצירה.';
+  String get homeNoCategoriesTitle => 'אין עדיין אשכולות.\nהקש + ליצירה.';
 
   @override
-  String get newCategoryDialogTitle => 'קטגוריה חדשה';
+  String get newCategoryDialogTitle => 'אשכול חדש';
 
   @override
-  String get categoryNameHint => 'שם הקטגוריה';
+  String get categoryNameHint => 'שם האשכול';
 
   @override
   String get categoryColorLabel => 'צבע';
@@ -355,12 +355,12 @@ class AppStringsHe extends AppStrings {
 
   @override
   String categoryLimitReached(int max, Object upgradeHint) {
-    return 'הגעת למגבלת הקטגוריות ($max). $upgradeHint';
+    return 'הגעת למגבלת האשכולות ($max). $upgradeHint';
   }
 
   @override
   String noteLimitReached(int max, Object upgradeHint) {
-    return 'הגעת למגבלת הפתקים ($max). $upgradeHint';
+    return 'הגעת למגבלת הזיכרונות ($max). $upgradeHint';
   }
 
   @override
@@ -370,28 +370,28 @@ class AppStringsHe extends AppStrings {
   String get upgradeHintNone => '';
 
   @override
-  String get notesListTitleFallback => 'פתקים';
+  String get notesListTitleFallback => 'זיכרונות';
 
   @override
-  String get notesListEmptyTitle => 'אין עדיין פתקים';
+  String get notesListEmptyTitle => 'אין עדיין זיכרונות';
 
   @override
-  String get notesListEmptyBody => 'הקש + כדי ליצור את הפתק הראשון שלך';
+  String get notesListEmptyBody => 'הקש + כדי ליצור את הזיכרון הראשון שלך';
 
   @override
   String get noteUntitled => '(ללא כותרת)';
 
   @override
-  String get noteDeletedSnack => 'הפתק נמחק';
+  String get noteDeletedSnack => 'הזיכרון נמחק';
 
   @override
-  String get deleteNoteTitle => 'למחוק את הפתק?';
+  String get deleteNoteTitle => 'למחוק את הזיכרון?';
 
   @override
   String get deleteNoteBody => 'לא ניתן לבטל פעולה זו.';
 
   @override
-  String get privateAuthReason => 'אמת את זהותך כדי לצפות בפתק פרטי זה';
+  String get privateAuthReason => 'אמת את זהותך כדי לצפות בזיכרון פרטי זה';
 
   @override
   String get renameCategory => 'שנה שם';
@@ -400,13 +400,13 @@ class AppStringsHe extends AppStrings {
   String get changeCategoryColor => 'שנה צבע';
 
   @override
-  String get deleteCategoryAction => 'מחק קטגוריה';
+  String get deleteCategoryAction => 'מחק אשכול';
 
   @override
-  String get renameCategoryDialog => 'שנה שם קטגוריה';
+  String get renameCategoryDialog => 'שנה שם אשכול';
 
   @override
-  String get categoryColorDialog => 'צבע קטגוריה';
+  String get categoryColorDialog => 'צבע אשכול';
 
   @override
   String deleteCategoryConfirmTitle(Object name) {
@@ -414,22 +414,23 @@ class AppStringsHe extends AppStrings {
   }
 
   @override
-  String get deleteCategoryConfirmBody => 'כל הפתקים בקטגוריה זו יימחקו גם הם.';
+  String get deleteCategoryConfirmBody =>
+      'כל הזיכרונות באשכול זו יימחקו גם הם.';
 
   @override
-  String get allNotesEmptyTitle => 'אין עדיין פתקים';
+  String get allNotesEmptyTitle => 'אין עדיין זיכרונות';
 
   @override
-  String get allNotesEmptyBody => 'צור קטגוריה והוסף את הפתק הראשון שלך';
+  String get allNotesEmptyBody => 'צור אשכול והוסף את הזיכרון הראשון שלך';
 
   @override
-  String get allNotesCreateFirst => 'צור קטגוריה תחילה';
+  String get allNotesCreateFirst => 'צור אשכול תחילה';
 
   @override
-  String get editorNewTitle => 'פתק חדש';
+  String get editorNewTitle => 'זיכרון חדש';
 
   @override
-  String get editorEditTitle => 'עריכת פתק';
+  String get editorEditTitle => 'עריכת זיכרון';
 
   @override
   String get editorSaving => 'שומר…';
@@ -446,10 +447,10 @@ class AppStringsHe extends AppStrings {
   String get editorBodyHint => 'התחל לכתוב…';
 
   @override
-  String get editorChangeCategory => 'שנה קטגוריה';
+  String get editorChangeCategory => 'שנה אשכול';
 
   @override
-  String get editorNewCategoryEntry => 'קטגוריה חדשה…';
+  String get editorNewCategoryEntry => 'אשכול חדש…';
 
   @override
   String get editorTooltipPublic => 'ציבורי';
@@ -458,13 +459,13 @@ class AppStringsHe extends AppStrings {
   String get editorTooltipPrivate => 'פרטי';
 
   @override
-  String get editorTooltipDelete => 'מחק פתק';
+  String get editorTooltipDelete => 'מחק זיכרון';
 
   @override
-  String get editorTooltipEdit => 'ערוך פתק';
+  String get editorTooltipEdit => 'ערוך זיכרון';
 
   @override
-  String get editorTooltipCopy => 'העתק פתק';
+  String get editorTooltipCopy => 'העתק זיכרון';
 
   @override
   String get reminderTooltipSet => 'הגדר תזכורת';
@@ -488,7 +489,7 @@ class AppStringsHe extends AppStrings {
 
   @override
   String get reminderSaveNoteFirst =>
-      'הוסף כותרת או גוף פתק לפני הגדרת תזכורת.';
+      'הוסף כותרת או גוף זיכרון לפני הגדרת תזכורת.';
 
   @override
   String get reminderNotificationsRequired =>
@@ -512,32 +513,29 @@ class AppStringsHe extends AppStrings {
   String get reminderMustBeFuture => 'בחר תאריך ושעה עתידיים.';
 
   @override
-  String get reminderNoteNotFound => 'פתק התזכורת הזה לא נמצא.';
+  String get reminderNoteNotFound => 'זיכרון התזכורת הזה לא נמצא.';
 
   @override
-  String get reminderNotificationBody => 'הקש כדי לפתוח את הפתק הזה';
+  String get reminderNotificationBody => 'הקש כדי לפתוח את הזיכרון הזה';
 
   @override
-  String get editorCopyMenuItem => 'העתק פתק';
+  String get editorCopyMenuItem => 'העתק זיכרון';
 
   @override
-  String get editorCopiedSnack => 'הפתק הועתק';
-
-  @override
-  String get editorSttRecord => 'הקלט קול';
+  String get editorCopiedSnack => 'הזיכרון הועתק';
 
   @override
   String get editorSttStop => 'הפסק הקלטה';
 
   @override
-  String get searchHint => 'חפש פתקים…';
+  String get searchHint => 'חפש זיכרונות…';
 
   @override
-  String get searchIdleTitle => 'חפש בפתקים שלך';
+  String get searchIdleTitle => 'חפש בזיכרונות שלך';
 
   @override
   String get searchIdleBody =>
-      'הקלד מילות מפתח או שאל שאלה.\nפתקים פרטיים אינם נכללים.';
+      'הקלד מילות מפתח או שאל שאלה.\nזיכרונות פרטיים אינם נכללים.';
 
   @override
   String searchNoResults(Object query) {
@@ -565,31 +563,31 @@ class AppStringsHe extends AppStrings {
   String get searchBackToResults => 'חזרה לתוצאות';
 
   @override
-  String get widgetSearchTitle => 'חפש בפתקים שלך';
+  String get widgetSearchTitle => 'חפש בזיכרונות שלך';
 
   @override
-  String get aiSearchTitle => 'חיפוש AI';
+  String get aiSearchTitle => 'שליפה AI';
 
   @override
-  String get aiSearchHint => 'שאל על הפתקים שלך…';
+  String get aiSearchHint => 'שאל על הזיכרונות שלך…';
 
   @override
-  String get aiSearchLoading => 'מחפש בפתקים שלך…';
+  String get aiSearchLoading => 'מחפש בזיכרונות שלך…';
 
   @override
-  String get aiSearchIdleTitle => 'שאל כל דבר על הפתקים שלך';
+  String get aiSearchIdleTitle => 'שאל כל דבר על הזיכרונות שלך';
 
   @override
-  String get aiSearchIdleBody => 'ה-AI מחפש בפתקים שלך ומסכם תשובה';
+  String get aiSearchIdleBody => 'ה-AI מחפש בזיכרונות שלך ומסכם תשובה';
 
   @override
-  String get aiSearchSuggestion1 => 'סכם את פתקי האימון שלי';
+  String get aiSearchSuggestion1 => 'סכם את האימונים שלי';
 
   @override
   String get aiSearchSuggestion2 => 'מה כתבתי על העבודה?';
 
   @override
-  String get aiSearchSuggestion3 => 'מצא פתקים על המטרות שלי';
+  String get aiSearchSuggestion3 => 'מצא הערות על המטרות שלי';
 
   @override
   String get aiSearchSuggestion4 => 'מהן תוכניות הנסיעה שלי?';
@@ -642,7 +640,7 @@ class AppStringsHe extends AppStrings {
 
   @override
   String get aiInfoBody =>
-      'חיפוש AI קורא את הפתקים שלך כדי לענות על שאלתך.\n\n🔒 פתקים פרטיים לעולם אינם נשלחים ל-AI.\n\n📄 פתקים ארוכים מאוד מקוצרים לפני השליחה.';
+      'חיפוש AI קורא את הזיכורנות שלך כדי לענות על שאלתך.\n\n🔒 זיכרונות פרטיים לעולם אינם נשלחים ל-AI.\n\n📄 זיכרונות ארוכים מאוד מקוצרים לפני השליחה.';
 
   @override
   String get aiInfoDismiss => 'הבנתי';
@@ -723,24 +721,24 @@ class AppStringsHe extends AppStrings {
   String get settingsUsageAi => 'חיפושי AI היום';
 
   @override
-  String get settingsUsageJotsAi => 'ארגוני Jots AI היום';
+  String get settingsUsageJotsAi => 'ארגוני AI לניצוצות היום';
 
   @override
-  String get settingsUsageNotes => 'פתקים';
+  String get settingsUsageNotes => 'זיכרונות';
 
   @override
-  String get settingsUsageCategories => 'קטגוריות';
+  String get settingsUsageCategories => 'אשכולות';
 
   @override
   String get settingsUpgradeTitle => 'שדרג ל-Pro';
 
   @override
   String get settingsUpgradeSubtitle =>
-      '50 חיפושי AI ביום · 1000 פתקים · 50 קטגוריות';
+      '30 חיפושי AI ביום · 1000 זיכרונות · 50 אשכולות';
 
   @override
   String get settingsUpgradeDialogBody =>
-      'Pro מעניק לך 50 חיפושי AI ביום, עד 1000 פתקים, 50 קטגוריות ו-20,000 תווים בפתק.';
+      'Pro מעניק לך 30 חיפושי AI ביום, עד 1000 זיכרונות, 50 אשכולות ו-20,000 תווים בזיכרון.';
 
   @override
   String get contactUsMessageHint => 'הודעתך (אופציונלי)…';
@@ -777,10 +775,10 @@ class AppStringsHe extends AppStrings {
   String get settingsLanguageFrench => 'Français';
 
   @override
-  String get jotsAddTooltip => 'הוסף jot';
+  String get jotsAddTooltip => 'הוסף ניצוץ';
 
   @override
-  String get jotAddDialogTitle => 'Jot חדש';
+  String get jotAddDialogTitle => 'ניצוץ חדש';
 
   @override
   String get jotInputHint => 'רשום מחשבה מהירה';
@@ -797,10 +795,10 @@ class AppStringsHe extends AppStrings {
   }
 
   @override
-  String get jotsEmptyTitle => 'אין jots שממתינים';
+  String get jotsEmptyTitle => 'אין ניצוצות ממתינים';
 
   @override
-  String get jotsEmptyBody => 'הקש על + כשעולה מחשבה.';
+  String get jotsEmptyBody => 'הקש + כאשר מחשבה צצה';
 
   @override
   String get jotsSortOldestFirst => 'הישנים קודם';
@@ -815,20 +813,20 @@ class AppStringsHe extends AppStrings {
   String get jotsAcceptAll => 'קבל את כל ההצעות';
 
   @override
-  String get jotsAiInfoTitle => 'על Jots AI';
+  String get jotsAiInfoTitle => 'על AI לניצוצות';
 
   @override
   String get jotsAiInfoBody =>
-      'Jots AI מציע איך לארגן מחשבות שלא טופלו. נשלחים רק jots שטרם נשלחו, שמות קטגוריות וכותרות של הערות. תוכן הערות והערות פרטיות לא נשלחים, ורשימות ארוכות עשויות להיות מוגבלות.';
+      'AI ניצוצות מציע איך לארגן מחשבות שלא טופלו. נשלחים רק ניצוצות שטרם נשלחו, שמות אשכולות וכותרות של זיכרונות. תוכן זיכרונות וזיכרונות פרטיים לא נשלחים. זיכרונות ארוכים עשויות להיות מוגבלות.';
 
   @override
   String get jotsAiNoNew => 'אין מחשבות חדשות לארגון.';
 
   @override
-  String get jotsAiQuota => 'הגעת למגבלת Jots AI היומית.';
+  String get jotsAiQuota => 'הגעת למגבלת AI היומית לניצוצות.';
 
   @override
-  String get jotsAiFailed => 'לא ניתן היה לארגן את ה-jots. נסה שוב.';
+  String get jotsAiFailed => 'לא ניתן היה לארגן ניצוצות.';
 
   @override
   String jotsAiSuggestionsProvided(int count) {
@@ -843,7 +841,7 @@ class AppStringsHe extends AppStrings {
   }
 
   @override
-  String get jotsAiLimitedTo30 => 'נשלחו רק 30 ה-jots החדשים הישנים ביותר.';
+  String get jotsAiLimitedTo30 => 'נשלחו רק 30 הניצוצות החדשים הישנים ביותר.';
 
   @override
   String jotsSelectedCount(int count) {
@@ -851,7 +849,7 @@ class AppStringsHe extends AppStrings {
   }
 
   @override
-  String get jotsDeleteSelectedTitle => 'למחוק את ה-jots שנבחרו?';
+  String get jotsDeleteSelectedTitle => 'למחוק את הניצוצות שנבחרו?';
 
   @override
   String get jotsDeleteSelectedBody => 'המחשבות שנבחרו יימחקו לצמיתות.';
@@ -862,16 +860,16 @@ class AppStringsHe extends AppStrings {
   }
 
   @override
-  String get jotActionsTooltip => 'טפל ב-jot';
+  String get jotActionsTooltip => 'טפל בניצוץ';
 
   @override
   String get jotActionsTitle => 'טיפול במחשבה';
 
   @override
-  String get jotActionCreateNote => 'צור הערה חדשה';
+  String get jotActionCreateNote => 'צור זיכרון חדש';
 
   @override
-  String get jotActionAddToNote => 'הוסף להערה קיימת';
+  String get jotActionAddToNote => 'הוסף לזיכרון קיים';
 
   @override
   String get jotActionCreateAlert => 'צור התראה';
@@ -892,22 +890,22 @@ class AppStringsHe extends AppStrings {
   String get jotActionUpdatedThoughtHint => 'לדוגמה: שר הטבעות';
 
   @override
-  String get jotActionNewNoteTitle => 'כותרת הערה';
+  String get jotActionNewNoteTitle => 'כותרת זיכרון';
 
   @override
-  String get jotActionCategory => 'קטגוריה';
+  String get jotActionCategory => 'אשכול';
 
   @override
-  String get jotActionNewCategory => 'קטגוריה חדשה';
+  String get jotActionNewCategory => 'אשכול חדש';
 
   @override
-  String get jotActionNote => 'הערה';
+  String get jotActionNote => 'מחשבה';
 
   @override
-  String get jotActionNoNotes => 'אין הערות בקטגוריה זו';
+  String get jotActionNoNotes => 'אין מחשבות באשכול זה';
 
   @override
-  String get jotActionLock => 'נעל הערה';
+  String get jotActionLock => 'נעל מחשבה';
 
   @override
   String jotActionReminderWhen(Object time) {
@@ -927,35 +925,35 @@ class AppStringsHe extends AppStrings {
   String get jotNotificationBody => 'הקש כדי לארגן את המחשבה הזו';
 
   @override
-  String get jotReminderNotFound => 'ה-jot הזה כבר לא זמין.';
+  String get jotReminderNotFound => 'הניצוץ הזה כבר לא זמין.';
 
   @override
-  String get widgetAddNoteTooltip => 'הוסף פתק';
+  String get widgetAddNoteTooltip => 'הוסף זיכרון';
 
   @override
-  String get widgetComposeTitle => 'פתק חדש';
+  String get widgetComposeTitle => 'זיכרון חדש';
 
   @override
-  String get widgetComposeDiscardTitle => 'להתעלם מהפתק?';
+  String get widgetComposeDiscardTitle => 'למחוק את הזיכרון?';
 
   @override
-  String get widgetComposeDiscardBody => 'הפתק שלך לא יישמר.';
+  String get widgetComposeDiscardBody => 'הזיכרון שלך לא יישמר.';
 
   @override
   String get widgetComposeNoCategories =>
-      'לא נמצאו קטגוריות.\nפתח את MindVault כדי ליצור אחת תחילה.';
+      'לא נמצאו אשכולות.\\nפתח את MindVault כדי ליצור אחד קודם.';
 
   @override
-  String get widgetComposeCategoryLabel => 'קטגוריה';
+  String get widgetComposeCategoryLabel => 'אשכול';
 
   @override
   String get noteTypeLabel => 'סוג';
 
   @override
-  String get noteTypeText => 'טקסט';
+  String get noteTypeText => 'רשומה';
 
   @override
-  String get noteTypeChecklist => 'רשימת משימות';
+  String get noteTypeChecklist => 'תוכנית';
 
   @override
   String get removeDoneTasksLabel => 'הסר משימות שהושלמו';
@@ -967,7 +965,7 @@ class AppStringsHe extends AppStrings {
   String get removeDoneTasksBody => 'משימות שהושלמו יימחקו לצמיתות.';
 
   @override
-  String get widgetViewEditTitle => 'עריכת פתק';
+  String get widgetViewEditTitle => 'עריכת זיכרון';
 
   @override
   String get widgetViewEdit => 'ערוך';
@@ -982,7 +980,7 @@ class AppStringsHe extends AppStrings {
   String get widgetViewNoContent => 'אין תוכן';
 
   @override
-  String get widgetViewNotFound => 'הפתק לא נמצא';
+  String get widgetViewNotFound => 'זיכרון לא נמצא';
 
   @override
   String get widgetViewDiscardTitle => 'להתעלם מהשינויים?';
@@ -992,4 +990,7 @@ class AppStringsHe extends AppStrings {
 
   @override
   String get widgetViewKeepEditing => 'המשך לערוך';
+
+  @override
+  String get editorSttRecord => 'הקלט קול';
 }

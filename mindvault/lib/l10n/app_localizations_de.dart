@@ -66,7 +66,7 @@ class AppStringsDe extends AppStrings {
   String get splashLoading => 'Tresor wird gesichert…';
 
   @override
-  String get authSubtitle => 'Deine verschlüsselten KI-Notizen';
+  String get authSubtitle => 'Deine verschlüsselten KI-Erinnerungen';
 
   @override
   String get authEmailLabel => 'E-Mail';
@@ -246,7 +246,7 @@ class AppStringsDe extends AppStrings {
 
   @override
   String get authDisclaimer =>
-      'Deine Notizen sind Ende-zu-Ende verschlüsselt.\nNur du kannst sie lesen.';
+      'Deine Erinnerungen sind Ende-zu-Ende verschlüsselt.\nNur du kannst sie lesen.';
 
   @override
   String get pinSetupAppBar => 'Verschlüsselung einrichten';
@@ -262,11 +262,11 @@ class AppStringsDe extends AppStrings {
 
   @override
   String get pinSetupBody =>
-      'Diese PIN schützt deine Notizen davor, von anderen gelesen zu werden. Du brauchst sie, wenn du dich auf einem neuen Gerät anmeldest.';
+      'Diese PIN schützt deine Erinnerungen davor, von anderen gelesen zu werden. Du brauchst sie, wenn du dich auf einem neuen Gerät anmeldest.';
 
   @override
   String get pinRecoveryBody =>
-      'Deine Notizen sind verschlüsselt. Gib deine Wiederherstellungs-PIN ein, um sie auf diesem Gerät zu entsperren.';
+      'Deine Erinnerungen sind verschlüsselt. Gib deine Wiederherstellungs-PIN ein, um sie auf diesem Gerät zu entsperren.';
 
   @override
   String get pinLabel => 'Wiederherstellungs-PIN (4–8 Stellen)';
@@ -308,7 +308,7 @@ class AppStringsDe extends AppStrings {
 
   @override
   String get pinStartFreshBody =>
-      'Dies erzeugt einen neuen Verschlüsselungsschlüssel. Deine bestehenden Notizen gehen verloren.\n\nDieser Schritt ist endgültig.';
+      'Dies erzeugt einen neuen Verschlüsselungsschlüssel. Deine bestehenden Erinnerungen gehen verloren.\n\nDieser Schritt ist endgültig.';
 
   @override
   String get pinEntryAppBar => 'Wiederherstellungs-PIN eingeben';
@@ -341,29 +341,29 @@ class AppStringsDe extends AppStrings {
   }
 
   @override
-  String get navAllNotes => 'Alle Notizen';
+  String get navAllNotes => 'Archiv';
 
   @override
-  String get navJots => 'Jots';
+  String get navJots => 'Funken';
 
   @override
-  String get navCategories => 'Kategorien';
+  String get navCategories => 'Cluster';
 
   @override
-  String get navSearch => 'Suche';
+  String get navSearch => 'Abruf';
 
   @override
   String get navSettings => 'Einstellungen';
 
   @override
   String get homeNoCategoriesTitle =>
-      'Noch keine Kategorien.\nTippe + zum Erstellen.';
+      'Noch keine Cluster.\nTippe + zum Erstellen.';
 
   @override
-  String get newCategoryDialogTitle => 'Neue Kategorie';
+  String get newCategoryDialogTitle => 'Neue Cluster';
 
   @override
-  String get categoryNameHint => 'Kategoriename';
+  String get categoryNameHint => 'Clusterame';
 
   @override
   String get categoryColorLabel => 'Farbe';
@@ -373,12 +373,12 @@ class AppStringsDe extends AppStrings {
 
   @override
   String categoryLimitReached(int max, Object upgradeHint) {
-    return 'Kategorienlimit erreicht ($max). $upgradeHint';
+    return 'Clusterlimit erreicht ($max). $upgradeHint';
   }
 
   @override
   String noteLimitReached(int max, Object upgradeHint) {
-    return 'Notizenlimit erreicht ($max). $upgradeHint';
+    return 'Erinnerungenlimit erreicht ($max). $upgradeHint';
   }
 
   @override
@@ -388,22 +388,23 @@ class AppStringsDe extends AppStrings {
   String get upgradeHintNone => '';
 
   @override
-  String get notesListTitleFallback => 'Notizen';
+  String get notesListTitleFallback => 'Erinnerungen';
 
   @override
-  String get notesListEmptyTitle => 'Noch keine Notizen';
+  String get notesListEmptyTitle => 'Noch keine Erinnerungen';
 
   @override
-  String get notesListEmptyBody => 'Tippe +, um deine erste Notiz zu erstellen';
+  String get notesListEmptyBody =>
+      'Tippe +, um deine erste Erinnerung zu erstellen';
 
   @override
   String get noteUntitled => '(ohne Titel)';
 
   @override
-  String get noteDeletedSnack => 'Notiz gelöscht';
+  String get noteDeletedSnack => 'Erinnerung gelöscht';
 
   @override
-  String get deleteNoteTitle => 'Notiz löschen?';
+  String get deleteNoteTitle => 'Erinnerung löschen?';
 
   @override
   String get deleteNoteBody =>
@@ -411,7 +412,7 @@ class AppStringsDe extends AppStrings {
 
   @override
   String get privateAuthReason =>
-      'Authentifiziere dich, um diese private Notiz zu sehen';
+      'Authentifiziere dich, um diese private Erinnerung zu sehen';
 
   @override
   String get renameCategory => 'Umbenennen';
@@ -420,13 +421,13 @@ class AppStringsDe extends AppStrings {
   String get changeCategoryColor => 'Farbe ändern';
 
   @override
-  String get deleteCategoryAction => 'Kategorie löschen';
+  String get deleteCategoryAction => 'Cluster löschen';
 
   @override
-  String get renameCategoryDialog => 'Kategorie umbenennen';
+  String get renameCategoryDialog => 'Cluster umbenennen';
 
   @override
-  String get categoryColorDialog => 'Kategoriefarbe';
+  String get categoryColorDialog => 'Clusterfarbe';
 
   @override
   String deleteCategoryConfirmTitle(Object name) {
@@ -435,20 +436,20 @@ class AppStringsDe extends AppStrings {
 
   @override
   String get deleteCategoryConfirmBody =>
-      'Alle Notizen in dieser Kategorie werden ebenfalls gelöscht.';
+      'Archiv in dieser Cluster werden ebenfalls gelöscht.';
 
   @override
-  String get allNotesEmptyTitle => 'Noch keine Notizen';
+  String get allNotesEmptyTitle => 'Noch keine Erinnerungen';
 
   @override
   String get allNotesEmptyBody =>
-      'Erstelle eine Kategorie und füge deine erste Notiz hinzu';
+      'Erstelle eine Cluster und füge deine erste Erinnerung hinzu';
 
   @override
-  String get allNotesCreateFirst => 'Erstelle zuerst eine Kategorie';
+  String get allNotesCreateFirst => 'Erstelle zuerst eine Cluster';
 
   @override
-  String get editorNewTitle => 'Neue Notiz';
+  String get editorNewTitle => 'Neue Erinnerung';
 
   @override
   String get editorEditTitle => 'Bearbeitung';
@@ -468,10 +469,10 @@ class AppStringsDe extends AppStrings {
   String get editorBodyHint => 'Schreibe los…';
 
   @override
-  String get editorChangeCategory => 'Kategorie ändern';
+  String get editorChangeCategory => 'Cluster ändern';
 
   @override
-  String get editorNewCategoryEntry => 'Neue Kategorie…';
+  String get editorNewCategoryEntry => 'Neue Cluster…';
 
   @override
   String get editorTooltipPublic => 'Öffentlich';
@@ -480,13 +481,13 @@ class AppStringsDe extends AppStrings {
   String get editorTooltipPrivate => 'Privat';
 
   @override
-  String get editorTooltipDelete => 'Notiz löschen';
+  String get editorTooltipDelete => 'Erinnerung löschen';
 
   @override
-  String get editorTooltipEdit => 'Notiz bearbeiten';
+  String get editorTooltipEdit => 'Erinnerung bearbeiten';
 
   @override
-  String get editorTooltipCopy => 'Notiz kopieren';
+  String get editorTooltipCopy => 'Erinnerung kopieren';
 
   @override
   String get reminderTooltipSet => 'Erinnerung festlegen';
@@ -510,7 +511,7 @@ class AppStringsDe extends AppStrings {
 
   @override
   String get reminderSaveNoteFirst =>
-      'Füge einen Titel oder Notiztext hinzu, bevor du eine Erinnerung festlegst.';
+      'Füge einen Titel oder Erinnerungtext hinzu, bevor du eine Erinnerung festlegst.';
 
   @override
   String get reminderNotificationsRequired =>
@@ -537,32 +538,30 @@ class AppStringsDe extends AppStrings {
 
   @override
   String get reminderNoteNotFound =>
-      'Diese Erinnerungsnotiz wurde nicht gefunden.';
+      'Diese ErinnerungsErinnerung wurde nicht gefunden.';
 
   @override
-  String get reminderNotificationBody => 'Tippen, um diese Notiz zu öffnen';
+  String get reminderNotificationBody =>
+      'Tippen, um diese Erinnerung zu öffnen';
 
   @override
-  String get editorCopyMenuItem => 'Notiz kopieren';
+  String get editorCopyMenuItem => 'Erinnerung kopieren';
 
   @override
-  String get editorCopiedSnack => 'Notiz kopiert';
-
-  @override
-  String get editorSttRecord => 'Sprache aufnehmen';
+  String get editorCopiedSnack => 'Erinnerung kopiert';
 
   @override
   String get editorSttStop => 'Aufnahme beenden';
 
   @override
-  String get searchHint => 'Notizen durchsuchen…';
+  String get searchHint => 'Erinnerungen durchsuchen…';
 
   @override
-  String get searchIdleTitle => 'Durchsuche deine Notizen';
+  String get searchIdleTitle => 'Durchsuche deine Erinnerungen';
 
   @override
   String get searchIdleBody =>
-      'Stichwörter eingeben oder eine Frage stellen. \nPrivate Notizen werden ignoriert.';
+      'Stichwörter eingeben oder eine Frage stellen. \nPrivate Erinnerungen werden ignoriert.';
 
   @override
   String searchNoResults(Object query) {
@@ -578,10 +577,10 @@ class AppStringsDe extends AppStrings {
   }
 
   @override
-  String get searchTryAiHint => 'Nicht gefunden? KI-Suche ausprobieren';
+  String get searchTryAiHint => 'Nicht gefunden? KI-Abruf ausprobieren';
 
   @override
-  String get searchNoResultsAiCta => 'Keine Ergebnisse. KI-Suche starten';
+  String get searchNoResultsAiCta => 'Keine Ergebnisse. KI-Abruf starten';
 
   @override
   String get searchHistoryButtonTooltip => 'KI-Suchverlauf';
@@ -590,32 +589,33 @@ class AppStringsDe extends AppStrings {
   String get searchBackToResults => 'Zurück zu Ergebnissen';
 
   @override
-  String get widgetSearchTitle => 'Notizen durchsuchen';
+  String get widgetSearchTitle => 'Erinnerungen durchsuchen';
 
   @override
-  String get aiSearchTitle => 'KI-Suche';
+  String get aiSearchTitle => 'KI-Abruf';
 
   @override
-  String get aiSearchHint => 'Frage etwas zu deinen Notizen…';
+  String get aiSearchHint => 'Frage etwas zu deinen Erinnerungen…';
 
   @override
-  String get aiSearchLoading => 'Notizen werden durchsucht…';
+  String get aiSearchLoading => 'Erinnerungen werden durchsucht…';
 
   @override
-  String get aiSearchIdleTitle => 'Stelle eine Frage zu deinen Notizen';
+  String get aiSearchIdleTitle => 'Stelle eine Frage zu deinen Erinnerungen';
 
   @override
   String get aiSearchIdleBody =>
-      'Die KI durchsucht deine Notizen und fasst eine Antwort zusammen';
+      'Die KI durchsucht deine Erinnerungen und fasst eine Antwort zusammen';
 
   @override
-  String get aiSearchSuggestion1 => 'Fasse meine Trainingsnotizen zusammen';
+  String get aiSearchSuggestion1 =>
+      'Fasse meine TrainingsErinnerungen zusammen';
 
   @override
   String get aiSearchSuggestion2 => 'Was habe ich über die Arbeit geschrieben?';
 
   @override
-  String get aiSearchSuggestion3 => 'Finde Notizen zu meinen Zielen';
+  String get aiSearchSuggestion3 => 'Finde Erinnerungen zu meinen Zielen';
 
   @override
   String get aiSearchSuggestion4 => 'Was sind meine Reisepläne?';
@@ -645,7 +645,7 @@ class AppStringsDe extends AppStrings {
   }
 
   @override
-  String get aiSearchRateDefault => 'Bitte warte vor der nächsten Suche';
+  String get aiSearchRateDefault => 'Bitte warte vor der nächsten Abruf';
 
   @override
   String get aiSearchErrorDailyLimit =>
@@ -667,11 +667,11 @@ class AppStringsDe extends AppStrings {
       'KI-Anfrage fehlgeschlagen. Bitte versuche es erneut.';
 
   @override
-  String get aiInfoTitle => 'Über die KI-Suche';
+  String get aiInfoTitle => 'Über die KI-Abruf';
 
   @override
   String get aiInfoBody =>
-      'Die KI-Suche liest deine Notizen, um deine Frage zu beantworten.\n\n🔒 Private Notizen werden nie an die KI gesendet.\n\n📄 Sehr lange Notizen werden vor dem Senden gekürzt.';
+      'Die KI-Abruf liest deine Erinnerungen, um deine Frage zu beantworten.\n\n🔒 Private Erinnerungen werden nie an die KI gesendet.\n\n📄 Sehr lange Erinnerungen werden vor dem Senden gekürzt.';
 
   @override
   String get aiInfoDismiss => 'Verstanden';
@@ -749,27 +749,27 @@ class AppStringsDe extends AppStrings {
   String get settingsTierPro => 'Pro';
 
   @override
-  String get settingsUsageAi => 'KI-Suchen heute';
+  String get settingsUsageAi => 'KI-Abrufn heute';
 
   @override
-  String get settingsUsageJotsAi => 'Jots-KI-Organisationen heute';
+  String get settingsUsageJotsAi => 'Funken-KI-Organisationen heute';
 
   @override
-  String get settingsUsageNotes => 'Notizen';
+  String get settingsUsageNotes => 'Erinnerungen';
 
   @override
-  String get settingsUsageCategories => 'Kategorien';
+  String get settingsUsageCategories => 'Cluster';
 
   @override
   String get settingsUpgradeTitle => 'Auf Pro upgraden';
 
   @override
   String get settingsUpgradeSubtitle =>
-      '50 KI-Suchen/Tag · 1000 Notizen · 50 Kategorien';
+      '30 KI-Abrufn/Tag · 1000 Erinnerungen · 50 Cluster';
 
   @override
   String get settingsUpgradeDialogBody =>
-      'Pro bietet dir 50 KI-Suchen pro Tag, bis zu 1000 Notizen, 50 Kategorien und 20.000 Zeichen pro Notiz.';
+      'Pro bietet dir 30 KI-Abrufn pro Tag, bis zu 1000 Erinnerungen, 50 Cluster und 20.000 Zeichen pro Erinnerung.';
 
   @override
   String get contactUsMessageHint => 'Deine Nachricht (optional)…';
@@ -806,10 +806,10 @@ class AppStringsDe extends AppStrings {
   String get settingsLanguageFrench => 'Français';
 
   @override
-  String get jotsAddTooltip => 'Jot hinzufügen';
+  String get jotsAddTooltip => 'Funke hinzuf?gen';
 
   @override
-  String get jotAddDialogTitle => 'Neuer Jot';
+  String get jotAddDialogTitle => 'Neuer Funke';
 
   @override
   String get jotInputHint => 'Schnellen Gedanken festhalten';
@@ -827,7 +827,7 @@ class AppStringsDe extends AppStrings {
   }
 
   @override
-  String get jotsEmptyTitle => 'Keine Jots in der Warteschlange';
+  String get jotsEmptyTitle => 'Keine Funken offen';
 
   @override
   String get jotsEmptyBody => 'Tippe auf +, sobald dir ein Gedanke kommt.';
@@ -845,21 +845,20 @@ class AppStringsDe extends AppStrings {
   String get jotsAcceptAll => 'Alle Vorschläge annehmen';
 
   @override
-  String get jotsAiInfoTitle => 'Über Jots KI';
+  String get jotsAiInfoTitle => '?ber Funken-KI';
 
   @override
   String get jotsAiInfoBody =>
-      'Jots KI schlägt vor, wie nicht bearbeitete Gedanken organisiert werden können. Es werden nur noch nicht gesendete Jots, Kategorienamen und Notiztitel gesendet. Notiztexte und private Notizen werden nicht gesendet, und lange Listen können begrenzt werden.';
+      'Funken KI schlägt vor, wie nicht bearbeitete Gedanken organisiert werden können. Es werden nur noch nicht gesendete Funken, Clusteramen und Erinnerungtitel gesendet. Erinnerungtexte und private Erinnerungen werden nicht gesendet, und lange Listen können begrenzt werden.';
 
   @override
   String get jotsAiNoNew => 'Keine neuen Gedanken zum Organisieren.';
 
   @override
-  String get jotsAiQuota => 'Tägliches Jots-KI-Limit erreicht.';
+  String get jotsAiQuota => 'T?gliches Funken-KI-Limit erreicht.';
 
   @override
-  String get jotsAiFailed =>
-      'Jots konnten nicht organisiert werden. Versuche es erneut.';
+  String get jotsAiFailed => 'Funken konnten nicht organisiert werden.';
 
   @override
   String jotsAiSuggestionsProvided(int count) {
@@ -876,7 +875,7 @@ class AppStringsDe extends AppStrings {
 
   @override
   String get jotsAiLimitedTo30 =>
-      'Nur die ältesten 30 neuen Jots wurden gesendet.';
+      'Nur die ältesten 30 neuen Funken wurden gesendet.';
 
   @override
   String jotsSelectedCount(int count) {
@@ -884,7 +883,7 @@ class AppStringsDe extends AppStrings {
   }
 
   @override
-  String get jotsDeleteSelectedTitle => 'Ausgewählte Jots löschen?';
+  String get jotsDeleteSelectedTitle => 'Ausgewählte Funken löschen?';
 
   @override
   String get jotsDeleteSelectedBody =>
@@ -896,16 +895,16 @@ class AppStringsDe extends AppStrings {
   }
 
   @override
-  String get jotActionsTooltip => 'Jot bearbeiten';
+  String get jotActionsTooltip => 'Funke bearbeiten';
 
   @override
   String get jotActionsTitle => 'Gedanken bearbeiten';
 
   @override
-  String get jotActionCreateNote => 'Neue Notiz erstellen';
+  String get jotActionCreateNote => 'Neue Erinnerung erstellen';
 
   @override
-  String get jotActionAddToNote => 'Zu bestehender Notiz hinzufügen';
+  String get jotActionAddToNote => 'Zu bestehender Erinnerung hinzufügen';
 
   @override
   String get jotActionCreateAlert => 'Erinnerung erstellen';
@@ -927,22 +926,22 @@ class AppStringsDe extends AppStrings {
   String get jotActionUpdatedThoughtHint => 'Beispiel: Der Herr der Ringe';
 
   @override
-  String get jotActionNewNoteTitle => 'Notiztitel';
+  String get jotActionNewNoteTitle => 'Erinnerungtitel';
 
   @override
-  String get jotActionCategory => 'Kategorie';
+  String get jotActionCategory => 'Cluster';
 
   @override
-  String get jotActionNewCategory => 'Neue Kategorie';
+  String get jotActionNewCategory => 'Neue Cluster';
 
   @override
-  String get jotActionNote => 'Notiz';
+  String get jotActionNote => 'Erinnerung';
 
   @override
-  String get jotActionNoNotes => 'Keine Notizen in dieser Kategorie';
+  String get jotActionNoNotes => 'Keine Erinnerungen in dieser Cluster';
 
   @override
-  String get jotActionLock => 'Notiz sperren';
+  String get jotActionLock => 'Erinnerung sperren';
 
   @override
   String jotActionReminderWhen(Object time) {
@@ -964,35 +963,36 @@ class AppStringsDe extends AppStrings {
       'Tippen, um diesen Gedanken zu organisieren';
 
   @override
-  String get jotReminderNotFound => 'Dieser Jot ist nicht mehr verfügbar.';
+  String get jotReminderNotFound => 'Dieser Funke ist nicht mehr verfügbar.';
 
   @override
-  String get widgetAddNoteTooltip => 'Notiz hinzufügen';
+  String get widgetAddNoteTooltip => 'Erinnerung hinzuf?gen';
 
   @override
-  String get widgetComposeTitle => 'Neue Notiz';
+  String get widgetComposeTitle => 'Neue Erinnerung';
 
   @override
-  String get widgetComposeDiscardTitle => 'Notiz verwerfen?';
+  String get widgetComposeDiscardTitle => 'Erinnerung verwerfen?';
 
   @override
-  String get widgetComposeDiscardBody => 'Deine Notiz wird nicht gespeichert.';
+  String get widgetComposeDiscardBody =>
+      'Deine Erinnerung wird nicht gespeichert.';
 
   @override
   String get widgetComposeNoCategories =>
-      'Keine Kategorien gefunden.\nÖffne MindVault, um zuerst eine zu erstellen.';
+      'Keine Cluster gefunden.\n?ffne MindVault, um zuerst einen zu erstellen.';
 
   @override
-  String get widgetComposeCategoryLabel => 'Kategorie';
+  String get widgetComposeCategoryLabel => 'Cluster';
 
   @override
   String get noteTypeLabel => 'Typ';
 
   @override
-  String get noteTypeText => 'Text';
+  String get noteTypeText => 'Aufzeichnung';
 
   @override
-  String get noteTypeChecklist => 'Checkliste';
+  String get noteTypeChecklist => 'Plan';
 
   @override
   String get removeDoneTasksLabel => 'Erledigte Aufgaben entfernen';
@@ -1005,7 +1005,7 @@ class AppStringsDe extends AppStrings {
       'Abgeschlossene Aufgaben werden dauerhaft entfernt.';
 
   @override
-  String get widgetViewEditTitle => 'Notiz bearbeiten';
+  String get widgetViewEditTitle => 'Erinnerung bearbeiten';
 
   @override
   String get widgetViewEdit => 'Bearbeiten';
@@ -1020,7 +1020,7 @@ class AppStringsDe extends AppStrings {
   String get widgetViewNoContent => 'Kein Inhalt';
 
   @override
-  String get widgetViewNotFound => 'Notiz nicht gefunden';
+  String get widgetViewNotFound => 'Erinnerung nicht gefunden';
 
   @override
   String get widgetViewDiscardTitle => 'Änderungen verwerfen?';
@@ -1031,4 +1031,7 @@ class AppStringsDe extends AppStrings {
 
   @override
   String get widgetViewKeepEditing => 'Weiter bearbeiten';
+
+  @override
+  String get editorSttRecord => 'Sprache aufnehmen';
 }

@@ -66,7 +66,7 @@ class AppStringsEn extends AppStrings {
   String get splashLoading => 'Securing your vault…';
 
   @override
-  String get authSubtitle => 'Your encrypted AI-powered notes';
+  String get authSubtitle => 'Your encrypted AI-powered memories';
 
   @override
   String get authEmailLabel => 'Email';
@@ -237,7 +237,7 @@ class AppStringsEn extends AppStrings {
 
   @override
   String get authDisclaimer =>
-      'Your notes are end-to-end encrypted.\nOnly you can read them.';
+      'Your memories are end-to-end encrypted.\nOnly you can read them.';
 
   @override
   String get pinSetupAppBar => 'Set Up Encryption';
@@ -253,11 +253,11 @@ class AppStringsEn extends AppStrings {
 
   @override
   String get pinSetupBody =>
-      'This PIN protects your notes from being read by anyone but you. You\'ll need it if you sign in on a new device.';
+      'This PIN protects your memories from being read by anyone but you. You\'ll need it if you sign in on a new device.';
 
   @override
   String get pinRecoveryBody =>
-      'Your notes are encrypted. Enter your recovery PIN to unlock them on this device.';
+      'Your memories are encrypted. Enter your recovery PIN to unlock them on this device.';
 
   @override
   String get pinLabel => 'Recovery PIN (4–8 digits)';
@@ -299,7 +299,7 @@ class AppStringsEn extends AppStrings {
 
   @override
   String get pinStartFreshBody =>
-      'This will generate a new encryption key. Your existing notes will be lost.\n\nThis cannot be undone.';
+      'This will generate a new encryption key. Your existing memories will be lost.\n\nThis cannot be undone.';
 
   @override
   String get pinEntryAppBar => 'Enter Recovery PIN';
@@ -330,29 +330,28 @@ class AppStringsEn extends AppStrings {
   }
 
   @override
-  String get navAllNotes => 'All Notes';
+  String get navAllNotes => 'Archive';
 
   @override
-  String get navJots => 'Jots';
+  String get navJots => 'Sparks';
 
   @override
-  String get navCategories => 'Categories';
+  String get navCategories => 'Clusters';
 
   @override
-  String get navSearch => 'Search';
+  String get navSearch => 'Recall';
 
   @override
   String get navSettings => 'Settings';
 
   @override
-  String get homeNoCategoriesTitle =>
-      'No categories yet.\nTap + to create one.';
+  String get homeNoCategoriesTitle => 'No clusters yet.\nTap + to create one.';
 
   @override
-  String get newCategoryDialogTitle => 'New Category';
+  String get newCategoryDialogTitle => 'New Cluster';
 
   @override
-  String get categoryNameHint => 'Category name';
+  String get categoryNameHint => 'Cluster name';
 
   @override
   String get categoryColorLabel => 'Color';
@@ -362,12 +361,12 @@ class AppStringsEn extends AppStrings {
 
   @override
   String categoryLimitReached(int max, Object upgradeHint) {
-    return 'Category limit reached ($max). $upgradeHint';
+    return 'Cluster limit reached ($max). $upgradeHint';
   }
 
   @override
   String noteLimitReached(int max, Object upgradeHint) {
-    return 'Note limit reached ($max). $upgradeHint';
+    return 'Memory limit reached ($max). $upgradeHint';
   }
 
   @override
@@ -377,28 +376,28 @@ class AppStringsEn extends AppStrings {
   String get upgradeHintNone => '';
 
   @override
-  String get notesListTitleFallback => 'Notes';
+  String get notesListTitleFallback => 'Memories';
 
   @override
-  String get notesListEmptyTitle => 'No notes yet';
+  String get notesListEmptyTitle => 'No memories yet';
 
   @override
-  String get notesListEmptyBody => 'Tap + to create your first note';
+  String get notesListEmptyBody => 'Tap + to create your first memory';
 
   @override
   String get noteUntitled => '(untitled)';
 
   @override
-  String get noteDeletedSnack => 'Note deleted';
+  String get noteDeletedSnack => 'Memory deleted';
 
   @override
-  String get deleteNoteTitle => 'Delete note?';
+  String get deleteNoteTitle => 'Delete memory?';
 
   @override
   String get deleteNoteBody => 'This action cannot be undone.';
 
   @override
-  String get privateAuthReason => 'Authenticate to view this private note';
+  String get privateAuthReason => 'Authenticate to view this private memory';
 
   @override
   String get renameCategory => 'Rename';
@@ -407,13 +406,13 @@ class AppStringsEn extends AppStrings {
   String get changeCategoryColor => 'Change color';
 
   @override
-  String get deleteCategoryAction => 'Delete category';
+  String get deleteCategoryAction => 'Delete cluster';
 
   @override
-  String get renameCategoryDialog => 'Rename Category';
+  String get renameCategoryDialog => 'Rename Cluster';
 
   @override
-  String get categoryColorDialog => 'Category Color';
+  String get categoryColorDialog => 'Cluster Color';
 
   @override
   String deleteCategoryConfirmTitle(Object name) {
@@ -422,22 +421,22 @@ class AppStringsEn extends AppStrings {
 
   @override
   String get deleteCategoryConfirmBody =>
-      'All notes in this category will also be deleted.';
+      'All memories in this cluster will also be deleted.';
 
   @override
-  String get allNotesEmptyTitle => 'No notes yet';
+  String get allNotesEmptyTitle => 'No memories yet';
 
   @override
-  String get allNotesEmptyBody => 'Create a category and add your first note';
+  String get allNotesEmptyBody => 'Create a cluster and add your first memory';
 
   @override
-  String get allNotesCreateFirst => 'Create a category first';
+  String get allNotesCreateFirst => 'Create a cluster first';
 
   @override
-  String get editorNewTitle => 'New Note';
+  String get editorNewTitle => 'New Memory';
 
   @override
-  String get editorEditTitle => 'Edit Note';
+  String get editorEditTitle => 'Edit Memory';
 
   @override
   String get editorSaving => 'Saving…';
@@ -454,10 +453,10 @@ class AppStringsEn extends AppStrings {
   String get editorBodyHint => 'Start writing…';
 
   @override
-  String get editorChangeCategory => 'Change category';
+  String get editorChangeCategory => 'Change cluster';
 
   @override
-  String get editorNewCategoryEntry => 'New category…';
+  String get editorNewCategoryEntry => 'New cluster…';
 
   @override
   String get editorTooltipPublic => 'Public';
@@ -466,13 +465,13 @@ class AppStringsEn extends AppStrings {
   String get editorTooltipPrivate => 'Private';
 
   @override
-  String get editorTooltipDelete => 'Delete note';
+  String get editorTooltipDelete => 'Delete memory';
 
   @override
-  String get editorTooltipEdit => 'Edit note';
+  String get editorTooltipEdit => 'Edit memory';
 
   @override
-  String get editorTooltipCopy => 'Copy note';
+  String get editorTooltipCopy => 'Copy memory';
 
   @override
   String get reminderTooltipSet => 'Set reminder';
@@ -496,7 +495,7 @@ class AppStringsEn extends AppStrings {
 
   @override
   String get reminderSaveNoteFirst =>
-      'Add a title or note body before setting a reminder.';
+      'Add a title or memory body before setting a reminder.';
 
   @override
   String get reminderNotificationsRequired =>
@@ -520,32 +519,29 @@ class AppStringsEn extends AppStrings {
   String get reminderMustBeFuture => 'Choose a future date and time.';
 
   @override
-  String get reminderNoteNotFound => 'That reminder note could not be found.';
+  String get reminderNoteNotFound => 'That reminder memory could not be found.';
 
   @override
-  String get reminderNotificationBody => 'Tap to open this note';
+  String get reminderNotificationBody => 'Tap to open this memory';
 
   @override
-  String get editorCopyMenuItem => 'Copy note';
+  String get editorCopyMenuItem => 'Copy memory';
 
   @override
-  String get editorCopiedSnack => 'Note copied';
-
-  @override
-  String get editorSttRecord => 'Record voice';
+  String get editorCopiedSnack => 'Memory copied';
 
   @override
   String get editorSttStop => 'Stop recording';
 
   @override
-  String get searchHint => 'Search notes…';
+  String get searchHint => 'Search memories…';
 
   @override
-  String get searchIdleTitle => 'Search your notes';
+  String get searchIdleTitle => 'Search your memories';
 
   @override
   String get searchIdleBody =>
-      'Type keywords or ask a question. \nPrivate notes are ignored.';
+      'Type keywords or ask a question. \nPrivate memories are ignored.';
 
   @override
   String searchNoResults(Object query) {
@@ -561,45 +557,45 @@ class AppStringsEn extends AppStrings {
   }
 
   @override
-  String get searchTryAiHint => 'Not what you were looking for? Try AI search';
+  String get searchTryAiHint => 'Not what you were looking for? Try AI recall';
 
   @override
   String get searchNoResultsAiCta =>
-      'No results found. Click to perform an AI Search';
+      'No results found. Click to perform an AI Recall';
 
   @override
-  String get searchHistoryButtonTooltip => 'AI search history';
+  String get searchHistoryButtonTooltip => 'AI recall history';
 
   @override
   String get searchBackToResults => 'Back to results';
 
   @override
-  String get widgetSearchTitle => 'Search your notes';
+  String get widgetSearchTitle => 'Recall your memories';
 
   @override
-  String get aiSearchTitle => 'AI Search';
+  String get aiSearchTitle => 'AI Recall';
 
   @override
-  String get aiSearchHint => 'Ask about your notes…';
+  String get aiSearchHint => 'Ask about your memories…';
 
   @override
-  String get aiSearchLoading => 'Searching your notes…';
+  String get aiSearchLoading => 'Recalling your memories…';
 
   @override
-  String get aiSearchIdleTitle => 'Ask anything about your notes';
+  String get aiSearchIdleTitle => 'Ask anything about your memories';
 
   @override
   String get aiSearchIdleBody =>
-      'AI searches your notes and synthesises an answer';
+      'AI recalls your memories and synthesises an answer';
 
   @override
-  String get aiSearchSuggestion1 => 'Summarize my workout notes';
+  String get aiSearchSuggestion1 => 'Summarize my workout memories';
 
   @override
   String get aiSearchSuggestion2 => 'What did I write about work?';
 
   @override
-  String get aiSearchSuggestion3 => 'Find notes about my goals';
+  String get aiSearchSuggestion3 => 'Find memories about my goals';
 
   @override
   String get aiSearchSuggestion4 => 'What are my travel plans?';
@@ -650,11 +646,11 @@ class AppStringsEn extends AppStrings {
   String get aiSearchErrorGeneric => 'AI request failed. Please try again.';
 
   @override
-  String get aiInfoTitle => 'About AI Search';
+  String get aiInfoTitle => 'About AI Recall';
 
   @override
   String get aiInfoBody =>
-      'AI Search reads your notes to answer your question.\n\n🔒 Private notes are never sent to AI.\n\n📄 Very long notes are shortened before being sent.';
+      'AI Recall reads your memories to answer your question.\n\n🔒 Private memories are never sent to AI.\n\n📄 Very long memories are shortened before being sent.';
 
   @override
   String get aiInfoDismiss => 'Got it';
@@ -663,10 +659,10 @@ class AppStringsEn extends AppStrings {
   String get aiAnswerCopied => 'Copied to clipboard';
 
   @override
-  String get aiHistoryTitle => 'AI Search History';
+  String get aiHistoryTitle => 'AI Recall History';
 
   @override
-  String get aiHistoryEmpty => 'No search history yet';
+  String get aiHistoryEmpty => 'No recall history yet';
 
   @override
   String get aiHistoryRelativeNow => 'Just now';
@@ -732,27 +728,27 @@ class AppStringsEn extends AppStrings {
   String get settingsTierPro => 'Pro';
 
   @override
-  String get settingsUsageAi => 'AI searches today';
+  String get settingsUsageAi => 'AI recalls today';
 
   @override
-  String get settingsUsageJotsAi => 'Jot AI organizes today';
+  String get settingsUsageJotsAi => 'Spark AI organizes today';
 
   @override
-  String get settingsUsageNotes => 'Notes';
+  String get settingsUsageNotes => 'Memories';
 
   @override
-  String get settingsUsageCategories => 'Categories';
+  String get settingsUsageCategories => 'Clusters';
 
   @override
   String get settingsUpgradeTitle => 'Upgrade to Pro';
 
   @override
   String get settingsUpgradeSubtitle =>
-      '50 AI searches/day · 1000 notes · 50 categories';
+      '30 AI recalls/day · 1000 memories · 50 clusters';
 
   @override
   String get settingsUpgradeDialogBody =>
-      'Pro gives you 50 AI searches/day, up to 1000 notes, 50 categories, and 20,000 chars per note.';
+      'Pro gives you 30 AI recalls/day, up to 1000 memories, 50 clusters, and 20,000 chars per memory.';
 
   @override
   String get contactUsMessageHint => 'Your message (optional)…';
@@ -788,10 +784,10 @@ class AppStringsEn extends AppStrings {
   String get settingsLanguageFrench => 'Français';
 
   @override
-  String get jotsAddTooltip => 'Add jot';
+  String get jotsAddTooltip => 'Add spark';
 
   @override
-  String get jotAddDialogTitle => 'New Jot';
+  String get jotAddDialogTitle => 'New Spark';
 
   @override
   String get jotInputHint => 'Capture a quick thought';
@@ -809,7 +805,7 @@ class AppStringsEn extends AppStrings {
   }
 
   @override
-  String get jotsEmptyTitle => 'No jots waiting';
+  String get jotsEmptyTitle => 'No sparks waiting';
 
   @override
   String get jotsEmptyBody => 'Tap + whenever a thought pops up.';
@@ -827,20 +823,20 @@ class AppStringsEn extends AppStrings {
   String get jotsAcceptAll => 'Accept all suggestions';
 
   @override
-  String get jotsAiInfoTitle => 'About Jots AI';
+  String get jotsAiInfoTitle => 'About Sparks AI';
 
   @override
   String get jotsAiInfoBody =>
-      'Jots AI suggests how to organize unhandled thoughts. Only unsent jots, category names, and note titles are sent. Note bodies and private notes are not sent, and long lists may be limited.';
+      'Sparks AI suggests how to organize unhandled thoughts. Only unsent sparks, cluster names, and memory titles are sent. Memory bodies and private memories are not sent, and long lists may be limited.';
 
   @override
   String get jotsAiNoNew => 'No new thoughts to organize.';
 
   @override
-  String get jotsAiQuota => 'Daily Jots AI limit reached.';
+  String get jotsAiQuota => 'Daily Sparks AI limit reached.';
 
   @override
-  String get jotsAiFailed => 'Could not organize jots. Try again.';
+  String get jotsAiFailed => 'Could not organize sparks. Try again.';
 
   @override
   String jotsAiSuggestionsProvided(int count) {
@@ -856,7 +852,7 @@ class AppStringsEn extends AppStrings {
   }
 
   @override
-  String get jotsAiLimitedTo30 => 'Only the oldest 30 new jots were sent.';
+  String get jotsAiLimitedTo30 => 'Only the oldest 30 new sparks were sent.';
 
   @override
   String jotsSelectedCount(int count) {
@@ -864,7 +860,7 @@ class AppStringsEn extends AppStrings {
   }
 
   @override
-  String get jotsDeleteSelectedTitle => 'Delete selected jots?';
+  String get jotsDeleteSelectedTitle => 'Delete selected sparks?';
 
   @override
   String get jotsDeleteSelectedBody =>
@@ -876,16 +872,16 @@ class AppStringsEn extends AppStrings {
   }
 
   @override
-  String get jotActionsTooltip => 'Handle jot';
+  String get jotActionsTooltip => 'Handle spark';
 
   @override
   String get jotActionsTitle => 'Handle thought';
 
   @override
-  String get jotActionCreateNote => 'Create new note';
+  String get jotActionCreateNote => 'Create new memory';
 
   @override
-  String get jotActionAddToNote => 'Add to existing note';
+  String get jotActionAddToNote => 'Add to existing memory';
 
   @override
   String get jotActionCreateAlert => 'Create alert';
@@ -906,22 +902,22 @@ class AppStringsEn extends AppStrings {
   String get jotActionUpdatedThoughtHint => 'Example: Lord of the Rings';
 
   @override
-  String get jotActionNewNoteTitle => 'Note title';
+  String get jotActionNewNoteTitle => 'Memory title';
 
   @override
-  String get jotActionCategory => 'Category';
+  String get jotActionCategory => 'Cluster';
 
   @override
-  String get jotActionNewCategory => 'New category';
+  String get jotActionNewCategory => 'New cluster';
 
   @override
-  String get jotActionNote => 'Note';
+  String get jotActionNote => 'Memory';
 
   @override
-  String get jotActionNoNotes => 'No notes in this category';
+  String get jotActionNoNotes => 'No memories in this cluster';
 
   @override
-  String get jotActionLock => 'Lock note';
+  String get jotActionLock => 'Lock memory';
 
   @override
   String jotActionReminderWhen(Object time) {
@@ -944,32 +940,32 @@ class AppStringsEn extends AppStrings {
   String get jotReminderNotFound => 'That thought could not be found.';
 
   @override
-  String get widgetAddNoteTooltip => 'Add note';
+  String get widgetAddNoteTooltip => 'Add memory';
 
   @override
-  String get widgetComposeTitle => 'New Note';
+  String get widgetComposeTitle => 'New Memory';
 
   @override
-  String get widgetComposeDiscardTitle => 'Discard note?';
+  String get widgetComposeDiscardTitle => 'Discard memory?';
 
   @override
-  String get widgetComposeDiscardBody => 'Your note will not be saved.';
+  String get widgetComposeDiscardBody => 'Your memory will not be saved.';
 
   @override
   String get widgetComposeNoCategories =>
-      'No categories found.\nOpen MindVault to create one first.';
+      'No clusters found.\nOpen MindVault to create one first.';
 
   @override
-  String get widgetComposeCategoryLabel => 'Category';
+  String get widgetComposeCategoryLabel => 'Cluster';
 
   @override
   String get noteTypeLabel => 'Type';
 
   @override
-  String get noteTypeText => 'Text';
+  String get noteTypeText => 'Record';
 
   @override
-  String get noteTypeChecklist => 'Checklist';
+  String get noteTypeChecklist => 'Plan';
 
   @override
   String get removeDoneTasksLabel => 'Remove done tasks';
@@ -982,7 +978,7 @@ class AppStringsEn extends AppStrings {
       'Completed tasks will be permanently removed.';
 
   @override
-  String get widgetViewEditTitle => 'Edit Note';
+  String get widgetViewEditTitle => 'Edit Memory';
 
   @override
   String get widgetViewEdit => 'Edit';
@@ -997,7 +993,7 @@ class AppStringsEn extends AppStrings {
   String get widgetViewNoContent => 'No content';
 
   @override
-  String get widgetViewNotFound => 'Note not found';
+  String get widgetViewNotFound => 'Memory not found';
 
   @override
   String get widgetViewDiscardTitle => 'Discard changes?';
@@ -1007,4 +1003,7 @@ class AppStringsEn extends AppStrings {
 
   @override
   String get widgetViewKeepEditing => 'Keep editing';
+
+  @override
+  String get editorSttRecord => 'Record voice';
 }

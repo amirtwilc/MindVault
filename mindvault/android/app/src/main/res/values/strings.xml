@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MindVault</string>
-    <string name="widget_description">Quick access to your notes</string>
-    <string name="widget_categories_description">Quick access to your categories</string>
-    <string name="widget_jot_description">Jot</string>
-    <string name="widget_notes_label">Notes</string>
-    <string name="widget_categories_label">Categories</string>
-    <string name="widget_jot_label">Jot</string>
-    <string name="reminder_notification_channel">Note reminders</string>
-    <string name="reminder_notification_body">Tap to open this note</string>
+    <string name="widget_description">Quick access to your memories</string>
+    <string name="widget_categories_description">Quick access to your clusters</string>
+    <string name="widget_jot_description">Spark</string>
+    <string name="widget_notes_label">Archive</string>
+    <string name="widget_categories_label">Clusters</string>
+    <string name="widget_jot_label">Spark</string>
+    <string name="reminder_notification_channel">Memory reminders</string>
+    <string name="reminder_notification_body">Tap to open this memory</string>
     <string name="jot_notification_body">Tap to organize this thought</string>
 </resources>

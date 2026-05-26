@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MindVault</string>
-    <string name="widget_description">Accès rapide à vos notes</string>
-    <string name="widget_categories_description">Accès rapide à vos catégories</string>
-    <string name="widget_notes_label">Notes</string>
-    <string name="widget_categories_label">Catégories</string>
+    <string name="widget_description">Acces rapide a vos souvenirs</string>
+    <string name="widget_categories_description">Acces rapide a vos groupes</string>
+    <string name="widget_notes_label">Archives</string>
+    <string name="widget_categories_label">Groupes</string>
 </resources>

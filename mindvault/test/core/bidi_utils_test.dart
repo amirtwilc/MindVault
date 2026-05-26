@@ -98,9 +98,7 @@ void main() {
     test('cursor clamps when out of range', () {
       expect(
         paragraphDirectionAt(
-            text: 'hello',
-            cursor: 999,
-            localeDefault: TextDirection.rtl),
+            text: 'hello', cursor: 999, localeDefault: TextDirection.rtl),
         TextDirection.ltr,
       );
     });
@@ -123,10 +121,10 @@ void main() {
     });
 
     test('digits-only body falls back to localeDefault', () {
-      expect(lockedBodyDirection('123 456', TextDirection.rtl),
-          TextDirection.rtl);
-      expect(lockedBodyDirection('123 456', TextDirection.ltr),
-          TextDirection.ltr);
+      expect(
+          lockedBodyDirection('123 456', TextDirection.rtl), TextDirection.rtl);
+      expect(
+          lockedBodyDirection('123 456', TextDirection.ltr), TextDirection.ltr);
     });
 
     test('first strong char wins even when later paragraphs differ', () {
