@@ -66,7 +66,11 @@ class AppStringsHi extends AppStrings {
   String get splashLoading => 'आपका वॉल्ट सुरक्षित हो रहा है…';
 
   @override
-  String get authSubtitle => 'आपके एन्क्रिप्टेड AI-संचालित नोट्स';
+  String get authSubtitle => 'कोई विचार कभी न खोएं';
+
+  @override
+  String get authIntroBody =>
+      'MindVault गारंटी देता है कि आपकी यादें सुरक्षित हैं और हमेशा आपके साथ रहेंगी, भले ही आप डिवाइस बदलें। इसके लिए कृपया अपने Google खाते से साइन इन करें।';
 
   @override
   String get authEmailLabel => 'ईमेल';
@@ -756,7 +760,7 @@ class AppStringsHi extends AppStrings {
 
   @override
   String get settingsUpgradeDialogBody =>
-      'Pro आपको 30 AI खोजें/दिन, 1000 नोट्स, 50 श्रेणियाँ और प्रति नोट 20,000 अक्षर देता है।';
+      'Pro आपको 30 AI खोजें/दिन, 1000 नोट्स, 50 श्रेणियाँ और प्रति नोट 20,000 अक्षर देता है।\n\nजल्द आ रहा है';
 
   @override
   String get contactUsMessageHint => 'आपका संदेश (वैकल्पिक)…';
@@ -948,6 +952,13 @@ class AppStringsHi extends AppStrings {
       'इस विचार को व्यवस्थित करने के लिए टैप करें';
 
   @override
+  String get jotDailyDigestTitle => 'MindVault चिंगारियाँ';
+
+  @override
+  String get jotDailyDigestBody =>
+      'आपके पास व्यवस्थित करने के लिए विचार प्रतीक्षा कर रहे हैं।';
+
+  @override
   String get jotReminderNotFound =>
       'यह ?????????????????????????? अब उपलब्ध नहीं है।';
 
@@ -1018,4 +1029,137 @@ class AppStringsHi extends AppStrings {
 
   @override
   String get editorSttRecord => 'आवाज़ रिकॉर्ड करें';
+
+  @override
+  String get walkthroughSkip => 'छोड़ें';
+
+  @override
+  String get walkthroughBack => 'पीछे';
+
+  @override
+  String get walkthroughNext => 'आगे';
+
+  @override
+  String get walkthroughDone => 'हो गया';
+
+  @override
+  String get walkthroughAllowNotifications => 'सूचनाएं अनुमति दें';
+
+  @override
+  String get walkthroughOpenBackgroundSettings => 'सेटिंग खोलें';
+
+  @override
+  String get walkthroughDoLater => 'मैं यह बाद में करूंगा';
+
+  @override
+  String get walkthroughWelcomeTitle => 'MindVault में आपका स्वागत है';
+
+  @override
+  String get walkthroughWelcomeBody =>
+      'MindVault आपकी यादों और विचारों को पास रखने में मदद करता है। बेहतर अनुभव के लिए सूचनाएं अनुमति दें, ताकि रिमाइंडर आप तक पहुंच सकें।';
+
+  @override
+  String get walkthroughBackgroundTitle => 'रिमाइंडर भरोसेमंद रखें';
+
+  @override
+  String get walkthroughBackgroundBody =>
+      'कुछ Android डिवाइस बैकग्राउंड में ऐप्स को रोक देते हैं। हम सही सेटिंग खोलने की कोशिश कर सकते हैं; वहां MindVault सक्षम करें और फिर यहां लौटें।';
+
+  @override
+  String get walkthroughArchiveTitle => 'संग्रह';
+
+  @override
+  String get walkthroughArchiveBody =>
+      'संग्रह आपकी यादों की लाइब्रेरी है। रेसिपी, काम, विचार और वह सब लिखें और फिर देखें जिसे आप खोना नहीं चाहते।';
+
+  @override
+  String get walkthroughClustersTitle => 'समूह';
+
+  @override
+  String get walkthroughClustersBody =>
+      'समूह यादों को व्यवस्थित और रंगों से चिन्हित रखते हैं, ताकि जुड़े हुए विचार आसानी से देखे जा सकें।';
+
+  @override
+  String get walkthroughRecallTitle => 'स्मरण';
+
+  @override
+  String get walkthroughRecallBody =>
+      'स्मरण आपकी यादों को कीवर्ड या AI से खोजता है। जैसे पूछें \"मेरे केक के लिए कितनी चीनी चाहिए?\" और MindVault सिर्फ याद खोजेगा नहीं, सीधा जवाब देगा।';
+
+  @override
+  String get walkthroughSparksTitle => 'चिंगारियाँ';
+
+  @override
+  String get walkthroughSparksBody =>
+      'चिंगारियाँ वे तेज़ विचार हैं जिन्हें आप अभी याद में बदलना नहीं चाहते। \"वह फिल्म देखनी है\", \"Jack को स्ट्रॉबेरी पसंद है\" या \"मेरी सहकर्मी की बेटी का नाम Beth है\" जैसी बातें लिखें। बाद में तय करें कि क्या करना है या Spark AI को आपके लिए सुझाव देने दें।';
+
+  @override
+  String get walkthroughWidgetsTitle => 'MindVault विजेट इस्तेमाल करें';
+
+  @override
+  String get walkthroughWidgetsBody =>
+      'MindVault विजेट आपकी यादों तक जल्दी पहुंचने और चलते-फिरते विचार बनाने के शक्तिशाली टूल हैं। होम स्क्रीन को लंबे समय तक दबाएं, Widgets चुनें, MindVault खोजें और विजेट को अपनी होम स्क्रीन पर खींचें।';
+
+  @override
+  String get settingsReplayWalkthrough => 'परिचय फिर देखें';
+
+  @override
+  String get settingsReplayWalkthroughSubtitle =>
+      'MindVault का परिचय फिर से खोलें';
+
+  @override
+  String get memoryHelpTooltip => 'याद सहायता';
+
+  @override
+  String get memoryHelpDialogTitle => 'याद की सुविधाएं';
+
+  @override
+  String get memoryHelpTitleField => 'शीर्षक';
+
+  @override
+  String get memoryHelpTitleFieldBody =>
+      'स्मृति को पहचानना और फिर से ढूंढना आसान बनाने के लिए छोटा शीर्षक जोड़ें।';
+
+  @override
+  String get memoryHelpType => 'प्रकार';
+
+  @override
+  String memoryHelpTypeBody(Object recordType, Object planType) {
+    return 'फ्रीफॉर्म टेक्स्ट के लिए $recordType या चेकलिस्ट के लिए $planType चुनें।';
+  }
+
+  @override
+  String get memoryHelpCluster => 'समूह';
+
+  @override
+  String get memoryHelpClusterBody =>
+      'स्मृति को रंग से चिन्हित समूह में ले जाएं।';
+
+  @override
+  String get memoryHelpRecord => 'रिकॉर्ड करें';
+
+  @override
+  String get memoryHelpRecordBody =>
+      'शीर्षक या मुख्य लेख में बोलकर लिखने के लिए आवाज रिकॉर्डिंग इस्तेमाल करें।';
+
+  @override
+  String get memoryHelpCopy => 'कॉपी करें';
+
+  @override
+  String get memoryHelpCopyBody =>
+      'स्मृति के मुख्य लेख को क्लिपबोर्ड में कॉपी करें।';
+
+  @override
+  String get memoryHelpReminder => 'रिमाइंडर';
+
+  @override
+  String get memoryHelpReminderBody =>
+      'इस स्मृति के लिए अलर्ट सेट करें; सूचनाओं की अनुमति होनी चाहिए।';
+
+  @override
+  String get memoryHelpLock => 'लॉक';
+
+  @override
+  String get memoryHelpLockBody =>
+      'स्मृति को निजी चिह्नित करें ताकि उसे खोलने के लिए डिवाइस प्रमाणीकरण चाहिए।';
 }

@@ -66,7 +66,11 @@ class AppStringsEs extends AppStrings {
   String get splashLoading => 'Protegiendo tu bóveda…';
 
   @override
-  String get authSubtitle => 'Tus memorias cifradas con IA';
+  String get authSubtitle => 'Nunca pierdas un pensamiento';
+
+  @override
+  String get authIntroBody =>
+      'MindVault garantiza que tus memorias estén seguras y siempre contigo, incluso si cambias de dispositivo. Para lograrlo, inicia sesión con tu cuenta de Google.';
 
   @override
   String get authEmailLabel => 'Correo electrónico';
@@ -767,7 +771,7 @@ class AppStringsEs extends AppStrings {
 
   @override
   String get settingsUpgradeDialogBody =>
-      'Pro te da 30 búsquedas IA/día, hasta 1000 memorias, 50 categorías y 20.000 caracteres por memoria.';
+      'Pro te da 30 búsquedas IA/día, hasta 1000 memorias, 50 categorías y 20.000 caracteres por memoria.\n\npróximamente';
 
   @override
   String get contactUsMessageHint => 'Tu mensaje (opcional)…';
@@ -959,6 +963,13 @@ class AppStringsEs extends AppStrings {
   String get jotNotificationBody => 'Toca para organizar este pensamiento';
 
   @override
+  String get jotDailyDigestTitle => 'Chispas de MindVault';
+
+  @override
+  String get jotDailyDigestBody =>
+      'Tienes pensamientos esperando a ser organizados.';
+
+  @override
   String get jotReminderNotFound => 'Este chispa ya no está disponible.';
 
   @override
@@ -1028,4 +1039,137 @@ class AppStringsEs extends AppStrings {
 
   @override
   String get editorSttRecord => 'Grabar voz';
+
+  @override
+  String get walkthroughSkip => 'Omitir';
+
+  @override
+  String get walkthroughBack => 'Atrás';
+
+  @override
+  String get walkthroughNext => 'Siguiente';
+
+  @override
+  String get walkthroughDone => 'Listo';
+
+  @override
+  String get walkthroughAllowNotifications => 'Permitir notificaciones';
+
+  @override
+  String get walkthroughOpenBackgroundSettings => 'Abrir ajustes';
+
+  @override
+  String get walkthroughDoLater => 'Lo haré más tarde';
+
+  @override
+  String get walkthroughWelcomeTitle => 'Bienvenido a MindVault';
+
+  @override
+  String get walkthroughWelcomeBody =>
+      'MindVault te ayuda a tener cerca tus recuerdos y pensamientos. Para una experiencia óptima, permite las notificaciones para que los recordatorios puedan llegarte.';
+
+  @override
+  String get walkthroughBackgroundTitle => 'Haz fiables los recordatorios';
+
+  @override
+  String get walkthroughBackgroundBody =>
+      'Algunos dispositivos Android pausan las apps en segundo plano. Podemos intentar abrir los ajustes correctos; activa MindVault allí y vuelve aquí.';
+
+  @override
+  String get walkthroughArchiveTitle => 'Archivo';
+
+  @override
+  String get walkthroughArchiveBody =>
+      'El Archivo es tu biblioteca de recuerdos. Escribe y revisa recetas, tareas, ideas y todo lo que no quieras perder.';
+
+  @override
+  String get walkthroughClustersTitle => 'Grupos';
+
+  @override
+  String get walkthroughClustersBody =>
+      'Los grupos mantienen tus recuerdos organizados y codificados por color, para que los pensamientos relacionados sean fáciles de revisar.';
+
+  @override
+  String get walkthroughRecallTitle => 'Evocar';
+
+  @override
+  String get walkthroughRecallBody =>
+      'Evocar busca en tus recuerdos por palabras clave o con IA. Pregunta algo como \"¿Cuánta azúcar necesito para mi pastel?\" y MindVault te dará una respuesta directa, no solo encontrará la memoria.';
+
+  @override
+  String get walkthroughSparksTitle => 'Chispas';
+
+  @override
+  String get walkthroughSparksBody =>
+      'Las chispas son pensamientos rápidos que aún no quieres convertir en recuerdos. Captura cosas como \"ver esa película\", \"a Jack le gustan las fresas\" o \"Beth es la hija de mi colega\". Decide después qué hacer o deja que Spark AI te sugiera.';
+
+  @override
+  String get walkthroughWidgetsTitle => 'Usa los widgets de MindVault';
+
+  @override
+  String get walkthroughWidgetsBody =>
+      'Los widgets de MindVault son herramientas potentes para acceder rápidamente a tu memoria y crear pensamientos al momento. Mantén pulsada la pantalla de inicio, elige Widgets, busca MindVault y arrastra los widgets a tu pantalla de inicio.';
+
+  @override
+  String get settingsReplayWalkthrough => 'Repetir guía';
+
+  @override
+  String get settingsReplayWalkthroughSubtitle =>
+      'Ver de nuevo la guía de MindVault';
+
+  @override
+  String get memoryHelpTooltip => 'Ayuda de memoria';
+
+  @override
+  String get memoryHelpDialogTitle => 'Funciones de la memoria';
+
+  @override
+  String get memoryHelpTitleField => 'Título';
+
+  @override
+  String get memoryHelpTitleFieldBody =>
+      'Añade un título corto para que la memoria sea más fácil de reconocer y recordar.';
+
+  @override
+  String get memoryHelpType => 'Tipo';
+
+  @override
+  String memoryHelpTypeBody(Object recordType, Object planType) {
+    return 'Elige $recordType para texto libre o $planType para una lista de tareas.';
+  }
+
+  @override
+  String get memoryHelpCluster => 'Cluster';
+
+  @override
+  String get memoryHelpClusterBody =>
+      'Mueve la memoria a un cluster codificado por color.';
+
+  @override
+  String get memoryHelpRecord => 'Grabar';
+
+  @override
+  String get memoryHelpRecordBody =>
+      'Usa la grabación de voz para dictar en el título o el cuerpo.';
+
+  @override
+  String get memoryHelpCopy => 'Copiar';
+
+  @override
+  String get memoryHelpCopyBody =>
+      'Copia el cuerpo de la memoria al portapapeles.';
+
+  @override
+  String get memoryHelpReminder => 'Recordatorio';
+
+  @override
+  String get memoryHelpReminderBody =>
+      'Configura una alerta para esta memoria; las notificaciones deben estar permitidas.';
+
+  @override
+  String get memoryHelpLock => 'Bloquear';
+
+  @override
+  String get memoryHelpLockBody =>
+      'Marca una memoria como privada para que abrirla requiera autenticación del dispositivo.';
 }

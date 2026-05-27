@@ -27,14 +27,22 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import java.util.Calendar
 import kotlin.math.abs
 
 private const val REMINDER_CHANNEL = "mindvault/reminders"
 private const val NOTIFICATION_CHANNEL_ID = "note_reminders_v2"
 private const val PREFS = "mindvault_reminders"
 private const val JOT_PREFS = "mindvault_jot_reminders"
+private const val SPARK_DIGEST_PREFS = "mindvault_spark_digest"
 private const val KEY_IDS = "note_ids"
 private const val KEY_JOT_IDS = "jot_ids"
+private const val KEY_SPARK_DIGEST_ENABLED = "spark_digest_enabled"
+private const val KEY_SPARK_DIGEST_TITLE = "spark_digest_title"
+private const val KEY_SPARK_DIGEST_BODY = "spark_digest_body"
+private const val KEY_SPARK_DIGEST_HOUR = "spark_digest_hour"
+private const val KEY_SPARK_DIGEST_MINUTE = "spark_digest_minute"
+private const val SPARK_DIGEST_REQUEST_CODE = 7303
 private const val NOTIFICATION_PERMISSION_REQUEST = 7301
 private const val TAG = "MindVaultReminders"
 
@@ -104,6 +112,23 @@ object ReminderPlugin {
                 "cancelJotsExcept" -> {
                     val keep = call.argument<List<String>>("jotIds")?.toSet() ?: emptySet()
                     cancelJotsExcept(activity, keep)
+                    result.success(null)
+                }
+                "scheduleSparkDigest" -> {
+                    val title = call.argument<String>("title")
+                    val body = call.argument<String>("body")
+                    val fireAt = call.argument<Long>("fireAtMillis")
+                    val hour = call.argument<Int>("hour")
+                    val minute = call.argument<Int>("minute")
+                    if (title == null || body == null || fireAt == null || hour == null || minute == null) {
+                        result.error("bad_args", "Missing Spark digest schedule argument.", null)
+                        return@setMethodCallHandler
+                    }
+                    scheduleSparkDigest(activity, title, body, fireAt, hour, minute)
+                    result.success(null)
+                }
+                "cancelSparkDigest" -> {
+                    cancelSparkDigest(activity)
                     result.success(null)
                 }
                 else -> result.notImplemented()
@@ -224,6 +249,36 @@ object ReminderPlugin {
         Log.i(TAG, "Canceled jot reminder jotId=$jotId")
     }
 
+    fun scheduleSparkDigest(
+        context: Context,
+        title: String,
+        body: String,
+        fireAtMillis: Long,
+        hour: Int,
+        minute: Int
+    ) {
+        ensureNotificationChannel(context)
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val fireAt = fireAtMillis.coerceAtLeast(System.currentTimeMillis() + 1000)
+        rememberSparkDigest(context, title, body, hour, minute)
+        val pi = sparkDigestPendingIntent(context, title, body)
+        alarmManager.cancel(pi)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fireAt, pi)
+        } else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, fireAt, pi)
+        }
+        Log.i(TAG, "Scheduled Spark digest fireAt=$fireAt hour=$hour minute=$minute")
+    }
+
+    fun cancelSparkDigest(context: Context) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.cancel(sparkDigestPendingIntent(context, "", ""))
+        forgetSparkDigest(context)
+        NotificationManagerCompat.from(context).cancel(sparkDigestNotificationId())
+        Log.i(TAG, "Canceled Spark digest")
+    }
+
     fun rescheduleRemembered(context: Context) {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         val now = System.currentTimeMillis()
@@ -258,6 +313,23 @@ object ReminderPlugin {
                 scheduleJot(context, jotId, title, body, remindAt, version)
             }
         }
+    }
+
+    fun rescheduleSparkDigest(context: Context) {
+        val prefs = context.getSharedPreferences(SPARK_DIGEST_PREFS, Context.MODE_PRIVATE)
+        if (prefs.getBoolean(KEY_SPARK_DIGEST_ENABLED, false) != true) return
+        val title = prefs.getString(KEY_SPARK_DIGEST_TITLE, null) ?: return
+        val body = prefs.getString(KEY_SPARK_DIGEST_BODY, null) ?: return
+        val hour = prefs.getInt(KEY_SPARK_DIGEST_HOUR, 21)
+        val minute = prefs.getInt(KEY_SPARK_DIGEST_MINUTE, 0)
+        scheduleSparkDigest(context, title, body, nextSparkDigestAt(hour, minute), hour, minute)
+    }
+
+    fun shouldFireSparkDigest(context: Context): Boolean {
+        val prefs = context.getSharedPreferences(SPARK_DIGEST_PREFS, Context.MODE_PRIVATE)
+        return prefs.getBoolean(KEY_SPARK_DIGEST_ENABLED, false) == true &&
+            prefs.getString(KEY_SPARK_DIGEST_TITLE, null) != null &&
+            prefs.getString(KEY_SPARK_DIGEST_BODY, null) != null
     }
 
     fun forgetFired(context: Context, noteId: String) {
@@ -340,6 +412,17 @@ object ReminderPlugin {
         val notification = buildJotNotification(context, jotId, title, body) ?: return
         NotificationManagerCompat.from(context).notify(jotNotificationId(jotId), notification)
         Log.i(TAG, "Posted jot reminder notification jotId=$jotId")
+    }
+
+    fun showSparkDigestNotification(context: Context, title: String, body: String) {
+        val notification = buildNotificationWithTap(
+            context,
+            title,
+            body,
+            sparkDigestTapPendingIntent(context)
+        ) ?: return
+        NotificationManagerCompat.from(context).notify(sparkDigestNotificationId(), notification)
+        Log.i(TAG, "Posted Spark digest notification")
     }
 
     fun buildNotification(
@@ -443,6 +526,20 @@ object ReminderPlugin {
         return PendingIntent.getActivity(
             context,
             jotNotificationId(jotId),
+            tapIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
+    private fun sparkDigestTapPendingIntent(context: Context): PendingIntent {
+        val tapIntent = Intent(context, MainActivity::class.java).apply {
+            action = Intent.ACTION_VIEW
+            data = Uri.parse("mindvault://spark-digest")
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        return PendingIntent.getActivity(
+            context,
+            sparkDigestNotificationId(),
             tapIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -610,6 +707,25 @@ object ReminderPlugin {
         return PendingIntent.getBroadcast(
             context,
             jotNotificationId(jotId),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
+    private fun sparkDigestPendingIntent(
+        context: Context,
+        title: String,
+        body: String
+    ): PendingIntent {
+        val intent = Intent(context, ReminderAlarmReceiver::class.java).apply {
+            action = "app.amir.mindvault.SPARK_DIGEST_ALARM"
+            data = Uri.parse("mindvault://spark-digest-alarm")
+            putExtra("title", title)
+            putExtra("body", body)
+        }
+        return PendingIntent.getBroadcast(
+            context,
+            SPARK_DIGEST_REQUEST_CODE,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -813,6 +929,23 @@ object ReminderPlugin {
         Log.i(TAG, "Remembered jot reminder jotId=$jotId at=$at")
     }
 
+    private fun rememberSparkDigest(
+        context: Context,
+        title: String,
+        body: String,
+        hour: Int,
+        minute: Int
+    ) {
+        context.getSharedPreferences(SPARK_DIGEST_PREFS, Context.MODE_PRIVATE).edit()
+            .putBoolean(KEY_SPARK_DIGEST_ENABLED, true)
+            .putString(KEY_SPARK_DIGEST_TITLE, title)
+            .putString(KEY_SPARK_DIGEST_BODY, body)
+            .putInt(KEY_SPARK_DIGEST_HOUR, hour)
+            .putInt(KEY_SPARK_DIGEST_MINUTE, minute)
+            .commit()
+        Log.i(TAG, "Remembered Spark digest hour=$hour minute=$minute")
+    }
+
     private fun forget(context: Context, noteId: String) {
         val nextIds = ids(context).minus(noteId)
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
@@ -837,6 +970,12 @@ object ReminderPlugin {
         Log.i(TAG, "Forgot jot reminder jotId=$jotId")
     }
 
+    private fun forgetSparkDigest(context: Context) {
+        context.getSharedPreferences(SPARK_DIGEST_PREFS, Context.MODE_PRIVATE).edit()
+            .clear()
+            .commit()
+    }
+
     private fun cancelExcept(context: Context, keep: Set<String>) {
         ids(context).filterNot { keep.contains(it) }.forEach { cancel(context, it) }
     }
@@ -857,4 +996,18 @@ object ReminderPlugin {
 
     private fun notificationId(noteId: String): Int = abs(noteId.hashCode())
     private fun jotNotificationId(jotId: String): Int = abs("jot_$jotId".hashCode())
+    private fun sparkDigestNotificationId(): Int = abs("spark_digest".hashCode())
+
+    private fun nextSparkDigestAt(hour: Int, minute: Int): Long {
+        val now = System.currentTimeMillis()
+        val next = Calendar.getInstance().apply {
+            timeInMillis = now
+            set(Calendar.HOUR_OF_DAY, hour.coerceIn(0, 23))
+            set(Calendar.MINUTE, minute.coerceIn(0, 59))
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+            if (timeInMillis <= now) add(Calendar.DAY_OF_YEAR, 1)
+        }
+        return next.timeInMillis
+    }
 }

@@ -66,7 +66,11 @@ class AppStringsHe extends AppStrings {
   String get splashLoading => 'מאבטח את הכספת שלך…';
 
   @override
-  String get authSubtitle => 'זיכרונות מוצפנים מבוססי בינה מלאכותית';
+  String get authSubtitle => 'לא מאבדים אף מחשבה';
+
+  @override
+  String get authIntroBody =>
+      'MindVault מבטיחה שהזיכרונות שלכם מאובטחים ותמיד איתכם, גם אם תחליפו מכשיר. כדי לאפשר זאת, התחברו עם חשבון Google שלכם.';
 
   @override
   String get authEmailLabel => 'אימייל';
@@ -738,7 +742,7 @@ class AppStringsHe extends AppStrings {
 
   @override
   String get settingsUpgradeDialogBody =>
-      'Pro מעניק לך 30 חיפושי AI ביום, עד 1000 זיכרונות, 50 אשכולות ו-20,000 תווים בזיכרון.';
+      'Pro מעניק לך 30 חיפושי AI ביום, עד 1000 זיכרונות, 50 אשכולות ו-20,000 תווים בזיכרון.\n\nבקרוב';
 
   @override
   String get contactUsMessageHint => 'הודעתך (אופציונלי)…';
@@ -925,6 +929,12 @@ class AppStringsHe extends AppStrings {
   String get jotNotificationBody => 'הקש כדי לארגן את המחשבה הזו';
 
   @override
+  String get jotDailyDigestTitle => 'ניצוצות MindVault';
+
+  @override
+  String get jotDailyDigestBody => 'יש לכם מחשבות שממתינות לארגון.';
+
+  @override
   String get jotReminderNotFound => 'הניצוץ הזה כבר לא זמין.';
 
   @override
@@ -993,4 +1003,135 @@ class AppStringsHe extends AppStrings {
 
   @override
   String get editorSttRecord => 'הקלט קול';
+
+  @override
+  String get walkthroughSkip => 'דלג';
+
+  @override
+  String get walkthroughBack => 'חזרה';
+
+  @override
+  String get walkthroughNext => 'הבא';
+
+  @override
+  String get walkthroughDone => 'סיום';
+
+  @override
+  String get walkthroughAllowNotifications => 'אפשר התראות';
+
+  @override
+  String get walkthroughOpenBackgroundSettings => 'פתח הגדרות';
+
+  @override
+  String get walkthroughDoLater => 'אעשה זאת מאוחר יותר';
+
+  @override
+  String get walkthroughWelcomeTitle => 'ברוכים הבאים ל-MindVault';
+
+  @override
+  String get walkthroughWelcomeBody =>
+      'MindVault עוזרת לשמור את הזיכרונות והמחשבות שלכם בהישג יד. לחוויה מיטבית, אפשרו התראות כדי שתזכורות יוכלו להגיע אליכם.';
+
+  @override
+  String get walkthroughBackgroundTitle => 'שומרים על תזכורות אמינות';
+
+  @override
+  String get walkthroughBackgroundBody =>
+      'חלק ממכשירי Android עוצרים אפליקציות ברקע. ננסה לפתוח את ההגדרות המתאימות; הפעילו שם את MindVault וחזרו לאפליקציה.';
+
+  @override
+  String get walkthroughArchiveTitle => 'ארכיון';
+
+  @override
+  String get walkthroughArchiveBody =>
+      'הארכיון הוא ספריית הזיכרונות שלכם. כתבו וחזרו למתכונים, משימות, רעיונות וכל דבר שלא תרצו לאבד.';
+
+  @override
+  String get walkthroughClustersTitle => 'אשכולות';
+
+  @override
+  String get walkthroughClustersBody =>
+      'אשכולות שומרים על הזיכרונות מסודרים ומקודדים בצבע, כדי שמחשבות קשורות יהיו קלות לסריקה.';
+
+  @override
+  String get walkthroughRecallTitle => 'שליפה';
+
+  @override
+  String get walkthroughRecallBody =>
+      'שליפה מחפשת בזיכרונות לפי מילות מפתח או בעזרת AI. שאלו למשל \"כמה סוכר צריך לעוגה שלי?\" ו-MindVault תספק תשובה ישירה, לא רק תמצא את הזיכרון.';
+
+  @override
+  String get walkthroughSparksTitle => 'ניצוצות';
+
+  @override
+  String get walkthroughSparksBody =>
+      'ניצוצות הם מחשבות מהירות שעדיין לא תרצו להפוך לזיכרון. שמרו דברים כמו \"לראות את הסרט הזה\", \"ג\'ק אוהב תותים\" או \"לבת של הקולגה שלי קוראים בת\'\". החליטו אחר כך מה לעשות או תנו ל-Spark AI להציע עבורכם.';
+
+  @override
+  String get walkthroughWidgetsTitle => 'השתמשו בווידג\'טים של MindVault';
+
+  @override
+  String get walkthroughWidgetsBody =>
+      'הווידג\'טים של MindVault הם כלים חזקים לגישה מהירה לזיכרון שלכם וליצירת מחשבות תוך כדי תנועה. לחצו לחיצה ארוכה על מסך הבית, בחרו ווידג\'טים, חפשו את MindVault וגררו את הווידג\'טים למסך הבית.';
+
+  @override
+  String get settingsReplayWalkthrough => 'הצג את ההדרכה שוב';
+
+  @override
+  String get settingsReplayWalkthroughSubtitle =>
+      'פתח שוב את הסיור של MindVault';
+
+  @override
+  String get memoryHelpTooltip => 'עזרה לזיכרון';
+
+  @override
+  String get memoryHelpDialogTitle => 'תכונות הזיכרון';
+
+  @override
+  String get memoryHelpTitleField => 'כותרת';
+
+  @override
+  String get memoryHelpTitleFieldBody =>
+      'הוסיפו כותרת קצרה כדי שיהיה קל יותר לזהות ולמצוא את הזיכרון.';
+
+  @override
+  String get memoryHelpType => 'סוג';
+
+  @override
+  String memoryHelpTypeBody(Object recordType, Object planType) {
+    return 'בחרו $recordType לטקסט חופשי או $planType לרשימת משימות.';
+  }
+
+  @override
+  String get memoryHelpCluster => 'אשכול';
+
+  @override
+  String get memoryHelpClusterBody => 'העבירו את הזיכרון לאשכול מקודד בצבע.';
+
+  @override
+  String get memoryHelpRecord => 'הקלטה';
+
+  @override
+  String get memoryHelpRecordBody =>
+      'השתמשו בהקלטת קול כדי להכתיב לכותרת או לגוף הזיכרון.';
+
+  @override
+  String get memoryHelpCopy => 'העתקה';
+
+  @override
+  String get memoryHelpCopyBody => 'העתיקו את גוף הזיכרון ללוח.';
+
+  @override
+  String get memoryHelpReminder => 'תזכורת';
+
+  @override
+  String get memoryHelpReminderBody =>
+      'הגדירו התראה לזיכרון הזה; יש לאפשר התראות.';
+
+  @override
+  String get memoryHelpLock => 'נעילה';
+
+  @override
+  String get memoryHelpLockBody =>
+      'סמנו זיכרון כפרטי כדי שפתיחתו תדרוש אימות מכשיר.';
 }
