@@ -15,6 +15,8 @@ class CategoryModel {
   final String lastUsedAt;
   @JsonKey(name: 'created_at')
   final String createdAt;
+  @JsonKey(name: 'updated_at')
+  final String? updatedAt;
   final String? color;
 
   const CategoryModel({
@@ -24,6 +26,7 @@ class CategoryModel {
     required this.sortOrder,
     required this.lastUsedAt,
     required this.createdAt,
+    this.updatedAt,
     this.color,
   });
 

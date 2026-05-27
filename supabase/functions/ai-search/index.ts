@@ -85,6 +85,42 @@ async function logError(
   }
 }
 
+type UsageReservation = {
+  allowed: boolean;
+  query_count: number;
+  daily_limit: number;
+  tier: string;
+};
+
+async function consumeUsage(
+  userId: string,
+  usageDate: string,
+): Promise<UsageReservation> {
+  const { data, error } = await adminClient.rpc("consume_ai_search_usage", {
+    p_user_id: userId,
+    p_usage_date: usageDate,
+  });
+  if (error) throw error;
+  const row = Array.isArray(data) ? data[0] : data;
+  return {
+    allowed: row?.allowed === true,
+    query_count: Number(row?.query_count ?? 0),
+    daily_limit: Number(row?.daily_limit ?? 5),
+    tier: typeof row?.tier === "string" ? row.tier : "free",
+  };
+}
+
+async function refundUsage(userId: string, usageDate: string): Promise<void> {
+  try {
+    await adminClient.rpc("refund_ai_search_usage", {
+      p_user_id: userId,
+      p_usage_date: usageDate,
+    });
+  } catch {
+    // Quota refund is best-effort after upstream model failures.
+  }
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: CORS });
@@ -102,35 +138,6 @@ Deno.serve(async (req: Request) => {
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return json({ error: "Unauthorized" }, 401);
 
-  const today = new Date().toISOString().slice(0, 10);
-
-  const [profileRes, usageRes] = await Promise.all([
-    supabase.from("profiles").select("tier").eq("id", user.id).maybeSingle(),
-    supabase
-      .from("ai_usage")
-      .select("query_count")
-      .eq("user_id", user.id)
-      .eq("usage_date", today)
-      .maybeSingle(),
-  ]);
-
-  const tier = (profileRes.data?.tier as string) ?? "free";
-  const usedToday = (usageRes.data?.query_count as number) ?? 0;
-
-  // Fetch quota from the tier_limits table via adminClient (bypasses RLS,
-  // consistent with other non-user-data reads).
-  const limitsRes = await adminClient
-    .from("tier_limits")
-    .select("ai_searches_per_day")
-    .eq("tier", tier)
-    .maybeSingle();
-  // Fall back to a safe default if the table row is missing.
-  const dailyLimit = (limitsRes.data?.ai_searches_per_day as number) ?? 5;
-
-  if (usedToday >= dailyLimit) {
-    return json({ error: "quota_exceeded" }, 429);
-  }
-
   let query: string;
   let notes: Array<{ title: string; body: string }>;
   try {
@@ -145,6 +152,21 @@ Deno.serve(async (req: Request) => {
 
   const aiKey = Deno.env.get("AI_API_KEY");
   if (!aiKey) return json({ error: "AI not configured on server" }, 503);
+
+  const today = new Date().toISOString().slice(0, 10);
+  let usage: UsageReservation;
+  try {
+    usage = await consumeUsage(user.id, today);
+  } catch (e) {
+    const message = `Usage check failed: ${(e as Error).message}`;
+    await logError(adminClient, user.id, message, {});
+    return json({ error: message }, 500);
+  }
+
+  if (!usage.allowed) {
+    return json({ error: "quota_exceeded" }, 429);
+  }
+  const tier = usage.tier;
 
   let answer = "";
   let lastError = "";
@@ -215,6 +237,7 @@ Deno.serve(async (req: Request) => {
       error_type: (e as Error).constructor?.name ?? "unknown",
       tier,
     });
+    await refundUsage(user.id, today);
     return json({ error: errMsg }, 502);
   }
 
@@ -229,15 +252,12 @@ Deno.serve(async (req: Request) => {
         "All models quota exceeded",
         { models_tried: AI_MODELS, tier },
       );
+      await refundUsage(user.id, today);
       return json({ error: "all_models_quota_exceeded" }, 503);
     }
+    await refundUsage(user.id, today);
     return json({ error: lastError ? `AI error: ${lastError}` : "AI request failed" }, 502);
   }
-
-  await supabase.from("ai_usage").upsert(
-    { user_id: user.id, usage_date: today, query_count: usedToday + 1 },
-    { onConflict: "user_id,usage_date" },
-  );
 
   return json({ answer });
 });

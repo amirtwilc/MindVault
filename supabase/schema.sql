@@ -109,8 +109,11 @@ CREATE TABLE IF NOT EXISTS clusters (
   color        TEXT,
   last_used_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE (user_id, name)
 );
+
+ALTER TABLE clusters ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT now();
 
 ALTER TABLE clusters ENABLE ROW LEVEL SECURITY;
 
@@ -283,6 +286,80 @@ ALTER TABLE ai_usage ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Users manage own ai_usage" ON ai_usage;
 CREATE POLICY "Users manage own ai_usage" ON ai_usage
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+CREATE OR REPLACE FUNCTION public.consume_ai_search_usage(
+  p_user_id UUID,
+  p_usage_date DATE DEFAULT CURRENT_DATE
+)
+RETURNS TABLE (
+  allowed BOOLEAN,
+  query_count INTEGER,
+  daily_limit INTEGER,
+  tier TEXT
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_tier TEXT;
+  v_limit INTEGER;
+  v_count INTEGER;
+  v_allowed BOOLEAN := false;
+BEGIN
+  SELECT p.tier, tl.ai_searches_per_day
+    INTO v_tier, v_limit
+  FROM profiles p
+  LEFT JOIN tier_limits tl ON tl.tier = p.tier
+  WHERE p.id = p_user_id;
+
+  v_tier := COALESCE(v_tier, 'free');
+  v_limit := COALESCE(v_limit, 5);
+
+  IF v_limit <= 0 THEN
+    RETURN QUERY SELECT false, 0, v_limit, v_tier;
+    RETURN;
+  END IF;
+
+  INSERT INTO ai_usage (user_id, usage_date, query_count)
+  VALUES (p_user_id, p_usage_date, 1)
+  ON CONFLICT (user_id, usage_date) DO UPDATE
+    SET query_count = ai_usage.query_count + 1
+    WHERE ai_usage.query_count < v_limit
+  RETURNING ai_usage.query_count INTO v_count;
+
+  IF FOUND THEN
+    v_allowed := true;
+  ELSE
+    SELECT au.query_count INTO v_count
+    FROM ai_usage au
+    WHERE au.user_id = p_user_id AND au.usage_date = p_usage_date;
+  END IF;
+
+  RETURN QUERY SELECT v_allowed, COALESCE(v_count, 0), v_limit, v_tier;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.refund_ai_search_usage(
+  p_user_id UUID,
+  p_usage_date DATE DEFAULT CURRENT_DATE
+)
+RETURNS VOID
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  UPDATE ai_usage
+  SET query_count = GREATEST(query_count - 1, 0)
+  WHERE user_id = p_user_id
+    AND usage_date = p_usage_date
+    AND query_count > 0;
+$$;
+
+REVOKE ALL ON FUNCTION public.consume_ai_search_usage(UUID, DATE) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.refund_ai_search_usage(UUID, DATE) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.consume_ai_search_usage(UUID, DATE) TO service_role;
+GRANT EXECUTE ON FUNCTION public.refund_ai_search_usage(UUID, DATE) TO service_role;
 
 -- ── spark_ai_usage ────────────────────────────────────────────
 -- One row per user per day. Consumed atomically by the organize-sparks edge
@@ -544,6 +621,233 @@ CREATE TRIGGER on_auth_user_created
 INSERT INTO public.profiles (id)
 SELECT id FROM auth.users
 ON CONFLICT (id) DO NOTHING;
+
+-- ── Conflict-safe synced writes ──────────────────────────────
+-- Client clocks already drive the local-first conflict model. These RPCs make
+-- the server enforce the same last-write-wins rule atomically so delayed older
+-- writes cannot overwrite newer rows.
+
+CREATE OR REPLACE FUNCTION public.upsert_cluster_lww(
+  p_id UUID,
+  p_name TEXT,
+  p_sort_order INTEGER,
+  p_color TEXT,
+  p_last_used_at TIMESTAMPTZ,
+  p_created_at TIMESTAMPTZ,
+  p_updated_at TIMESTAMPTZ
+)
+RETURNS SETOF public.clusters
+LANGUAGE sql
+SECURITY INVOKER
+SET search_path = public
+AS $$
+  INSERT INTO public.clusters (
+    id, user_id, name, sort_order, color, last_used_at, created_at, updated_at
+  )
+  VALUES (
+    p_id, auth.uid(), p_name, p_sort_order, p_color, p_last_used_at, p_created_at, p_updated_at
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    name = EXCLUDED.name,
+    sort_order = EXCLUDED.sort_order,
+    color = EXCLUDED.color,
+    last_used_at = EXCLUDED.last_used_at,
+    created_at = EXCLUDED.created_at,
+    updated_at = EXCLUDED.updated_at
+  WHERE clusters.user_id = auth.uid()
+    AND clusters.updated_at <= EXCLUDED.updated_at
+  RETURNING *;
+$$;
+
+CREATE OR REPLACE FUNCTION public.upsert_memory_lww(
+  p_id UUID,
+  p_category_id UUID,
+  p_title TEXT,
+  p_body TEXT,
+  p_is_private BOOLEAN,
+  p_last_used_at TIMESTAMPTZ,
+  p_created_at TIMESTAMPTZ,
+  p_updated_at TIMESTAMPTZ,
+  p_note_type TEXT,
+  p_is_pinned BOOLEAN,
+  p_pinned_at TIMESTAMPTZ,
+  p_pin_order INTEGER
+)
+RETURNS SETOF public.memories
+LANGUAGE sql
+SECURITY INVOKER
+SET search_path = public
+AS $$
+  INSERT INTO public.memories (
+    id, user_id, category_id, title, body, is_private, last_used_at, created_at,
+    updated_at, note_type, is_pinned, pinned_at, pin_order
+  )
+  VALUES (
+    p_id, auth.uid(), p_category_id, p_title, p_body, p_is_private,
+    p_last_used_at, p_created_at, p_updated_at, p_note_type, p_is_pinned,
+    p_pinned_at, p_pin_order
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    category_id = EXCLUDED.category_id,
+    title = EXCLUDED.title,
+    body = EXCLUDED.body,
+    is_private = EXCLUDED.is_private,
+    last_used_at = EXCLUDED.last_used_at,
+    created_at = EXCLUDED.created_at,
+    updated_at = EXCLUDED.updated_at,
+    note_type = EXCLUDED.note_type,
+    is_pinned = EXCLUDED.is_pinned,
+    pinned_at = EXCLUDED.pinned_at,
+    pin_order = EXCLUDED.pin_order
+  WHERE memories.user_id = auth.uid()
+    AND memories.updated_at <= EXCLUDED.updated_at
+  RETURNING *;
+$$;
+
+CREATE OR REPLACE FUNCTION public.upsert_spark_lww(
+  p_id UUID,
+  p_text TEXT,
+  p_created_at TIMESTAMPTZ,
+  p_updated_at TIMESTAMPTZ,
+  p_handled_at TIMESTAMPTZ,
+  p_ai_processed_at TIMESTAMPTZ,
+  p_ai_suggestion_json TEXT,
+  p_ai_suggestion_run_id UUID,
+  p_reminder_at TIMESTAMPTZ
+)
+RETURNS SETOF public.sparks
+LANGUAGE sql
+SECURITY INVOKER
+SET search_path = public
+AS $$
+  INSERT INTO public.sparks (
+    id, user_id, text, created_at, updated_at, handled_at, ai_processed_at,
+    ai_suggestion_json, ai_suggestion_run_id, reminder_at
+  )
+  VALUES (
+    p_id, auth.uid(), p_text, p_created_at, p_updated_at, p_handled_at,
+    p_ai_processed_at, p_ai_suggestion_json, p_ai_suggestion_run_id,
+    p_reminder_at
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    text = EXCLUDED.text,
+    created_at = EXCLUDED.created_at,
+    updated_at = EXCLUDED.updated_at,
+    handled_at = EXCLUDED.handled_at,
+    ai_processed_at = EXCLUDED.ai_processed_at,
+    ai_suggestion_json = EXCLUDED.ai_suggestion_json,
+    ai_suggestion_run_id = EXCLUDED.ai_suggestion_run_id,
+    reminder_at = EXCLUDED.reminder_at
+  WHERE sparks.user_id = auth.uid()
+    AND sparks.updated_at <= EXCLUDED.updated_at
+  RETURNING *;
+$$;
+
+CREATE OR REPLACE FUNCTION public.upsert_plan_item_lww(
+  p_id UUID,
+  p_note_id UUID,
+  p_text TEXT,
+  p_is_completed BOOLEAN,
+  p_sort_order INTEGER,
+  p_completed_at TIMESTAMPTZ,
+  p_created_at TIMESTAMPTZ,
+  p_updated_at TIMESTAMPTZ
+)
+RETURNS SETOF public.plan_items
+LANGUAGE sql
+SECURITY INVOKER
+SET search_path = public
+AS $$
+  INSERT INTO public.plan_items (
+    id, note_id, user_id, text, is_completed, sort_order, completed_at,
+    created_at, updated_at
+  )
+  VALUES (
+    p_id, p_note_id, auth.uid(), p_text, p_is_completed, p_sort_order,
+    p_completed_at, p_created_at, p_updated_at
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    note_id = EXCLUDED.note_id,
+    text = EXCLUDED.text,
+    is_completed = EXCLUDED.is_completed,
+    sort_order = EXCLUDED.sort_order,
+    completed_at = EXCLUDED.completed_at,
+    created_at = EXCLUDED.created_at,
+    updated_at = EXCLUDED.updated_at
+  WHERE plan_items.user_id = auth.uid()
+    AND plan_items.updated_at <= EXCLUDED.updated_at
+  RETURNING *;
+$$;
+
+CREATE OR REPLACE FUNCTION public.upsert_memory_reminder_lww(
+  p_note_id UUID,
+  p_remind_at TIMESTAMPTZ,
+  p_created_at TIMESTAMPTZ,
+  p_updated_at TIMESTAMPTZ,
+  p_deleted_at TIMESTAMPTZ
+)
+RETURNS SETOF public.memory_reminders
+LANGUAGE sql
+SECURITY INVOKER
+SET search_path = public
+AS $$
+  INSERT INTO public.memory_reminders (
+    note_id, user_id, remind_at, created_at, updated_at, deleted_at
+  )
+  VALUES (
+    p_note_id, auth.uid(), p_remind_at, p_created_at, p_updated_at, p_deleted_at
+  )
+  ON CONFLICT (note_id) DO UPDATE SET
+    remind_at = EXCLUDED.remind_at,
+    created_at = EXCLUDED.created_at,
+    updated_at = EXCLUDED.updated_at,
+    deleted_at = EXCLUDED.deleted_at
+  WHERE memory_reminders.user_id = auth.uid()
+    AND memory_reminders.updated_at <= EXCLUDED.updated_at
+  RETURNING *;
+$$;
+
+CREATE OR REPLACE FUNCTION public.wipe_user_content_for_fresh_start()
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY INVOKER
+SET search_path = public
+AS $$
+DECLARE
+  v_user_id UUID := auth.uid();
+BEGIN
+  IF v_user_id IS NULL THEN
+    RAISE EXCEPTION 'wipe_user_content_for_fresh_start requires auth';
+  END IF;
+
+  DELETE FROM public.plan_items WHERE user_id = v_user_id;
+  DELETE FROM public.memory_reminders WHERE user_id = v_user_id;
+  DELETE FROM public.memories WHERE user_id = v_user_id;
+  DELETE FROM public.sparks WHERE user_id = v_user_id;
+  DELETE FROM public.clusters WHERE user_id = v_user_id;
+  DELETE FROM public.ai_usage WHERE user_id = v_user_id;
+  DELETE FROM public.spark_ai_usage WHERE user_id = v_user_id;
+  DELETE FROM public.user_keys WHERE user_id = v_user_id;
+
+  INSERT INTO public.clusters (user_id, name, sort_order, last_used_at, created_at, updated_at)
+  VALUES (v_user_id, 'General', 0, now(), now(), now())
+  ON CONFLICT DO NOTHING;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.upsert_cluster_lww(UUID, TEXT, INTEGER, TEXT, TIMESTAMPTZ, TIMESTAMPTZ, TIMESTAMPTZ) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.upsert_memory_lww(UUID, UUID, TEXT, TEXT, BOOLEAN, TIMESTAMPTZ, TIMESTAMPTZ, TIMESTAMPTZ, TEXT, BOOLEAN, TIMESTAMPTZ, INTEGER) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.upsert_spark_lww(UUID, TEXT, TIMESTAMPTZ, TIMESTAMPTZ, TIMESTAMPTZ, TIMESTAMPTZ, TEXT, UUID, TIMESTAMPTZ) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.upsert_plan_item_lww(UUID, UUID, TEXT, BOOLEAN, INTEGER, TIMESTAMPTZ, TIMESTAMPTZ, TIMESTAMPTZ) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.upsert_memory_reminder_lww(UUID, TIMESTAMPTZ, TIMESTAMPTZ, TIMESTAMPTZ, TIMESTAMPTZ) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.wipe_user_content_for_fresh_start() FROM PUBLIC;
+
+GRANT EXECUTE ON FUNCTION public.upsert_cluster_lww(UUID, TEXT, INTEGER, TEXT, TIMESTAMPTZ, TIMESTAMPTZ, TIMESTAMPTZ) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.upsert_memory_lww(UUID, UUID, TEXT, TEXT, BOOLEAN, TIMESTAMPTZ, TIMESTAMPTZ, TIMESTAMPTZ, TEXT, BOOLEAN, TIMESTAMPTZ, INTEGER) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.upsert_spark_lww(UUID, TEXT, TIMESTAMPTZ, TIMESTAMPTZ, TIMESTAMPTZ, TIMESTAMPTZ, TEXT, UUID, TIMESTAMPTZ) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.upsert_plan_item_lww(UUID, UUID, TEXT, BOOLEAN, INTEGER, TIMESTAMPTZ, TIMESTAMPTZ, TIMESTAMPTZ) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.upsert_memory_reminder_lww(UUID, TIMESTAMPTZ, TIMESTAMPTZ, TIMESTAMPTZ, TIMESTAMPTZ) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.wipe_user_content_for_fresh_start() TO authenticated;
 
 -- ── Realtime ────────────────────────────────────────────────
 -- The Flutter app subscribes to memories + clusters changes to

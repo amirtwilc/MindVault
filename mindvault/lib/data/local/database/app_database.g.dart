@@ -44,6 +44,14 @@ class $CategoriesTableTable extends CategoriesTable
   late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
       'created_at', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
   static const VerificationMeta _colorMeta = const VerificationMeta('color');
   @override
   late final GeneratedColumn<String> color = GeneratedColumn<String>(
@@ -51,7 +59,7 @@ class $CategoriesTableTable extends CategoriesTable
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, userId, name, sortOrder, lastUsedAt, createdAt, color];
+      [id, userId, name, sortOrder, lastUsedAt, createdAt, updatedAt, color];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -98,6 +106,10 @@ class $CategoriesTableTable extends CategoriesTable
     } else if (isInserting) {
       context.missing(_createdAtMeta);
     }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    }
     if (data.containsKey('color')) {
       context.handle(
           _colorMeta, color.isAcceptableOrUnknown(data['color']!, _colorMeta));
@@ -123,6 +135,8 @@ class $CategoriesTableTable extends CategoriesTable
           .read(DriftSqlType.dateTime, data['${effectivePrefix}last_used_at'])!,
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
       color: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}color']),
     );
@@ -142,6 +156,7 @@ class CategoriesTableData extends DataClass
   final int sortOrder;
   final DateTime lastUsedAt;
   final DateTime createdAt;
+  final DateTime updatedAt;
   final String? color;
   const CategoriesTableData(
       {required this.id,
@@ -150,6 +165,7 @@ class CategoriesTableData extends DataClass
       required this.sortOrder,
       required this.lastUsedAt,
       required this.createdAt,
+      required this.updatedAt,
       this.color});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -160,6 +176,7 @@ class CategoriesTableData extends DataClass
     map['sort_order'] = Variable<int>(sortOrder);
     map['last_used_at'] = Variable<DateTime>(lastUsedAt);
     map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
     if (!nullToAbsent || color != null) {
       map['color'] = Variable<String>(color);
     }
@@ -174,6 +191,7 @@ class CategoriesTableData extends DataClass
       sortOrder: Value(sortOrder),
       lastUsedAt: Value(lastUsedAt),
       createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
       color:
           color == null && nullToAbsent ? const Value.absent() : Value(color),
     );
@@ -189,6 +207,7 @@ class CategoriesTableData extends DataClass
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
       lastUsedAt: serializer.fromJson<DateTime>(json['lastUsedAt']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       color: serializer.fromJson<String?>(json['color']),
     );
   }
@@ -202,6 +221,7 @@ class CategoriesTableData extends DataClass
       'sortOrder': serializer.toJson<int>(sortOrder),
       'lastUsedAt': serializer.toJson<DateTime>(lastUsedAt),
       'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'color': serializer.toJson<String?>(color),
     };
   }
@@ -213,6 +233,7 @@ class CategoriesTableData extends DataClass
           int? sortOrder,
           DateTime? lastUsedAt,
           DateTime? createdAt,
+          DateTime? updatedAt,
           Value<String?> color = const Value.absent()}) =>
       CategoriesTableData(
         id: id ?? this.id,
@@ -221,6 +242,7 @@ class CategoriesTableData extends DataClass
         sortOrder: sortOrder ?? this.sortOrder,
         lastUsedAt: lastUsedAt ?? this.lastUsedAt,
         createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
         color: color.present ? color.value : this.color,
       );
   CategoriesTableData copyWithCompanion(CategoriesTableCompanion data) {
@@ -232,6 +254,7 @@ class CategoriesTableData extends DataClass
       lastUsedAt:
           data.lastUsedAt.present ? data.lastUsedAt.value : this.lastUsedAt,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       color: data.color.present ? data.color.value : this.color,
     );
   }
@@ -245,14 +268,15 @@ class CategoriesTableData extends DataClass
           ..write('sortOrder: $sortOrder, ')
           ..write('lastUsedAt: $lastUsedAt, ')
           ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('color: $color')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, userId, name, sortOrder, lastUsedAt, createdAt, color);
+  int get hashCode => Object.hash(
+      id, userId, name, sortOrder, lastUsedAt, createdAt, updatedAt, color);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -263,6 +287,7 @@ class CategoriesTableData extends DataClass
           other.sortOrder == this.sortOrder &&
           other.lastUsedAt == this.lastUsedAt &&
           other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
           other.color == this.color);
 }
 
@@ -273,6 +298,7 @@ class CategoriesTableCompanion extends UpdateCompanion<CategoriesTableData> {
   final Value<int> sortOrder;
   final Value<DateTime> lastUsedAt;
   final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
   final Value<String?> color;
   final Value<int> rowid;
   const CategoriesTableCompanion({
@@ -282,6 +308,7 @@ class CategoriesTableCompanion extends UpdateCompanion<CategoriesTableData> {
     this.sortOrder = const Value.absent(),
     this.lastUsedAt = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
     this.color = const Value.absent(),
     this.rowid = const Value.absent(),
   });
@@ -292,6 +319,7 @@ class CategoriesTableCompanion extends UpdateCompanion<CategoriesTableData> {
     this.sortOrder = const Value.absent(),
     required DateTime lastUsedAt,
     required DateTime createdAt,
+    this.updatedAt = const Value.absent(),
     this.color = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : id = Value(id),
@@ -306,6 +334,7 @@ class CategoriesTableCompanion extends UpdateCompanion<CategoriesTableData> {
     Expression<int>? sortOrder,
     Expression<DateTime>? lastUsedAt,
     Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
     Expression<String>? color,
     Expression<int>? rowid,
   }) {
@@ -316,6 +345,7 @@ class CategoriesTableCompanion extends UpdateCompanion<CategoriesTableData> {
       if (sortOrder != null) 'sort_order': sortOrder,
       if (lastUsedAt != null) 'last_used_at': lastUsedAt,
       if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (color != null) 'color': color,
       if (rowid != null) 'rowid': rowid,
     });
@@ -328,6 +358,7 @@ class CategoriesTableCompanion extends UpdateCompanion<CategoriesTableData> {
       Value<int>? sortOrder,
       Value<DateTime>? lastUsedAt,
       Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt,
       Value<String?>? color,
       Value<int>? rowid}) {
     return CategoriesTableCompanion(
@@ -337,6 +368,7 @@ class CategoriesTableCompanion extends UpdateCompanion<CategoriesTableData> {
       sortOrder: sortOrder ?? this.sortOrder,
       lastUsedAt: lastUsedAt ?? this.lastUsedAt,
       createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
       color: color ?? this.color,
       rowid: rowid ?? this.rowid,
     );
@@ -363,6 +395,9 @@ class CategoriesTableCompanion extends UpdateCompanion<CategoriesTableData> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
     if (color.present) {
       map['color'] = Variable<String>(color.value);
     }
@@ -381,6 +416,7 @@ class CategoriesTableCompanion extends UpdateCompanion<CategoriesTableData> {
           ..write('sortOrder: $sortOrder, ')
           ..write('lastUsedAt: $lastUsedAt, ')
           ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('color: $color, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -3688,6 +3724,7 @@ typedef $$CategoriesTableTableCreateCompanionBuilder = CategoriesTableCompanion
   Value<int> sortOrder,
   required DateTime lastUsedAt,
   required DateTime createdAt,
+  Value<DateTime> updatedAt,
   Value<String?> color,
   Value<int> rowid,
 });
@@ -3699,6 +3736,7 @@ typedef $$CategoriesTableTableUpdateCompanionBuilder = CategoriesTableCompanion
   Value<int> sortOrder,
   Value<DateTime> lastUsedAt,
   Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
   Value<String?> color,
   Value<int> rowid,
 });
@@ -3729,6 +3767,9 @@ class $$CategoriesTableTableFilterComposer
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get color => $composableBuilder(
       column: $table.color, builder: (column) => ColumnFilters(column));
@@ -3761,6 +3802,9 @@ class $$CategoriesTableTableOrderingComposer
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get color => $composableBuilder(
       column: $table.color, builder: (column) => ColumnOrderings(column));
 }
@@ -3791,6 +3835,9 @@ class $$CategoriesTableTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
   GeneratedColumn<String> get color =>
       $composableBuilder(column: $table.color, builder: (column) => column);
@@ -3829,6 +3876,7 @@ class $$CategoriesTableTableTableManager extends RootTableManager<
             Value<int> sortOrder = const Value.absent(),
             Value<DateTime> lastUsedAt = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
             Value<String?> color = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
@@ -3839,6 +3887,7 @@ class $$CategoriesTableTableTableManager extends RootTableManager<
             sortOrder: sortOrder,
             lastUsedAt: lastUsedAt,
             createdAt: createdAt,
+            updatedAt: updatedAt,
             color: color,
             rowid: rowid,
           ),
@@ -3849,6 +3898,7 @@ class $$CategoriesTableTableTableManager extends RootTableManager<
             Value<int> sortOrder = const Value.absent(),
             required DateTime lastUsedAt,
             required DateTime createdAt,
+            Value<DateTime> updatedAt = const Value.absent(),
             Value<String?> color = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
@@ -3859,6 +3909,7 @@ class $$CategoriesTableTableTableManager extends RootTableManager<
             sortOrder: sortOrder,
             lastUsedAt: lastUsedAt,
             createdAt: createdAt,
+            updatedAt: updatedAt,
             color: color,
             rowid: rowid,
           ),

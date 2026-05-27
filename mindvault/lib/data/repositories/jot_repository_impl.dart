@@ -105,7 +105,12 @@ class JotRepositoryImpl implements JotRepository {
       final synced = _decryptModel(await _remote.insertJot(_payload(jot)));
       await _local.upsertJot(_jotToCompanion(synced));
       return synced;
-    } catch (_) {
+    } catch (e) {
+      _errorLogger.report(
+        source: 'create_spark_remote',
+        message: e.toString(),
+        context: {'spark_id': jot.id},
+      );
       await _local.upsertPendingOp(jot.id, 'create_spark', jot.id);
       return jot;
     }
@@ -140,7 +145,12 @@ class JotRepositoryImpl implements JotRepository {
       await _local.upsertJot(_jotToCompanion(synced));
       await _local.deletePendingOp(id);
       return synced;
-    } catch (_) {
+    } catch (e) {
+      _errorLogger.report(
+        source: 'update_spark_remote',
+        message: e.toString(),
+        context: {'spark_id': id},
+      );
       await _local.upsertPendingOp(id, 'update_spark', id);
       return updated;
     }
@@ -162,7 +172,12 @@ class JotRepositoryImpl implements JotRepository {
       await _local.upsertJot(_jotToCompanion(synced));
       await _local.deletePendingOp(id);
       return synced;
-    } catch (_) {
+    } catch (e) {
+      _errorLogger.report(
+        source: 'clear_spark_reminder_remote',
+        message: e.toString(),
+        context: {'spark_id': id},
+      );
       await _local.upsertPendingOp(id, 'update_spark', id);
       return updated;
     }
@@ -179,7 +194,12 @@ class JotRepositoryImpl implements JotRepository {
     await _local.removePendingOpsForRecord(id);
     try {
       await _remote.deleteJot(id);
-    } catch (_) {
+    } catch (e) {
+      _errorLogger.report(
+        source: 'delete_spark_remote',
+        message: e.toString(),
+        context: {'spark_id': id},
+      );
       await _local.upsertPendingOp('del_jot_$id', 'delete_spark', id);
     }
   }
@@ -217,12 +237,24 @@ class JotRepositoryImpl implements JotRepository {
                 await _local.deletePendingOp(op.id);
                 continue;
               }
-            } catch (_) {}
+            } catch (e) {
+              _errorLogger.report(
+                source: 'sync_pending_spark_fetch_remote',
+                message: e.toString(),
+                context: {'spark_id': op.recordId, 'op_type': op.opType},
+              );
+            }
           }
           await _remote.upsertJot(_payload(jot));
         }
         await _local.deletePendingOp(op.id);
-      } catch (_) {}
+      } catch (e) {
+        _errorLogger.report(
+          source: 'sync_pending_spark_op',
+          message: e.toString(),
+          context: {'spark_id': op.recordId, 'op_type': op.opType},
+        );
+      }
     }
     await _syncAllJots();
   }
