@@ -66,7 +66,11 @@ class AppStringsDe extends AppStrings {
   String get splashLoading => 'Tresor wird gesichert…';
 
   @override
-  String get authSubtitle => 'Deine verschlüsselten KI-Erinnerungen';
+  String get authSubtitle => 'Verliere nie wieder einen Gedanken';
+
+  @override
+  String get authIntroBody =>
+      'MindVault stellt sicher, dass deine Erinnerungen geschützt sind und immer bei dir bleiben, selbst wenn du das Gerät wechselst. Melde dich dafür bitte mit deinem Google-Konto an.';
 
   @override
   String get authEmailLabel => 'E-Mail';
@@ -769,7 +773,7 @@ class AppStringsDe extends AppStrings {
 
   @override
   String get settingsUpgradeDialogBody =>
-      'Pro bietet dir 30 KI-Abrufn pro Tag, bis zu 1000 Erinnerungen, 50 Cluster und 20.000 Zeichen pro Erinnerung.';
+      'Pro bietet dir 30 KI-Abrufn pro Tag, bis zu 1000 Erinnerungen, 50 Cluster und 20.000 Zeichen pro Erinnerung.\n\nbald verfügbar';
 
   @override
   String get contactUsMessageHint => 'Deine Nachricht (optional)…';
@@ -963,6 +967,13 @@ class AppStringsDe extends AppStrings {
       'Tippen, um diesen Gedanken zu organisieren';
 
   @override
+  String get jotDailyDigestTitle => 'MindVault-Funken';
+
+  @override
+  String get jotDailyDigestBody =>
+      'Du hast Gedanken, die noch organisiert werden möchten.';
+
+  @override
   String get jotReminderNotFound => 'Dieser Funke ist nicht mehr verfügbar.';
 
   @override
@@ -1034,4 +1045,137 @@ class AppStringsDe extends AppStrings {
 
   @override
   String get editorSttRecord => 'Sprache aufnehmen';
+
+  @override
+  String get walkthroughSkip => 'Überspringen';
+
+  @override
+  String get walkthroughBack => 'Zurück';
+
+  @override
+  String get walkthroughNext => 'Weiter';
+
+  @override
+  String get walkthroughDone => 'Fertig';
+
+  @override
+  String get walkthroughAllowNotifications => 'Benachrichtigungen erlauben';
+
+  @override
+  String get walkthroughOpenBackgroundSettings => 'Einstellungen öffnen';
+
+  @override
+  String get walkthroughDoLater => 'Ich mache das später';
+
+  @override
+  String get walkthroughWelcomeTitle => 'Willkommen bei MindVault';
+
+  @override
+  String get walkthroughWelcomeBody =>
+      'MindVault hilft dir, deine Erinnerungen und Gedanken griffbereit zu behalten. Für ein optimales Erlebnis erlaube Benachrichtigungen, damit Erinnerungen dich erreichen.';
+
+  @override
+  String get walkthroughBackgroundTitle => 'Erinnerungen zuverlässig halten';
+
+  @override
+  String get walkthroughBackgroundBody =>
+      'Einige Android-Geräte pausieren Apps im Hintergrund. Wir können versuchen, die passenden Einstellungen zu öffnen; aktiviere dort MindVault und kehre dann hierher zurück.';
+
+  @override
+  String get walkthroughArchiveTitle => 'Archiv';
+
+  @override
+  String get walkthroughArchiveBody =>
+      'Das Archiv ist deine Erinnerungsbibliothek. Schreibe und öffne Rezepte, To-dos, Ideen und alles, was du nicht verlieren möchtest.';
+
+  @override
+  String get walkthroughClustersTitle => 'Cluster';
+
+  @override
+  String get walkthroughClustersBody =>
+      'Cluster halten Erinnerungen organisiert und farbcodiert, damit zusammengehörige Gedanken leicht zu überblicken sind.';
+
+  @override
+  String get walkthroughRecallTitle => 'Abruf';
+
+  @override
+  String get walkthroughRecallBody =>
+      'Abruf durchsucht deine Erinnerungen per Stichwort oder mit KI. Frage zum Beispiel \"Wie viel Zucker brauche ich für meinen Kuchen?\" und MindVault gibt dir eine direkte Antwort, statt nur die Erinnerung zu finden.';
+
+  @override
+  String get walkthroughSparksTitle => 'Funken';
+
+  @override
+  String get walkthroughSparksBody =>
+      'Funken sind schnelle Gedanken, die du noch nicht in Erinnerungen umwandeln möchtest. Halte Dinge fest wie \"diesen Film ansehen\", \"Jack mag Erdbeeren\" oder \"Beth ist die Tochter meiner Kollegin\". Entscheide später, was du tun möchtest, oder lass Spark AI Vorschläge machen.';
+
+  @override
+  String get walkthroughWidgetsTitle => 'MindVault-Widgets nutzen';
+
+  @override
+  String get walkthroughWidgetsBody =>
+      'MindVault-Widgets sind leistungsstarke Werkzeuge, um schnell auf deine Erinnerungen zuzugreifen und unterwegs Gedanken zu erstellen. Drücke lange auf den Startbildschirm, wähle Widgets, suche nach MindVault und ziehe die Widgets auf deinen Startbildschirm.';
+
+  @override
+  String get settingsReplayWalkthrough => 'Einführung erneut ansehen';
+
+  @override
+  String get settingsReplayWalkthroughSubtitle =>
+      'Die MindVault-Einführung noch einmal öffnen';
+
+  @override
+  String get memoryHelpTooltip => 'Hilfe zu Erinnerungen';
+
+  @override
+  String get memoryHelpDialogTitle => 'Funktionen der Erinnerung';
+
+  @override
+  String get memoryHelpTitleField => 'Titel';
+
+  @override
+  String get memoryHelpTitleFieldBody =>
+      'Füge einen kurzen Titel hinzu, damit die Erinnerung leichter zu erkennen und wiederzufinden ist.';
+
+  @override
+  String get memoryHelpType => 'Typ';
+
+  @override
+  String memoryHelpTypeBody(Object recordType, Object planType) {
+    return 'Wähle $recordType für freien Text oder $planType für eine Checkliste.';
+  }
+
+  @override
+  String get memoryHelpCluster => 'Cluster';
+
+  @override
+  String get memoryHelpClusterBody =>
+      'Verschiebe die Erinnerung in einen farbcodierten Cluster.';
+
+  @override
+  String get memoryHelpRecord => 'Aufnehmen';
+
+  @override
+  String get memoryHelpRecordBody =>
+      'Nutze die Sprachaufnahme, um in den Titel oder Text zu diktieren.';
+
+  @override
+  String get memoryHelpCopy => 'Kopieren';
+
+  @override
+  String get memoryHelpCopyBody =>
+      'Kopiere den Text der Erinnerung in die Zwischenablage.';
+
+  @override
+  String get memoryHelpReminder => 'Erinnerung';
+
+  @override
+  String get memoryHelpReminderBody =>
+      'Lege einen Alarm für diese Erinnerung fest; Benachrichtigungen müssen erlaubt sein.';
+
+  @override
+  String get memoryHelpLock => 'Sperren';
+
+  @override
+  String get memoryHelpLockBody =>
+      'Markiere eine Erinnerung als privat, damit zum Öffnen die Geräteauthentifizierung nötig ist.';
 }

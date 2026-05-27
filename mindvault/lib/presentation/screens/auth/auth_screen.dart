@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/jots_provider.dart';
 import 'auth_error_formatter.dart';
 import 'auth_form_validator.dart';
 
@@ -275,6 +276,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   Future<void> _returnToSignIn({bool signOutRecoverySession = false}) async {
     if (signOutRecoverySession &&
         ref.read(supabaseClientProvider).auth.currentSession != null) {
+      await ref.read(jotReminderSchedulerProvider).cancelDailyDigest();
       await ref.read(authDatasourceProvider).signOut();
     }
 
@@ -387,11 +389,22 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       const SizedBox(height: 12),
                       Text(
                         _title(l),
-                        style: tt.titleMedium?.copyWith(
+                        style: tt.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
                           color: cs.onSurfaceVariant,
                         ),
                         textAlign: TextAlign.center,
                       ),
+                      if (_isDefaultAuthView) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          l.authIntroBody,
+                          style: tt.bodyMedium?.copyWith(
+                            color: cs.onSurfaceVariant,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                       const Spacer(flex: 3),
                       if (_error != null ||
                           deepLinkError != null ||

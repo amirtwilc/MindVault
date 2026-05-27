@@ -8,6 +8,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/database_provider.dart';
 import '../../providers/encryption_provider.dart';
+import '../../providers/jots_provider.dart';
 import '../../../core/constants/supabase_constants.dart';
 import '../../../data/remote/supabase/supabase_user_keys_datasource.dart';
 import 'package:encrypt/encrypt.dart' as enc;
@@ -179,6 +180,7 @@ class _PinSetupScreenState extends ConsumerState<PinSetupScreen> {
   }
 
   Future<void> _signOut() async {
+    await ref.read(jotReminderSchedulerProvider).cancelDailyDigest();
     await ref.read(encryptionServiceProvider).deleteKey();
     ref.read(aesKeyProvider.notifier).state = null;
     ref.invalidate(encryptionReadyProvider);

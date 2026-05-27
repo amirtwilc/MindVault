@@ -9,6 +9,7 @@ import '../../providers/jots_provider.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/notes_provider.dart';
 import '../../providers/tier_provider.dart';
+import '../../providers/walkthrough_provider.dart';
 import '../../../services/widget_data_service.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -199,16 +200,36 @@ class SettingsScreen extends ConsumerWidget {
           ),
           Card(
             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            child: ListTile(
-              leading: Icon(Icons.logout, color: cs.error),
-              title: Text(l.settingsSignOut, style: TextStyle(color: cs.error)),
-              onTap: () async {
-                await ref.read(encryptionServiceProvider).deleteKey();
-                ref.read(aesKeyProvider.notifier).state = null;
-                ref.invalidate(encryptionReadyProvider);
-                await WidgetDataService().clearWidget();
-                await ref.read(authDatasourceProvider).signOut();
-              },
+            child: Column(
+              children: [
+                ListTile(
+                  leading: Icon(
+                    Icons.help_outline,
+                    color: cs.primary,
+                    textDirection: TextDirection.ltr,
+                  ),
+                  title: Text(l.settingsReplayWalkthrough),
+                  subtitle: Text(l.settingsReplayWalkthroughSubtitle),
+                  onTap: () =>
+                      ref.read(walkthroughProvider.notifier).startManual(),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: Icon(Icons.logout, color: cs.error),
+                  title: Text(l.settingsSignOut,
+                      style: TextStyle(color: cs.error)),
+                  onTap: () async {
+                    await ref
+                        .read(jotReminderSchedulerProvider)
+                        .cancelDailyDigest();
+                    await ref.read(encryptionServiceProvider).deleteKey();
+                    ref.read(aesKeyProvider.notifier).state = null;
+                    ref.invalidate(encryptionReadyProvider);
+                    await WidgetDataService().clearWidget();
+                    await ref.read(authDatasourceProvider).signOut();
+                  },
+                ),
+              ],
             ),
           ),
         ],

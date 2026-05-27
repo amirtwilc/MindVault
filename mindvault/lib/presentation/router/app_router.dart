@@ -34,6 +34,8 @@ import '../screens/widget/widget_jot_compose_screen.dart';
 import '../screens/widget/widget_note_view_screen.dart';
 import '../screens/widget/widget_search_screen.dart';
 import '../screens/home/reminder_note_resolver_screen.dart';
+import '../widgets/app_walkthrough_overlay.dart';
+import '../widgets/mindvault_nav_icons.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final authNotifier = _AuthListenable(ref);
@@ -63,6 +65,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             queryParameters: {'id': jotId},
           ).toString();
         }
+      }
+      if (state.uri.scheme == 'mindvault' && state.uri.host == 'spark-digest') {
+        return '/home/sparks';
       }
 
       final authState = ref.read(authStateProvider).valueOrNull;
@@ -319,6 +324,7 @@ class HomeShell extends ConsumerStatefulWidget {
 class _HomeShellState extends ConsumerState<HomeShell>
     with WidgetsBindingObserver {
   late final PageController _pageController;
+  late final Map<WalkthroughTarget, GlobalKey> _walkthroughTargetKeys;
   int _currentPage = 0;
   int? _programmaticTargetPage;
 
@@ -349,6 +355,12 @@ class _HomeShellState extends ConsumerState<HomeShell>
   void initState() {
     super.initState();
     _pageController = PageController();
+    _walkthroughTargetKeys = {
+      WalkthroughTarget.archive: GlobalKey(debugLabel: 'walkthrough_archive'),
+      WalkthroughTarget.sparks: GlobalKey(debugLabel: 'walkthrough_sparks'),
+      WalkthroughTarget.clusters: GlobalKey(debugLabel: 'walkthrough_clusters'),
+      WalkthroughTarget.recall: GlobalKey(debugLabel: 'walkthrough_recall'),
+    };
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _syncPendingOps();
@@ -415,56 +427,97 @@ class _HomeShellState extends ConsumerState<HomeShell>
     ref.watch(reminderStartupProvider);
 
     final location = GoRouterState.of(context).uri.path;
-    return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (page) {
-          if (_programmaticTargetPage != null) {
-            if (page == _programmaticTargetPage) _programmaticTargetPage = null;
-            return;
-          }
-          setState(() => _currentPage = page);
-          _navigate(context, page);
-        },
-        children: [
-          const AllNotesScreen(),
-          _isJotsPage(location) ? widget.child : const JotsScreen(),
-          _isCategoriesSubPage(location) ? widget.child : const HomeScreen(),
-          _isSearchSubPage(location) ? widget.child : const SearchScreen(),
-          const SettingsScreen(),
-        ],
-      ),
-      bottomNavigationBar: NavigationBar(
-        labelTextStyle: WidgetStatePropertyAll<TextStyle?>(bottomNavLabelStyle),
-        destinations: [
-          NavigationDestination(
-              icon: const Icon(Icons.notes), label: l.navAllNotes),
-          NavigationDestination(
-              icon: const Icon(Icons.bolt_outlined), label: l.navJots),
-          NavigationDestination(
-              icon: const Icon(Icons.grid_view), label: l.navCategories),
-          NavigationDestination(
-              icon: const Icon(Icons.search), label: l.navSearch),
-          NavigationDestination(
-              icon: const Icon(Icons.settings), label: l.navSettings),
-        ],
-        selectedIndex: _currentPage,
-        onDestinationSelected: (i) {
-          setState(() => _currentPage = i);
-          _navigate(context, i);
-          _programmaticTargetPage = i;
-          _pageController
-              .animateToPage(
-            i,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-          )
-              .then((_) {
-            if (mounted) _programmaticTargetPage = null;
-          });
-        },
-      ),
+    return Stack(
+      children: [
+        Scaffold(
+          body: PageView(
+            controller: _pageController,
+            onPageChanged: (page) {
+              if (_programmaticTargetPage != null) {
+                if (page == _programmaticTargetPage) {
+                  _programmaticTargetPage = null;
+                }
+                return;
+              }
+              setState(() => _currentPage = page);
+              _navigate(context, page);
+            },
+            children: [
+              const AllNotesScreen(),
+              _isJotsPage(location) ? widget.child : const JotsScreen(),
+              _isCategoriesSubPage(location)
+                  ? widget.child
+                  : const HomeScreen(),
+              _isSearchSubPage(location) ? widget.child : const SearchScreen(),
+              const SettingsScreen(),
+            ],
+          ),
+          bottomNavigationBar: NavigationBar(
+            labelTextStyle:
+                WidgetStatePropertyAll<TextStyle?>(bottomNavLabelStyle),
+            destinations: [
+              NavigationDestination(
+                key: _walkthroughTargetKeys[WalkthroughTarget.archive],
+                icon: const MindVaultNavIcon(
+                  kind: MindVaultNavIconKind.archive,
+                ),
+                label: l.navAllNotes,
+              ),
+              NavigationDestination(
+                key: _walkthroughTargetKeys[WalkthroughTarget.sparks],
+                icon: const MindVaultNavIcon(
+                  kind: MindVaultNavIconKind.sparks,
+                ),
+                label: l.navJots,
+              ),
+              NavigationDestination(
+                key: _walkthroughTargetKeys[WalkthroughTarget.clusters],
+                icon: const MindVaultNavIcon(
+                  kind: MindVaultNavIconKind.clusters,
+                ),
+                label: l.navCategories,
+              ),
+              NavigationDestination(
+                key: _walkthroughTargetKeys[WalkthroughTarget.recall],
+                icon: const Icon(Icons.search),
+                label: l.navSearch,
+              ),
+              NavigationDestination(
+                  icon: const Icon(Icons.settings), label: l.navSettings),
+            ],
+            selectedIndex: _currentPage,
+            onDestinationSelected: _selectPage,
+          ),
+        ),
+        AppWalkthroughOverlay(
+          targetKeys: _walkthroughTargetKeys,
+          onNavigateToSection: (page) => _selectPage(page, animate: false),
+        ),
+      ],
     );
+  }
+
+  void _selectPage(int index, {bool animate = true}) {
+    setState(() => _currentPage = index);
+    _navigate(context, index);
+    _programmaticTargetPage = index;
+    if (!_pageController.hasClients) return;
+    if (!animate) {
+      _pageController.jumpToPage(index);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _programmaticTargetPage = null;
+      });
+      return;
+    }
+    _pageController
+        .animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    )
+        .then((_) {
+      if (mounted) _programmaticTargetPage = null;
+    });
   }
 
   int _selectedIndex(BuildContext context) {

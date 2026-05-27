@@ -17,6 +17,7 @@ import '../../providers/jots_provider.dart';
 import '../../providers/notes_provider.dart';
 import '../../providers/reminder_provider.dart';
 import '../../widgets/category_color_picker.dart';
+import '../../widgets/mindvault_nav_icons.dart';
 import '../../widgets/reminder_background_permission_prompt.dart';
 import '_ai_search_widgets.dart' show SttMixin;
 
@@ -634,8 +635,10 @@ class _EmptyJotsState extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.bolt_outlined,
-              size: 64, color: colorScheme.outlineVariant),
+          MindVaultNavIcon(
+              kind: MindVaultNavIconKind.sparks,
+              size: 64,
+              color: colorScheme.outlineVariant),
           const SizedBox(height: 16),
           Text(
             l.jotsEmptyTitle,

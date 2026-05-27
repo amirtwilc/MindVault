@@ -66,7 +66,11 @@ class AppStringsEn extends AppStrings {
   String get splashLoading => 'Securing your vault…';
 
   @override
-  String get authSubtitle => 'Your encrypted AI-powered memories';
+  String get authSubtitle => 'Never lose a thought';
+
+  @override
+  String get authIntroBody =>
+      'MindVault guarantees your memories are secure and are always with you, even if you change a device. To accomplish this, please sign in with your Google account';
 
   @override
   String get authEmailLabel => 'Email';
@@ -748,7 +752,7 @@ class AppStringsEn extends AppStrings {
 
   @override
   String get settingsUpgradeDialogBody =>
-      'Pro gives you 30 AI recalls/day, up to 1000 memories, 50 clusters, and 20,000 chars per memory.';
+      'Pro gives you 30 AI recalls/day, up to 1000 memories, 50 clusters, and 20,000 chars per memory.\n\ncoming soon';
 
   @override
   String get contactUsMessageHint => 'Your message (optional)…';
@@ -937,6 +941,12 @@ class AppStringsEn extends AppStrings {
   String get jotNotificationBody => 'Tap to organize this thought';
 
   @override
+  String get jotDailyDigestTitle => 'MindVault Sparks';
+
+  @override
+  String get jotDailyDigestBody => 'You have thoughts waiting to be organized.';
+
+  @override
   String get jotReminderNotFound => 'That thought could not be found.';
 
   @override
@@ -1006,4 +1016,136 @@ class AppStringsEn extends AppStrings {
 
   @override
   String get editorSttRecord => 'Record voice';
+
+  @override
+  String get walkthroughSkip => 'Skip';
+
+  @override
+  String get walkthroughBack => 'Back';
+
+  @override
+  String get walkthroughNext => 'Next';
+
+  @override
+  String get walkthroughDone => 'Done';
+
+  @override
+  String get walkthroughAllowNotifications => 'Allow notifications';
+
+  @override
+  String get walkthroughOpenBackgroundSettings => 'Open settings';
+
+  @override
+  String get walkthroughDoLater => 'I will do this later';
+
+  @override
+  String get walkthroughWelcomeTitle => 'Welcome to MindVault';
+
+  @override
+  String get walkthroughWelcomeBody =>
+      'MindVault helps you keep your memories and thoughts close at hand. For optimal experience, allow notifications so reminders can reach you.';
+
+  @override
+  String get walkthroughBackgroundTitle => 'Keep reminders reliable';
+
+  @override
+  String get walkthroughBackgroundBody =>
+      'Some Android devices pause apps in the background. We can try to open the right settings; enable MindVault there, then return here.';
+
+  @override
+  String get walkthroughArchiveTitle => 'Archive';
+
+  @override
+  String get walkthroughArchiveBody =>
+      'Archive is your memory library. Write and revisit recipes, to-dos, ideas, and anything you do not want to lose.';
+
+  @override
+  String get walkthroughClustersTitle => 'Clusters';
+
+  @override
+  String get walkthroughClustersBody =>
+      'Clusters keep memories organized and color coded, so related thoughts stay easy to scan.';
+
+  @override
+  String get walkthroughRecallTitle => 'Recall';
+
+  @override
+  String get walkthroughRecallBody =>
+      'Recall searches your memories by keyword or with AI. Ask something like \"How much sugar do I need for my cake?\" and MindVault will provide a straight answer, not just find the memory.';
+
+  @override
+  String get walkthroughSparksTitle => 'Sparks';
+
+  @override
+  String get walkthroughSparksBody =>
+      'Sparks are quick thoughts you are not ready to turn into memories. Capture things like \"watch that movie\", \"Jack likes strawberries\", or \"Beth is my colleague\'s daughter\'s name\". Decide later what to do or let Spark AI suggest for you.';
+
+  @override
+  String get walkthroughWidgetsTitle => 'Use MindVault widgets';
+
+  @override
+  String get walkthroughWidgetsBody =>
+      'MindVault widgets are powerful tools to quickly access your memory and create thoughts on the fly. Long-press the home screen, choose Widgets, look for MindVault and drag the widgets to your home screen.';
+
+  @override
+  String get settingsReplayWalkthrough => 'Replay walkthrough';
+
+  @override
+  String get settingsReplayWalkthroughSubtitle =>
+      'See the MindVault tour again';
+
+  @override
+  String get memoryHelpTooltip => 'Memory help';
+
+  @override
+  String get memoryHelpDialogTitle => 'Memory features';
+
+  @override
+  String get memoryHelpTitleField => 'Title';
+
+  @override
+  String get memoryHelpTitleFieldBody =>
+      'Add a short title to make the memory easier to recognize and recall.';
+
+  @override
+  String get memoryHelpType => 'Type';
+
+  @override
+  String memoryHelpTypeBody(Object recordType, Object planType) {
+    return 'Choose $recordType for freeform text or $planType for a checklist.';
+  }
+
+  @override
+  String get memoryHelpCluster => 'Cluster';
+
+  @override
+  String get memoryHelpClusterBody =>
+      'Move the memory into a color-coded cluster.';
+
+  @override
+  String get memoryHelpRecord => 'Record';
+
+  @override
+  String get memoryHelpRecordBody =>
+      'Use voice recording to dictate into the title or body.';
+
+  @override
+  String get memoryHelpCopy => 'Copy';
+
+  @override
+  String get memoryHelpCopyBody => 'Copy the memory body to the clipboard.';
+
+  @override
+  String get memoryHelpReminder => 'Reminder';
+
+  @override
+  String get memoryHelpReminderBody =>
+      'Set an alert for this memory; notifications must be allowed.';
+
+  @override
+  String get memoryHelpLock => 'Lock';
+
+  @override
+  String get memoryHelpLockBody =>
+      'Mark a memory private so opening it requires device authentication.';
 }

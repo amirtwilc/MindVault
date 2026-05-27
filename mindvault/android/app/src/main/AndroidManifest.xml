@@ -75,6 +75,16 @@
                     android:host="jot"
                     android:path="/reminder"/>
             </intent-filter>
+
+            <!-- Deep link for the daily Spark digest notification -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="mindvault"
+                    android:host="spark-digest"/>
+            </intent-filter>
         </activity>
 
         <!-- Transparent Flutter activity launched by the widget "New Note" button -->

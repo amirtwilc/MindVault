@@ -74,6 +74,10 @@ class _MindVaultAppState extends ConsumerState<MindVaultApp> {
       }
       return true;
     }
+    if (uri.scheme == 'mindvault' && uri.host == 'spark-digest') {
+      if (mounted) ref.read(appRouterProvider).go('/home/sparks');
+      return true;
+    }
     return false;
   }
 
@@ -106,19 +110,26 @@ class _MindVaultAppState extends ConsumerState<MindVaultApp> {
       final now = DateTime.now().toUtc();
       final jots = next.value ?? const [];
       await _clearExpiredJotReminders(jots);
+      final jotScheduler = ref.read(jotReminderSchedulerProvider);
+      final strings = reminderStringsFor(ref.read(localeProvider));
+      if (jots.isEmpty) {
+        await jotScheduler.cancelDailyDigest();
+      } else {
+        await jotScheduler.scheduleDailyDigest(
+          title: strings.jotDailyDigestTitle,
+          body: strings.jotDailyDigestBody,
+        );
+      }
       final active = jots
           .where(
               (jot) => jot.reminderAt != null && jot.reminderAt!.isAfter(now))
           .toList();
-      await ref
-          .read(jotReminderSchedulerProvider)
-          .cancelExcept(active.map((jot) => jot.id));
+      await jotScheduler.cancelExcept(active.map((jot) => jot.id));
       for (final jot in active) {
-        await ref.read(jotReminderSchedulerProvider).schedule(
-              jot: jot,
-              notificationBody: reminderStringsFor(ref.read(localeProvider))
-                  .jotNotificationBody,
-            );
+        await jotScheduler.schedule(
+          jot: jot,
+          notificationBody: strings.jotNotificationBody,
+        );
       }
       _scheduleNextJotReminderCleanup(jots);
     });

@@ -509,14 +509,22 @@ class AiErrorView extends StatelessWidget {
 
 mixin SttMixin<T extends StatefulWidget> on State<T> {
   final SpeechToText stt = SpeechToText();
-  bool sttAvailable = false;
+  bool sttAvailable = true;
   bool listening = false;
+  bool _sttInitialized = false;
 
   Future<void> initStt() async {
+    if (mounted) setState(() => sttAvailable = true);
+  }
+
+  Future<bool> _ensureSttInitialized() async {
+    if (_sttInitialized) return sttAvailable;
     final available = await stt.initialize(onError: (_) {
       if (mounted) setState(() => listening = false);
     });
+    _sttInitialized = true;
     if (mounted) setState(() => sttAvailable = available);
+    return available;
   }
 
   Future<void> toggleListen(void Function(String) onResult) async {
@@ -525,6 +533,7 @@ mixin SttMixin<T extends StatefulWidget> on State<T> {
       if (mounted) setState(() => listening = false);
       return;
     }
+    if (!await _ensureSttInitialized()) return;
     if (mounted) setState(() => listening = true);
     await stt.listen(
       onResult: (result) {

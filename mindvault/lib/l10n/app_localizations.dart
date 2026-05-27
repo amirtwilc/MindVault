@@ -223,8 +223,14 @@ abstract class AppStrings {
   /// No description provided for @authSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Your encrypted AI-powered memories'**
+  /// **'Never lose a thought'**
   String get authSubtitle;
+
+  /// No description provided for @authIntroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'MindVault guarantees your memories are secure and are always with you, even if you change a device. To accomplish this, please sign in with your Google account'**
+  String get authIntroBody;
 
   /// No description provided for @authEmailLabel.
   ///
@@ -1429,7 +1435,7 @@ abstract class AppStrings {
   /// No description provided for @settingsUpgradeDialogBody.
   ///
   /// In en, this message translates to:
-  /// **'Pro gives you 30 AI recalls/day, up to 1000 memories, 50 clusters, and 20,000 chars per memory.'**
+  /// **'Pro gives you 30 AI recalls/day, up to 1000 memories, 50 clusters, and 20,000 chars per memory.\n\ncoming soon'**
   String get settingsUpgradeDialogBody;
 
   /// No description provided for @contactUsMessageHint.
@@ -1762,6 +1768,18 @@ abstract class AppStrings {
   /// **'Tap to organize this thought'**
   String get jotNotificationBody;
 
+  /// No description provided for @jotDailyDigestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'MindVault Sparks'**
+  String get jotDailyDigestTitle;
+
+  /// No description provided for @jotDailyDigestBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You have thoughts waiting to be organized.'**
+  String get jotDailyDigestBody;
+
   /// No description provided for @jotReminderNotFound.
   ///
   /// In en, this message translates to:
@@ -1899,6 +1917,240 @@ abstract class AppStrings {
   /// In en, this message translates to:
   /// **'Record voice'**
   String get editorSttRecord;
+
+  /// No description provided for @walkthroughSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get walkthroughSkip;
+
+  /// No description provided for @walkthroughBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get walkthroughBack;
+
+  /// No description provided for @walkthroughNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get walkthroughNext;
+
+  /// No description provided for @walkthroughDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get walkthroughDone;
+
+  /// No description provided for @walkthroughAllowNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow notifications'**
+  String get walkthroughAllowNotifications;
+
+  /// No description provided for @walkthroughOpenBackgroundSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get walkthroughOpenBackgroundSettings;
+
+  /// No description provided for @walkthroughDoLater.
+  ///
+  /// In en, this message translates to:
+  /// **'I will do this later'**
+  String get walkthroughDoLater;
+
+  /// No description provided for @walkthroughWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to MindVault'**
+  String get walkthroughWelcomeTitle;
+
+  /// No description provided for @walkthroughWelcomeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'MindVault helps you keep your memories and thoughts close at hand. For optimal experience, allow notifications so reminders can reach you.'**
+  String get walkthroughWelcomeBody;
+
+  /// No description provided for @walkthroughBackgroundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep reminders reliable'**
+  String get walkthroughBackgroundTitle;
+
+  /// No description provided for @walkthroughBackgroundBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Some Android devices pause apps in the background. We can try to open the right settings; enable MindVault there, then return here.'**
+  String get walkthroughBackgroundBody;
+
+  /// No description provided for @walkthroughArchiveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get walkthroughArchiveTitle;
+
+  /// No description provided for @walkthroughArchiveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive is your memory library. Write and revisit recipes, to-dos, ideas, and anything you do not want to lose.'**
+  String get walkthroughArchiveBody;
+
+  /// No description provided for @walkthroughClustersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clusters'**
+  String get walkthroughClustersTitle;
+
+  /// No description provided for @walkthroughClustersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Clusters keep memories organized and color coded, so related thoughts stay easy to scan.'**
+  String get walkthroughClustersBody;
+
+  /// No description provided for @walkthroughRecallTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recall'**
+  String get walkthroughRecallTitle;
+
+  /// No description provided for @walkthroughRecallBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Recall searches your memories by keyword or with AI. Ask something like \"How much sugar do I need for my cake?\" and MindVault will provide a straight answer, not just find the memory.'**
+  String get walkthroughRecallBody;
+
+  /// No description provided for @walkthroughSparksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sparks'**
+  String get walkthroughSparksTitle;
+
+  /// No description provided for @walkthroughSparksBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Sparks are quick thoughts you are not ready to turn into memories. Capture things like \"watch that movie\", \"Jack likes strawberries\", or \"Beth is my colleague\'s daughter\'s name\". Decide later what to do or let Spark AI suggest for you.'**
+  String get walkthroughSparksBody;
+
+  /// No description provided for @walkthroughWidgetsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use MindVault widgets'**
+  String get walkthroughWidgetsTitle;
+
+  /// No description provided for @walkthroughWidgetsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'MindVault widgets are powerful tools to quickly access your memory and create thoughts on the fly. Long-press the home screen, choose Widgets, look for MindVault and drag the widgets to your home screen.'**
+  String get walkthroughWidgetsBody;
+
+  /// No description provided for @settingsReplayWalkthrough.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay walkthrough'**
+  String get settingsReplayWalkthrough;
+
+  /// No description provided for @settingsReplayWalkthroughSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'See the MindVault tour again'**
+  String get settingsReplayWalkthroughSubtitle;
+
+  /// No description provided for @memoryHelpTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory help'**
+  String get memoryHelpTooltip;
+
+  /// No description provided for @memoryHelpDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory features'**
+  String get memoryHelpDialogTitle;
+
+  /// No description provided for @memoryHelpTitleField.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get memoryHelpTitleField;
+
+  /// No description provided for @memoryHelpTitleFieldBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a short title to make the memory easier to recognize and recall.'**
+  String get memoryHelpTitleFieldBody;
+
+  /// No description provided for @memoryHelpType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get memoryHelpType;
+
+  /// No description provided for @memoryHelpTypeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose {recordType} for freeform text or {planType} for a checklist.'**
+  String memoryHelpTypeBody(Object recordType, Object planType);
+
+  /// No description provided for @memoryHelpCluster.
+  ///
+  /// In en, this message translates to:
+  /// **'Cluster'**
+  String get memoryHelpCluster;
+
+  /// No description provided for @memoryHelpClusterBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Move the memory into a color-coded cluster.'**
+  String get memoryHelpClusterBody;
+
+  /// No description provided for @memoryHelpRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Record'**
+  String get memoryHelpRecord;
+
+  /// No description provided for @memoryHelpRecordBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use voice recording to dictate into the title or body.'**
+  String get memoryHelpRecordBody;
+
+  /// No description provided for @memoryHelpCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get memoryHelpCopy;
+
+  /// No description provided for @memoryHelpCopyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy the memory body to the clipboard.'**
+  String get memoryHelpCopyBody;
+
+  /// No description provided for @memoryHelpReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder'**
+  String get memoryHelpReminder;
+
+  /// No description provided for @memoryHelpReminderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Set an alert for this memory; notifications must be allowed.'**
+  String get memoryHelpReminderBody;
+
+  /// No description provided for @memoryHelpLock.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock'**
+  String get memoryHelpLock;
+
+  /// No description provided for @memoryHelpLockBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark a memory private so opening it requires device authentication.'**
+  String get memoryHelpLockBody;
 }
 
 class _AppStringsDelegate extends LocalizationsDelegate<AppStrings> {

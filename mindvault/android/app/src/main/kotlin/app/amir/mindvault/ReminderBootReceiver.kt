@@ -11,6 +11,7 @@ class ReminderBootReceiver : BroadcastReceiver() {
         ) {
             ReminderPlugin.rescheduleRemembered(context)
             ReminderPlugin.rescheduleRememberedJots(context)
+            ReminderPlugin.rescheduleSparkDigest(context)
             ReminderPlugin.ensureHourlyReconcile(context)
         }
     }

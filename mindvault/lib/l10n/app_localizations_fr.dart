@@ -66,7 +66,11 @@ class AppStringsFr extends AppStrings {
   String get splashLoading => 'Sécurisation de votre coffre…';
 
   @override
-  String get authSubtitle => 'Vos souvenirs chiffrées propulsées par l\'IA';
+  String get authSubtitle => 'Ne perdez plus jamais une pensée';
+
+  @override
+  String get authIntroBody =>
+      'MindVault garantit que vos souvenirs sont sécurisés et toujours avec vous, même si vous changez d\'appareil. Pour cela, connectez-vous avec votre compte Google.';
 
   @override
   String get authEmailLabel => 'E-mail';
@@ -774,7 +778,7 @@ class AppStringsFr extends AppStrings {
 
   @override
   String get settingsUpgradeDialogBody =>
-      'Pro vous offre 30 recherches IA/jour, jusqu\'à 1000 souvenirs, 50 catégories et 20 000 caractères par souvenir.';
+      'Pro vous offre 30 recherches IA/jour, jusqu\'à 1000 souvenirs, 50 catégories et 20 000 caractères par souvenir.\n\nbientôt disponible';
 
   @override
   String get contactUsMessageHint => 'Votre message (facultatif)…';
@@ -969,6 +973,13 @@ class AppStringsFr extends AppStrings {
   String get jotNotificationBody => 'Touchez pour organiser cette pensée';
 
   @override
+  String get jotDailyDigestTitle => 'Étincelles MindVault';
+
+  @override
+  String get jotDailyDigestBody =>
+      'Vous avez des pensées qui attendent d\'être organisées.';
+
+  @override
   String get jotReminderNotFound => 'Ce ?tincelle n’est plus disponible.';
 
   @override
@@ -1040,4 +1051,137 @@ class AppStringsFr extends AppStrings {
 
   @override
   String get editorSttRecord => 'Enregistrer la voix';
+
+  @override
+  String get walkthroughSkip => 'Ignorer';
+
+  @override
+  String get walkthroughBack => 'Retour';
+
+  @override
+  String get walkthroughNext => 'Suivant';
+
+  @override
+  String get walkthroughDone => 'Terminé';
+
+  @override
+  String get walkthroughAllowNotifications => 'Autoriser les notifications';
+
+  @override
+  String get walkthroughOpenBackgroundSettings => 'Ouvrir les paramètres';
+
+  @override
+  String get walkthroughDoLater => 'Je le ferai plus tard';
+
+  @override
+  String get walkthroughWelcomeTitle => 'Bienvenue dans MindVault';
+
+  @override
+  String get walkthroughWelcomeBody =>
+      'MindVault vous aide à garder vos souvenirs et pensées à portée de main. Pour une expérience optimale, autorisez les notifications afin que les rappels puissent vous parvenir.';
+
+  @override
+  String get walkthroughBackgroundTitle => 'Rendre les rappels fiables';
+
+  @override
+  String get walkthroughBackgroundBody =>
+      'Certains appareils Android mettent les apps en pause en arrière-plan. Nous pouvons essayer d\'ouvrir les bons paramètres; activez MindVault, puis revenez ici.';
+
+  @override
+  String get walkthroughArchiveTitle => 'Archives';
+
+  @override
+  String get walkthroughArchiveBody =>
+      'Les archives sont votre bibliothèque de souvenirs. Notez et retrouvez recettes, tâches, idées et tout ce que vous ne voulez pas perdre.';
+
+  @override
+  String get walkthroughClustersTitle => 'Groupes';
+
+  @override
+  String get walkthroughClustersBody =>
+      'Les groupes gardent vos souvenirs organisés et codés par couleur, afin que les pensées liées restent faciles à parcourir.';
+
+  @override
+  String get walkthroughRecallTitle => 'Réminiscence';
+
+  @override
+  String get walkthroughRecallBody =>
+      'Réminiscence recherche vos souvenirs par mots-clés ou avec l\'IA. Demandez par exemple \"Combien de sucre me faut-il pour mon gâteau ?\" et MindVault fournira une réponse directe, pas seulement le souvenir.';
+
+  @override
+  String get walkthroughSparksTitle => 'Étincelles';
+
+  @override
+  String get walkthroughSparksBody =>
+      'Les étincelles sont des pensées rapides que vous ne voulez pas encore transformer en souvenirs. Capturez des choses comme \"regarder ce film\", \"Jack aime les fraises\" ou \"Beth est la fille de ma collègue\". Décidez plus tard quoi en faire ou laissez Spark AI vous suggérer.';
+
+  @override
+  String get walkthroughWidgetsTitle => 'Utiliser les widgets MindVault';
+
+  @override
+  String get walkthroughWidgetsBody =>
+      'Les widgets MindVault sont des outils puissants pour accéder rapidement à votre mémoire et créer des pensées à la volée. Appuyez longuement sur l\'écran d\'accueil, choisissez Widgets, cherchez MindVault et faites glisser les widgets vers votre écran d\'accueil.';
+
+  @override
+  String get settingsReplayWalkthrough => 'Revoir la présentation';
+
+  @override
+  String get settingsReplayWalkthroughSubtitle =>
+      'Relancer la présentation de MindVault';
+
+  @override
+  String get memoryHelpTooltip => 'Aide mémoire';
+
+  @override
+  String get memoryHelpDialogTitle => 'Fonctions de la mémoire';
+
+  @override
+  String get memoryHelpTitleField => 'Titre';
+
+  @override
+  String get memoryHelpTitleFieldBody =>
+      'Ajoutez un titre court pour rendre la mémoire plus facile à reconnaître et à retrouver.';
+
+  @override
+  String get memoryHelpType => 'Type';
+
+  @override
+  String memoryHelpTypeBody(Object recordType, Object planType) {
+    return 'Choisissez $recordType pour du texte libre ou $planType pour une liste de tâches.';
+  }
+
+  @override
+  String get memoryHelpCluster => 'Cluster';
+
+  @override
+  String get memoryHelpClusterBody =>
+      'Déplacez la mémoire dans un cluster codé par couleur.';
+
+  @override
+  String get memoryHelpRecord => 'Enregistrer';
+
+  @override
+  String get memoryHelpRecordBody =>
+      'Utilisez l\'enregistrement vocal pour dicter dans le titre ou le corps.';
+
+  @override
+  String get memoryHelpCopy => 'Copier';
+
+  @override
+  String get memoryHelpCopyBody =>
+      'Copiez le corps de la mémoire dans le presse-papiers.';
+
+  @override
+  String get memoryHelpReminder => 'Rappel';
+
+  @override
+  String get memoryHelpReminderBody =>
+      'Définissez une alerte pour cette mémoire; les notifications doivent être autorisées.';
+
+  @override
+  String get memoryHelpLock => 'Verrouiller';
+
+  @override
+  String get memoryHelpLockBody =>
+      'Marquez une mémoire comme privée afin que son ouverture exige l\'authentification de l\'appareil.';
 }

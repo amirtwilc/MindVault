@@ -24,6 +24,7 @@ import '../../providers/widget_sync_provider.dart';
 import '../../widgets/bidi_aware_text_field.dart';
 import '../../widgets/category_color_picker.dart';
 import '../../widgets/checklist_note_view.dart';
+import '../../widgets/memory_help_dialog.dart';
 import '../../widgets/reminder_button.dart';
 import '_ai_search_widgets.dart' show SttMixin;
 
@@ -784,6 +785,14 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen>
                 )
               : null,
           actions: [
+            IconButton(
+              tooltip: l.memoryHelpTooltip,
+              icon: const Icon(
+                Icons.help_outline,
+                textDirection: TextDirection.ltr,
+              ),
+              onPressed: () => showMemoryHelpDialog(context),
+            ),
             if (_isReadMode)
               IconButton(
                 tooltip: l.editorTooltipEdit,

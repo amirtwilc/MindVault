@@ -64,7 +64,6 @@ final reminderStartupProvider = FutureProvider<void>((ref) async {
   final noteRepo = ref.watch(noteRepositoryProvider);
   final locale = ref.watch(localeProvider);
   if (repo == null || noteRepo == null) return;
-  await scheduler.ensureInitialNotificationPromptOnce();
   await repo.cleanupExpiredReminders(DateTime.now().toUtc());
   await noteRepo.syncPendingOps();
   await repo.syncPendingOps();

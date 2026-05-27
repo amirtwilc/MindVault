@@ -9,6 +9,10 @@ private const val TAG = "MindVaultReminders"
 
 class ReminderAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action == SPARK_DIGEST_ACTION) {
+            handleSparkDigestAlarm(context, intent)
+            return
+        }
         if (intent.action == JOT_REMINDER_ACTION || intent.hasExtra("jotId")) {
             handleJotAlarm(context, intent)
             return
@@ -39,7 +43,17 @@ class ReminderAlarmReceiver : BroadcastReceiver() {
         ReminderPlugin.forgetFiredJot(context, jotId)
     }
 
+    private fun handleSparkDigestAlarm(context: Context, intent: Intent) {
+        val title = intent.getStringExtra("title") ?: return
+        val body = intent.getStringExtra("body") ?: return
+        Log.i(TAG, "Received Spark digest alarm")
+        if (!ReminderPlugin.shouldFireSparkDigest(context)) return
+        ReminderPlugin.showSparkDigestNotification(context, title, body)
+        ReminderPlugin.rescheduleSparkDigest(context)
+    }
+
     private companion object {
         const val JOT_REMINDER_ACTION = "app.amir.mindvault.JOT_REMINDER_ALARM"
+        const val SPARK_DIGEST_ACTION = "app.amir.mindvault.SPARK_DIGEST_ALARM"
     }
 }
