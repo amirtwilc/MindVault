@@ -23,6 +23,7 @@ import '../screens/home/home_screen.dart';
 import '../screens/home/all_notes_screen.dart';
 import '../screens/home/jots_screen.dart';
 import '../screens/home/jot_reminder_resolver_screen.dart';
+import '../screens/home/spark_digest_resolver_screen.dart';
 import '../screens/home/notes_list_screen.dart';
 import '../screens/home/note_editor_screen.dart';
 import '../screens/home/search_screen.dart';
@@ -67,7 +68,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         }
       }
       if (state.uri.scheme == 'mindvault' && state.uri.host == 'spark-digest') {
-        return '/home/sparks';
+        return '/spark-digest';
       }
 
       final authState = ref.read(authStateProvider).valueOrNull;
@@ -83,6 +84,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       if (!isLoggedIn) {
         if (location == '/reminder-note') return null;
         if (location == '/jot-reminder') return null;
+        if (location == '/spark-digest') return null;
         if (location != '/auth') return '/auth';
         return null;
       }
@@ -99,6 +101,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       if (!encryptionReady && location != '/pin-setup') {
         if (location == '/reminder-note') return null;
         if (location == '/jot-reminder') return null;
+        if (location == '/spark-digest') return null;
         return '/pin-setup';
       }
 
@@ -198,6 +201,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (_, state) => JotReminderResolverScreen(
           jotId: state.uri.queryParameters['id'] ?? '',
         ),
+      ),
+      GoRoute(
+        path: '/spark-digest',
+        builder: (_, __) => const SparkDigestResolverScreen(),
       ),
       // Note editor — outside shell so bottom nav is hidden while editing
       GoRoute(

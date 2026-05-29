@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -393,6 +395,11 @@ class _JotsScreenState extends ConsumerState<JotsScreen>
             onPressed: () => Navigator.pop(ctx, false),
             child: Text(l.actionClose),
           ),
+          if (result.aiDebug != null)
+            TextButton(
+              onPressed: () => _showAiDebugDialog(result.aiDebug!),
+              child: const Text('AI Debug'),
+            ),
           if (result.suggestions.isNotEmpty)
             FilledButton(
               onPressed: () => Navigator.pop(ctx, true),
@@ -404,6 +411,42 @@ class _JotsScreenState extends ConsumerState<JotsScreen>
     if (accept == true) {
       await _acceptSuggestions(runId: result.runId);
     }
+  }
+
+  Future<void> _showAiDebugDialog(Map<String, dynamic> debug) async {
+    const encoder = JsonEncoder.withIndent('  ');
+    final text = encoder.convert(debug);
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('AI Request / Result'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: SelectableText(
+              text,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontFamily: 'monospace',
+                  ),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton.icon(
+            icon: const Icon(Icons.copy),
+            label: const Text('Copy'),
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: text));
+              Navigator.pop(ctx);
+            },
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _acceptSuggestions({String? runId}) async {
@@ -711,9 +754,13 @@ class _JotActionSheetState extends ConsumerState<JotActionSheet> {
     final fallback = _defaultCategoryId(widget.categories);
     final suggestedCategory =
         _categoryIdForName(widget.categories, suggestion?.categoryName);
-    _createCategoryId = suggestion?.categoryId ?? suggestedCategory ?? fallback;
-    _addCategoryId = _createCategoryId;
     _existingNoteId = suggestion?.noteId;
+    final suggestedNoteCategory =
+        _categoryIdForNoteId(widget.notes, _existingNoteId);
+    _createCategoryId = suggestion?.categoryId ?? suggestedCategory ?? fallback;
+    _addCategoryId = suggestion?.action == JotSuggestedAction.addToNote
+        ? suggestedNoteCategory ?? _createCategoryId
+        : _createCategoryId;
     _reminderAt = (suggestion?.reminderAt ?? widget.jot.reminderAt)?.toLocal();
     _locked = suggestion?.isPrivate ?? false;
     _noteType = NoteType.fromStorage(suggestion?.noteType ?? 'record');
@@ -722,8 +769,7 @@ class _JotActionSheetState extends ConsumerState<JotActionSheet> {
       _addToNote = suggestion.action == JotSuggestedAction.addToNote;
       _createAlert = suggestion.reminderAt != null ||
           suggestion.action == JotSuggestedAction.reminder;
-      _updateThought = suggestion.updatedText?.trim().isNotEmpty == true &&
-          suggestion.updatedText!.trim() != widget.jot.text.trim();
+      _updateThought = suggestion.updatedText?.trim().isNotEmpty == true;
     } else if (_hasExistingReminder) {
       _createAlert = true;
     }
@@ -1205,6 +1251,11 @@ class _JotActionSheetState extends ConsumerState<JotActionSheet> {
       if (category.name.toLowerCase() == normalized) return category.id;
     }
     return null;
+  }
+
+  String? _categoryIdForNoteId(List<Note> notes, String? noteId) {
+    if (noteId == null) return null;
+    return notes.where((note) => note.id == noteId).firstOrNull?.categoryId;
   }
 
   String? _defaultCategoryId(List<Category> categories) {

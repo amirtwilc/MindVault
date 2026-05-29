@@ -40,4 +40,8 @@ class SupabaseUserKeysDatasource {
       'salt': salt,
     });
   }
+
+  Future<void> wipeUserContentForFreshStart() async {
+    await _client.rpc('wipe_user_content_for_fresh_start');
+  }
 }

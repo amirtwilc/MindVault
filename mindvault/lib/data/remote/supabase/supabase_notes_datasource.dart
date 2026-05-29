@@ -12,8 +12,9 @@ class SupabaseNotesDatasource {
 
   String get _userId {
     final id = _client.auth.currentUser?.id;
-    if (id == null)
+    if (id == null) {
       throw StateError('SupabaseNotesDatasource: no authenticated user');
+    }
     return id;
   }
 
@@ -29,26 +30,11 @@ class SupabaseNotesDatasource {
   }
 
   Future<NoteModel> insertNote(Map<String, dynamic> data) async {
-    await ensureSupabaseProfile(_client);
-    final response = await _client
-        .from(SupabaseConstants.notesTable)
-        .insert({...data, 'user_id': _userId})
-        .select()
-        .single();
-    return NoteModel.fromJson(response);
+    return upsertNoteLww(data);
   }
 
   Future<NoteModel> updateNote(String id, Map<String, dynamic> data) async {
-    await ensureSupabaseProfile(_client);
-    final response = await _client
-        .from(SupabaseConstants.notesTable)
-        .update(
-            {...data, 'updated_at': DateTime.now().toUtc().toIso8601String()})
-        .eq('id', id)
-        .eq('user_id', _userId)
-        .select()
-        .single();
-    return NoteModel.fromJson(response);
+    return upsertNoteLww({'id': id, ...data});
   }
 
   Future<void> deleteNote(String id) async {
@@ -72,10 +58,32 @@ class SupabaseNotesDatasource {
   RealtimeChannel? _remindersChannel;
 
   Future<void> upsertNote(Map<String, dynamic> data) async {
+    await upsertNoteLww(data);
+  }
+
+  Future<NoteModel> upsertNoteLww(Map<String, dynamic> data) async {
     await ensureSupabaseProfile(_client);
-    await _client
-        .from(SupabaseConstants.notesTable)
-        .upsert({...data, 'user_id': _userId});
+    final response = await _client.rpc('upsert_memory_lww', params: {
+      'p_id': data['id'],
+      'p_category_id': data['category_id'],
+      'p_title': data['title'],
+      'p_body': data['body'] ?? '',
+      'p_is_private': data['is_private'] ?? false,
+      'p_last_used_at': data['last_used_at'],
+      'p_created_at': data['created_at'],
+      'p_updated_at': data['updated_at'],
+      'p_note_type': data['note_type'] ?? 'text',
+      'p_is_pinned': data['is_pinned'] ?? false,
+      'p_pinned_at': data['pinned_at'],
+      'p_pin_order': data['pin_order'],
+    });
+    final rows = (response as List).cast<Map<String, dynamic>>();
+    if (rows.isNotEmpty) return NoteModel.fromJson(rows.first);
+    final current = await fetchNoteById(data['id'] as String);
+    if (current == null) {
+      throw StateError('Memory LWW upsert returned no row for ${data['id']}');
+    }
+    return current;
   }
 
   void subscribeToNotes(
@@ -135,12 +143,21 @@ class SupabaseNotesDatasource {
 
   Future<NoteReminderModel> upsertReminder(Map<String, dynamic> data) async {
     await ensureSupabaseProfile(_client);
-    final response = await _client
-        .from(SupabaseConstants.noteRemindersTable)
-        .upsert({...data, 'user_id': _userId})
-        .select()
-        .single();
-    return NoteReminderModel.fromJson(response);
+    final response = await _client.rpc('upsert_memory_reminder_lww', params: {
+      'p_note_id': data['note_id'],
+      'p_remind_at': data['remind_at'],
+      'p_created_at': data['created_at'],
+      'p_updated_at': data['updated_at'],
+      'p_deleted_at': data['deleted_at'],
+    });
+    final rows = (response as List).cast<Map<String, dynamic>>();
+    if (rows.isNotEmpty) return NoteReminderModel.fromJson(rows.first);
+    final current = await fetchReminderByNoteId(data['note_id'] as String);
+    if (current == null) {
+      throw StateError(
+          'Reminder LWW upsert returned no row for ${data['note_id']}');
+    }
+    return current;
   }
 
   void subscribeToReminders(
@@ -177,11 +194,15 @@ class SupabaseNotesDatasource {
 
   Future<void> updatePinOrders(List<Map<String, dynamic>> updates) async {
     final now = DateTime.now().toUtc().toIso8601String();
-    await Future.wait(updates.map((u) => _client
-        .from(SupabaseConstants.notesTable)
-        .update({'pin_order': u['pin_order'], 'updated_at': now})
-        .eq('id', u['id'] as String)
-        .eq('user_id', _userId)));
+    for (final update in updates) {
+      final current = await fetchNoteById(update['id'] as String);
+      if (current == null) continue;
+      await upsertNote({
+        ...current.toJson(),
+        'pin_order': update['pin_order'],
+        'updated_at': now,
+      });
+    }
   }
 
   Future<List<ChecklistItemModel>> fetchChecklistItems(String noteId) async {
@@ -221,20 +242,31 @@ class SupabaseNotesDatasource {
   Future<ChecklistItemModel> upsertChecklistItem(
       Map<String, dynamic> data) async {
     await ensureSupabaseProfile(_client);
-    final response = await _client
-        .from(SupabaseConstants.checklistItemsTable)
-        .upsert({...data, 'user_id': _userId})
-        .select()
-        .single();
-    return ChecklistItemModel.fromJson(response);
+    final response = await _client.rpc('upsert_plan_item_lww', params: {
+      'p_id': data['id'],
+      'p_note_id': data['note_id'],
+      'p_text': data['text'],
+      'p_is_completed': data['is_completed'] ?? false,
+      'p_sort_order': data['sort_order'] ?? 0,
+      'p_completed_at': data['completed_at'],
+      'p_created_at': data['created_at'],
+      'p_updated_at': data['updated_at'],
+    });
+    final rows = (response as List).cast<Map<String, dynamic>>();
+    if (rows.isNotEmpty) return ChecklistItemModel.fromJson(rows.first);
+    final current = await fetchChecklistItemById(data['id'] as String);
+    if (current == null) {
+      throw StateError(
+          'Plan item LWW upsert returned no row for ${data['id']}');
+    }
+    return current;
   }
 
   Future<void> upsertChecklistItems(List<Map<String, dynamic>> items) async {
     if (items.isEmpty) return;
-    await ensureSupabaseProfile(_client);
-    await _client
-        .from(SupabaseConstants.checklistItemsTable)
-        .upsert(items.map((e) => {...e, 'user_id': _userId}).toList());
+    for (final item in items) {
+      await upsertChecklistItem(item);
+    }
   }
 
   Future<void> deleteChecklistItem(String id) async {

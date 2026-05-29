@@ -278,7 +278,7 @@ void main() {
 
   group('jots', () {
     test('schema version includes jots migration', () {
-      expect(db.schemaVersion, equals(12));
+      expect(db.schemaVersion, equals(13));
     });
 
     test('upsertJot inserts and updates a jot', () async {

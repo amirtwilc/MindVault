@@ -94,7 +94,12 @@ class ReminderRepositoryImpl implements ReminderRepository {
       await _local.upsertReminder(_reminderToCompanion(synced));
       await _local.deletePendingOp(_pendingId(noteId));
       return synced;
-    } catch (_) {
+    } catch (e) {
+      _errorLogger.report(
+        source: 'upsert_reminder_remote',
+        message: e.toString(),
+        context: {'memory_id': noteId},
+      );
       await _local.upsertPendingOp(
           _pendingId(noteId), 'upsert_reminder', noteId);
       return reminder;
@@ -116,7 +121,12 @@ class ReminderRepositoryImpl implements ReminderRepository {
     try {
       await _remote.upsertReminder(_payload(reminder));
       await _local.deletePendingOp(_pendingId(noteId));
-    } catch (_) {
+    } catch (e) {
+      _errorLogger.report(
+        source: 'delete_reminder_remote',
+        message: e.toString(),
+        context: {'memory_id': noteId},
+      );
       await _local.upsertPendingOp(
           _pendingId(noteId), 'delete_reminder', noteId);
     }
@@ -135,7 +145,13 @@ class ReminderRepositoryImpl implements ReminderRepository {
         }
         await _remote.upsertReminder(_payload(rowToReminder(row)));
         await _local.deletePendingOp(op.id);
-      } catch (_) {}
+      } catch (e) {
+        _errorLogger.report(
+          source: 'sync_pending_reminder_op',
+          message: e.toString(),
+          context: {'memory_id': op.recordId, 'op_type': op.opType},
+        );
+      }
     }
     await syncAllReminders();
   }

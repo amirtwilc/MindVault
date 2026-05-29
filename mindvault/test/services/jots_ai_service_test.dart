@@ -129,6 +129,9 @@ void main() {
     expect(sent.length, equals(30));
     expect(sent.first['id'], equals('jot-0'));
     expect(sent.last['id'], equals('jot-29'));
+    expect(backend.lastRequest!['local_now'], isA<String>());
+    expect(backend.lastRequest!['time_zone_offset_minutes'], isA<int>());
+    expect(backend.lastRequest!['time_zone_name'], isA<String>());
     expect(result!.sentCount, equals(30));
     expect(result.limitedToThirty, isTrue);
   });
@@ -321,5 +324,28 @@ void main() {
     expect(result.suggestions.first.noteType, equals('checklist'));
     expect(result.suggestions.first.updatedText, equals('Milk'));
     expect(result.suggestions.last.reminderAt, isNotNull);
+  });
+
+  test('keeps temporary AI debug payload from edge response', () async {
+    final backend = _FakeJotsAiBackend({
+      'run_id': 'run',
+      'suggestions': [],
+      'ai_debug': {
+        'model': 'gemini-test',
+        'request': {'contents': []},
+        'raw_text': '{"s":[]}',
+      },
+    });
+    final service = await _service(backend);
+
+    final result = await service.organize(
+      jots: [_jot(id: 'jot-1')],
+      categories: [_category()],
+      notes: const [],
+      locale: locale,
+    );
+
+    expect(result!.aiDebug?['model'], equals('gemini-test'));
+    expect(result.aiDebug?['raw_text'], equals('{"s":[]}'));
   });
 }

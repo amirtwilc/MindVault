@@ -40,23 +40,29 @@ class SupabaseJotsDatasource {
   }
 
   Future<JotModel> insertJot(Map<String, dynamic> data) async {
-    await ensureSupabaseProfile(_client);
-    final response = await _client
-        .from(SupabaseConstants.jotsTable)
-        .insert({...data, 'user_id': _userId})
-        .select()
-        .single();
-    return JotModel.fromJson(response);
+    return upsertJot(data);
   }
 
   Future<JotModel> upsertJot(Map<String, dynamic> data) async {
     await ensureSupabaseProfile(_client);
-    final response = await _client
-        .from(SupabaseConstants.jotsTable)
-        .upsert({...data, 'user_id': _userId})
-        .select()
-        .single();
-    return JotModel.fromJson(response);
+    final response = await _client.rpc('upsert_spark_lww', params: {
+      'p_id': data['id'],
+      'p_text': data['text'],
+      'p_created_at': data['created_at'],
+      'p_updated_at': data['updated_at'],
+      'p_handled_at': data['handled_at'],
+      'p_ai_processed_at': data['ai_processed_at'],
+      'p_ai_suggestion_json': data['ai_suggestion_json'],
+      'p_ai_suggestion_run_id': data['ai_suggestion_run_id'],
+      'p_reminder_at': data['reminder_at'],
+    });
+    final rows = (response as List).cast<Map<String, dynamic>>();
+    if (rows.isNotEmpty) return JotModel.fromJson(rows.first);
+    final current = await fetchJotById(data['id'] as String);
+    if (current == null) {
+      throw StateError('Spark LWW upsert returned no row for ${data['id']}');
+    }
+    return current;
   }
 
   Future<void> deleteJot(String id) async {

@@ -63,6 +63,10 @@ void main() {
     when(() => channel.unsubscribe()).thenAnswer((_) async => 'ok');
     when(() => remoteCats.subscribeToCategories(any())).thenReturn(channel);
     when(() => remoteCats.fetchCategories()).thenAnswer((_) async => []);
+    when(() => remoteCats.insertCategory(any(), any(),
+        color: any(named: 'color'),
+        id: any(named: 'id'))).thenAnswer((_) async => _model());
+    when(() => remoteCats.upsertCategory(any())).thenAnswer((_) async {});
     when(() => remoteNotes.deleteNotesByCategoryId(any()))
         .thenAnswer((_) async {});
 
@@ -377,8 +381,7 @@ void main() {
     });
 
     test('updates name in state immediately', () async {
-      when(() => remoteCats.updateCategoryName(any(), any()))
-          .thenAnswer((_) async {});
+      when(() => remoteCats.upsertCategory(any())).thenAnswer((_) async {});
 
       await container
           .read(categoriesProvider.notifier)
@@ -389,8 +392,7 @@ void main() {
     });
 
     test('updates Drift', () async {
-      when(() => remoteCats.updateCategoryName(any(), any()))
-          .thenAnswer((_) async {});
+      when(() => remoteCats.upsertCategory(any())).thenAnswer((_) async {});
 
       await container
           .read(categoriesProvider.notifier)
@@ -403,7 +405,7 @@ void main() {
     });
 
     test('queues pending op when Supabase fails', () async {
-      when(() => remoteCats.updateCategoryName(any(), any()))
+      when(() => remoteCats.upsertCategory(any()))
           .thenThrow(Exception('offline'));
 
       await container
@@ -468,7 +470,7 @@ void main() {
     });
 
     test('assigns new sort orders matching the supplied order', () async {
-      when(() => remoteCats.updateSortOrders(any())).thenAnswer((_) async {});
+      when(() => remoteCats.upsertCategory(any())).thenAnswer((_) async {});
 
       await container
           .read(categoriesProvider.notifier)
@@ -481,7 +483,7 @@ void main() {
     });
 
     test('queues pending ops for all categories when Supabase fails', () async {
-      when(() => remoteCats.updateSortOrders(any()))
+      when(() => remoteCats.upsertCategory(any()))
           .thenThrow(Exception('offline'));
 
       await container
@@ -508,8 +510,7 @@ void main() {
     });
 
     test('updates color in state and Drift', () async {
-      when(() => remoteCats.updateCategoryColor(any(), any()))
-          .thenAnswer((_) async {});
+      when(() => remoteCats.upsertCategory(any())).thenAnswer((_) async {});
 
       await container
           .read(categoriesProvider.notifier)

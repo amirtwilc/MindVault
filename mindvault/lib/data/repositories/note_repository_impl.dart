@@ -185,7 +185,13 @@ class NoteRepositoryImpl implements NoteRepository {
         try {
           companions
               .add(_checklistItemToCompanion(_decryptChecklistModel(model)));
-        } catch (_) {}
+        } catch (e) {
+          _errorLogger.report(
+            source: 'decrypt_plan_item_row',
+            message: e.toString(),
+            context: {'plan_item_id': model.id, 'memory_id': model.noteId},
+          );
+        }
       }
       if (companions.isNotEmpty) await _local.upsertChecklistItems(companions);
 
@@ -209,7 +215,13 @@ class NoteRepositoryImpl implements NoteRepository {
     for (final m in models) {
       try {
         companions.add(_noteToCompanion(_decryptModel(m)));
-      } catch (_) {}
+      } catch (e) {
+        _errorLogger.report(
+          source: 'decrypt_memory_row',
+          message: e.toString(),
+          context: {'memory_id': m.id},
+        );
+      }
     }
     if (companions.isNotEmpty) await _local.upsertNotes(companions);
   }
@@ -254,6 +266,21 @@ class NoteRepositoryImpl implements NoteRepository {
         'updated_at': item.updatedAt.toUtc().toIso8601String(),
       };
 
+  Map<String, dynamic> _notePayload(Note note) => {
+        'id': note.id,
+        'category_id': note.categoryId,
+        'title': _enc(note.title),
+        'body': _enc(note.body),
+        'is_private': note.isPrivate,
+        'created_at': note.createdAt.toUtc().toIso8601String(),
+        'updated_at': note.updatedAt.toUtc().toIso8601String(),
+        'last_used_at': note.lastUsedAt.toUtc().toIso8601String(),
+        'is_pinned': note.isPinned,
+        'pinned_at': note.pinnedAt?.toUtc().toIso8601String(),
+        'pin_order': note.pinOrder,
+        'note_type': note.noteType.storageValue,
+      };
+
   Future<void> _refreshChecklistBody(String noteId) async {
     final row = await _local.getNote(noteId);
     if (row == null ||
@@ -277,12 +304,14 @@ class NoteRepositoryImpl implements NoteRepository {
     final row = await _local.getNote(noteId);
     if (row == null) return;
     try {
-      await _remote.updateNote(noteId, {
-        'body': _enc(row.body),
-        'note_type': NoteType.checklist.storageValue,
-      });
+      await _remote.upsertNote(_notePayload(rowToNote(row)));
       await _local.deletePendingOp(noteId);
-    } catch (_) {
+    } catch (e) {
+      _errorLogger.report(
+        source: 'sync_checklist_body_note',
+        message: e.toString(),
+        context: {'memory_id': noteId},
+      );
       await _local.upsertPendingOp(noteId, 'update_memory', noteId);
     }
   }
@@ -319,17 +348,7 @@ class NoteRepositoryImpl implements NoteRepository {
     _analytics?.track('note_created');
 
     try {
-      final model = await _remote.insertNote({
-        'id': id,
-        'category_id': categoryId,
-        'title': _enc(title),
-        'body': _enc(body),
-        'is_private': isPrivate,
-        'created_at': now.toIso8601String(),
-        'updated_at': now.toIso8601String(),
-        'last_used_at': now.toIso8601String(),
-        'note_type': noteType.storageValue,
-      });
+      final model = await _remote.insertNote(_notePayload(note));
       final synced = _decryptModel(model);
       await _local.upsertNote(_noteToCompanion(synced));
       return synced;
@@ -374,13 +393,7 @@ class NoteRepositoryImpl implements NoteRepository {
     await _local.upsertNote(_noteToCompanion(updated));
 
     try {
-      final data = <String, dynamic>{};
-      if (title != null) data['title'] = _enc(title);
-      if (body != null) data['body'] = _enc(body);
-      if (isPrivate != null) data['is_private'] = isPrivate;
-      if (categoryId != null) data['category_id'] = categoryId;
-      if (noteType != null) data['note_type'] = noteType.storageValue;
-      final model = await _remote.updateNote(id, data);
+      final model = await _remote.updateNote(id, _notePayload(updated));
       final synced = _decryptModel(model);
       await _local.upsertNote(_noteToCompanion(synced));
       await _local.deletePendingOp(id);
@@ -417,7 +430,12 @@ class NoteRepositoryImpl implements NoteRepository {
     try {
       await _remote.deleteNote(id);
       return await _remote.fetchNoteById(id) == null;
-    } catch (_) {
+    } catch (e) {
+      _errorLogger.report(
+        source: 'delete_memory_remote_exception',
+        message: e.toString(),
+        context: {'memory_id': id},
+      );
       return false;
     }
   }
@@ -450,22 +468,15 @@ class NoteRepositoryImpl implements NoteRepository {
                 await _local.deletePendingOp(op.id);
                 continue;
               }
-            } catch (_) {}
+            } catch (e) {
+              _errorLogger.report(
+                source: 'sync_pending_memory_fetch_remote',
+                message: e.toString(),
+                context: {'memory_id': op.recordId, 'op_type': op.opType},
+              );
+            }
           }
-          await _remote.upsertNote({
-            'id': note.id,
-            'category_id': note.categoryId,
-            'title': _enc(note.title),
-            'body': _enc(note.body),
-            'is_private': note.isPrivate,
-            'created_at': note.createdAt.toUtc().toIso8601String(),
-            'updated_at': note.updatedAt.toUtc().toIso8601String(),
-            'last_used_at': note.lastUsedAt.toUtc().toIso8601String(),
-            'is_pinned': note.isPinned,
-            'pinned_at': note.pinnedAt?.toUtc().toIso8601String(),
-            'pin_order': note.pinOrder,
-            'note_type': note.noteType.storageValue,
-          });
+          await _remote.upsertNote(_notePayload(note));
         } else if (op.opType == 'delete_plan_item') {
           await _remote.deleteChecklistItem(op.recordId);
           await _local.deleteChecklistItem(op.recordId);
@@ -484,7 +495,13 @@ class NoteRepositoryImpl implements NoteRepository {
         if (handled) {
           await _local.deletePendingOp(op.id);
         }
-      } catch (_) {}
+      } catch (e) {
+        _errorLogger.report(
+          source: 'sync_pending_memory_op',
+          message: e.toString(),
+          context: {'record_id': op.recordId, 'op_type': op.opType},
+        );
+      }
     }
     await _syncAllNotes();
     await _syncAllChecklistItems();
@@ -535,13 +552,17 @@ class NoteRepositoryImpl implements NoteRepository {
     )));
 
     try {
-      await _remote.updateNote(id, {
-        'is_pinned': isPinned,
-        'pinned_at': (isPinned ? newPinnedAt : null)?.toIso8601String(),
-        'pin_order': isPinned ? newPinOrder : null,
-      });
+      final row = await _local.getNote(id);
+      if (row != null) {
+        await _remote.updateNote(id, _notePayload(rowToNote(row)));
+      }
       await _local.deletePendingOp(id);
-    } catch (_) {
+    } catch (e) {
+      _errorLogger.report(
+        source: 'set_memory_pinned_remote',
+        message: e.toString(),
+        context: {'memory_id': id},
+      );
       await _local.upsertPendingOp(id, 'update_memory', id);
     }
   }
@@ -565,14 +586,30 @@ class NoteRepositoryImpl implements NoteRepository {
     }
     if (companions.isNotEmpty) await _local.upsertNotes(companions);
 
-    final updates = orderedIds
-        .asMap()
-        .entries
-        .map((e) => {'id': e.value, 'pin_order': e.key})
-        .toList();
     try {
-      await _remote.updatePinOrders(updates);
-    } catch (_) {
+      for (final companion in companions) {
+        final note = Note(
+          id: companion.id.value,
+          userId: companion.userId.value,
+          categoryId: companion.categoryId.value,
+          title: companion.title.value,
+          body: companion.body.value,
+          isPrivate: companion.isPrivate.value,
+          lastUsedAt: companion.lastUsedAt.value,
+          createdAt: companion.createdAt.value,
+          updatedAt: companion.updatedAt.value,
+          noteType: NoteType.fromStorage(companion.noteType.value),
+          isPinned: companion.isPinned.value,
+          pinnedAt: companion.pinnedAt.value,
+          pinOrder: companion.pinOrder.value,
+        );
+        await _remote.updateNote(note.id, _notePayload(note));
+      }
+    } catch (e) {
+      _errorLogger.report(
+        source: 'reorder_pinned_memories_remote',
+        message: e.toString(),
+      );
       for (final id in orderedIds) {
         await _local.upsertPendingOp(id, 'update_memory', id);
       }
@@ -613,7 +650,12 @@ class NoteRepositoryImpl implements NoteRepository {
       await updateNote(id: noteId, body: body, noteType: noteType);
       try {
         await _remote.deleteChecklistItemsByNoteId(noteId);
-      } catch (_) {
+      } catch (e) {
+        _errorLogger.report(
+          source: 'convert_checklist_delete_remote',
+          message: e.toString(),
+          context: {'memory_id': noteId},
+        );
         for (final item in items) {
           await _local.upsertPendingOp(
               'del_checklist_${item.id}', 'delete_plan_item', item.id);
@@ -682,7 +724,12 @@ class NoteRepositoryImpl implements NoteRepository {
       for (final item in removed) {
         await _remote.deleteChecklistItem(item.id);
       }
-    } catch (_) {
+    } catch (e) {
+      _errorLogger.report(
+        source: 'replace_plan_items_remote',
+        message: e.toString(),
+        context: {'memory_id': noteId},
+      );
       for (final item in items) {
         await _local.upsertPendingOp(item.id, 'update_plan_item', item.id);
       }
@@ -721,7 +768,12 @@ class NoteRepositoryImpl implements NoteRepository {
     await _syncChecklistBodyNote(item.noteId);
     try {
       await _remote.upsertChecklistItem(_checklistItemPayload(item));
-    } catch (_) {
+    } catch (e) {
+      _errorLogger.report(
+        source: 'toggle_plan_item_remote',
+        message: e.toString(),
+        context: {'plan_item_id': item.id, 'memory_id': item.noteId},
+      );
       await _local.upsertPendingOp(item.id, 'update_plan_item', item.id);
     }
   }
@@ -747,7 +799,12 @@ class NoteRepositoryImpl implements NoteRepository {
     try {
       await _remote
           .upsertChecklistItems(items.map(_checklistItemPayload).toList());
-    } catch (_) {
+    } catch (e) {
+      _errorLogger.report(
+        source: 'reorder_plan_items_remote',
+        message: e.toString(),
+        context: {'memory_id': noteId},
+      );
       for (final item in items) {
         await _local.upsertPendingOp(item.id, 'update_plan_item', item.id);
       }
@@ -764,7 +821,12 @@ class NoteRepositoryImpl implements NoteRepository {
     for (final item in completed) {
       try {
         await _remote.deleteChecklistItem(item.id);
-      } catch (_) {
+      } catch (e) {
+        _errorLogger.report(
+          source: 'delete_completed_plan_item_remote',
+          message: e.toString(),
+          context: {'plan_item_id': item.id, 'memory_id': noteId},
+        );
         await _local.upsertPendingOp(
             'del_checklist_${item.id}', 'delete_plan_item', item.id);
       }

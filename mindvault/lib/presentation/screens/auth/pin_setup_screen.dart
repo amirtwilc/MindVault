@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -83,8 +81,9 @@ class _PinSetupScreenState extends ConsumerState<PinSetupScreen> {
     try {
       await client.from(SupabaseConstants.profilesTable).insert({'id': userId});
     } on PostgrestException catch (e) {
-      if (e.code != '23505')
+      if (e.code != '23505') {
         rethrow; // 23505 = unique_violation: profile already exists
+      }
     }
   }
 
@@ -209,13 +208,19 @@ class _PinSetupScreenState extends ConsumerState<PinSetupScreen> {
 
     try {
       // "Start fresh" path: wipe locally cached plaintext notes and any
-      // pending ops that were encrypted with the old key.
+      // pending ops that were encrypted with the old key. The remote wipe
+      // happens first so a network/RLS failure cannot create split-brain data
+      // encrypted with two different keys.
       if (_existingKey != null) {
         final userId = Supabase.instance.client.auth.currentUser?.id;
         if (userId != null) {
+          final client = Supabase.instance.client;
+          final keysDatasource = SupabaseUserKeysDatasource(client);
+          await keysDatasource.wipeUserContentForFreshStart();
+          await ref.read(jotReminderSchedulerProvider).cancelDailyDigest();
           final db = ref.read(appDatabaseProvider);
-          await db.deleteAllUserNotes(userId);
-          await db.deleteAllPendingOps();
+          await db.deleteAllUserDataForFreshStart(userId);
+          await WidgetDataService().clearWidget();
         }
       }
 
@@ -241,13 +246,14 @@ class _PinSetupScreenState extends ConsumerState<PinSetupScreen> {
       ref.read(aesKeyProvider.notifier).state = aesKey;
       ref.invalidate(encryptionReadyProvider);
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _error = e is PostgrestException
               ? l.pinServerError(e.message)
               : l.pinSetupError;
           _loading = false;
         });
+      }
     }
   }
 

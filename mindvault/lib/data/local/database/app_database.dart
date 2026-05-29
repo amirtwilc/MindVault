@@ -20,6 +20,8 @@ class CategoriesTable extends Table {
       integer().named('sort_order').withDefault(const Constant(0))();
   DateTimeColumn get lastUsedAt => dateTime().named('last_used_at')();
   DateTimeColumn get createdAt => dateTime().named('created_at')();
+  DateTimeColumn get updatedAt =>
+      dateTime().named('updated_at').withDefault(currentDateAndTime)();
   TextColumn get color => text().named('color').nullable()();
 
   @override
@@ -184,7 +186,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 12;
+  int get schemaVersion => 13;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -230,6 +232,12 @@ class AppDatabase extends _$AppDatabase {
           }
           if (from < 12) {
             await _repairRenamedLocalSchema();
+          }
+          if (from < 13) {
+            await m.addColumn(categoriesTable, categoriesTable.updatedAt);
+            await customStatement(
+              'UPDATE clusters SET updated_at = created_at WHERE updated_at IS NULL',
+            );
           }
         },
         onCreate: (m) async {
@@ -453,6 +461,21 @@ class AppDatabase extends _$AppDatabase {
     await (delete(checklistItemsTable)..where((t) => t.userId.equals(userId)))
         .go();
     await (delete(notesTable)..where((t) => t.userId.equals(userId))).go();
+  }
+
+  Future<void> deleteAllUserDataForFreshStart(String userId) async {
+    await (delete(checklistItemsTable)..where((t) => t.userId.equals(userId)))
+        .go();
+    await (delete(noteRemindersTable)..where((t) => t.userId.equals(userId)))
+        .go();
+    await delete(reminderDeviceStateTable).go();
+    await (delete(notesTable)..where((t) => t.userId.equals(userId))).go();
+    await (delete(jotsTable)..where((t) => t.userId.equals(userId))).go();
+    await (delete(categoriesTable)..where((t) => t.userId.equals(userId)))
+        .go();
+    await delete(aiSearchHistoryTable).go();
+    await delete(aiCacheTable).go();
+    await deleteAllPendingOps();
   }
 
   Future<NotesTableData?> getNote(String id) {

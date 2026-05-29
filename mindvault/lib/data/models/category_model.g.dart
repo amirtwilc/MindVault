@@ -14,6 +14,7 @@ CategoryModel _$CategoryModelFromJson(Map<String, dynamic> json) =>
       sortOrder: (json['sort_order'] as num).toInt(),
       lastUsedAt: json['last_used_at'] as String,
       createdAt: json['created_at'] as String,
+      updatedAt: json['updated_at'] as String?,
       color: json['color'] as String?,
     );
 
@@ -25,5 +26,6 @@ Map<String, dynamic> _$CategoryModelToJson(CategoryModel instance) =>
       'sort_order': instance.sortOrder,
       'last_used_at': instance.lastUsedAt,
       'created_at': instance.createdAt,
+      'updated_at': instance.updatedAt,
       'color': instance.color,
     };
