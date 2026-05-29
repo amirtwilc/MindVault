@@ -53,6 +53,9 @@ type NoteInput = {
 type OrganizeRequest = {
   locale?: string;
   now?: string;
+  local_now?: string;
+  time_zone_offset_minutes?: number;
+  time_zone_name?: string;
   jots?: JotInput[];
   categories?: CategoryInput[];
   notes?: NoteInput[];
@@ -75,6 +78,8 @@ type PromptAliases = {
   jotIdsByAlias: Map<string, string>;
   categoryIdsByAlias: Map<string, string>;
   noteIdsByAlias: Map<string, string>;
+  noteIdsByTitle: Map<string, string>;
+  noteCategoryAliasesByAlias: Map<string, string>;
   noteTypesByAlias: Map<string, string>;
 };
 
@@ -133,6 +138,145 @@ async function refundUsage(userId: string, usageDate: string): Promise<void> {
 
 function stringValue(value: unknown): string | undefined {
   return typeof value === "string" ? value : undefined;
+}
+
+function numberValue(value: unknown): number | undefined {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value !== "string" || value.trim().length === 0) return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function normalizeNoteType(value: unknown): string | undefined {
+  const raw = stringValue(value);
+  if (raw === "record" || raw === "text") return "record";
+  if (raw === "plan" || raw === "checklist") return "plan";
+  return undefined;
+}
+
+function normalizeLocalReminderAt(value: unknown): string | undefined {
+  const raw = stringValue(value)?.trim();
+  if (!raw) return undefined;
+
+  const dateTime = raw.match(
+    /^(\d{4}-\d{2}-\d{2})[T ](\d{1,2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?$/,
+  );
+  if (dateTime) {
+    const hour = dateTime[2].padStart(2, "0");
+    const second = dateTime[4] ?? "00";
+    return `${dateTime[1]}T${hour}:${dateTime[3]}:${second}`;
+  }
+
+  const dateOnly = raw.match(/^(\d{4}-\d{2}-\d{2})$/);
+  if (dateOnly) return `${dateOnly[1]}T09:00:00`;
+
+  return undefined;
+}
+
+function parseLocalDateTime(value: string): Date | undefined {
+  const match = value.match(
+    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/,
+  );
+  if (!match) return undefined;
+  return new Date(Date.UTC(
+    Number(match[1]),
+    Number(match[2]) - 1,
+    Number(match[3]),
+    Number(match[4]),
+    Number(match[5]),
+    Number(match[6] ?? 0),
+  ));
+}
+
+function formatLocalDateTime(date: Date, timeSource: Date): string {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  const hour = String(timeSource.getUTCHours()).padStart(2, "0");
+  const minute = String(timeSource.getUTCMinutes()).padStart(2, "0");
+  return `${year}-${month}-${day}T${hour}:${minute}`;
+}
+
+function hasExplicitDate(text: string): boolean {
+  return /\b\d{4}-\d{2}-\d{2}\b/.test(text) ||
+    /\b\d{1,2}[./-]\d{1,2}(?:[./-]\d{2,4})?\b/.test(text) ||
+    /\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\b/i
+      .test(text);
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function hasWeekdayCandidate(text: string, candidate: string): boolean {
+  const normalized = candidate.trim().toLowerCase();
+  if (normalized.length < 2) return false;
+  if (/^[a-z]+$/i.test(normalized)) {
+    return new RegExp(`\\b${escapeRegExp(normalized)}\\b`, "i").test(text);
+  }
+  return text.includes(normalized);
+}
+
+function weekdayFromText(text: string, locale: string): number | undefined {
+  const normalizedText = text.toLowerCase();
+  const candidates: Array<[string, number]> = [
+    ["sunday", 0],
+    ["sun", 0],
+    ["monday", 1],
+    ["mon", 1],
+    ["tuesday", 2],
+    ["tue", 2],
+    ["tues", 2],
+    ["wednesday", 3],
+    ["wed", 3],
+    ["thursday", 4],
+    ["thu", 4],
+    ["thur", 4],
+    ["thurs", 4],
+    ["friday", 5],
+    ["fri", 5],
+    ["saturday", 6],
+    ["sat", 6],
+  ];
+
+  for (let day = 0; day < 7; day++) {
+    const date = new Date(Date.UTC(2023, 0, 1 + day));
+    for (const width of ["long", "short"] as const) {
+      const name = new Intl.DateTimeFormat(locale, { weekday: width })
+        .format(date);
+      candidates.push([name, day]);
+    }
+  }
+
+  candidates.sort((a, b) => b[0].length - a[0].length);
+  return candidates.find(([candidate]) =>
+    hasWeekdayCandidate(normalizedText, candidate)
+  )?.[1];
+}
+
+function correctWeekdayReminderAt(input: {
+  reminderAt: string;
+  jotText?: string;
+  localNow: string;
+  locale: string;
+}): string {
+  if (!input.jotText || hasExplicitDate(input.jotText)) {
+    return input.reminderAt;
+  }
+  const targetDay = weekdayFromText(input.jotText, input.locale);
+  if (targetDay === undefined) return input.reminderAt;
+
+  const reminderDate = parseLocalDateTime(input.reminderAt);
+  const localNowDate = parseLocalDateTime(
+    normalizeLocalReminderAt(input.localNow) ?? input.localNow,
+  );
+  if (!reminderDate || !localNowDate) return input.reminderAt;
+
+  let delta = (targetDay - localNowDate.getUTCDay() + 7) % 7;
+  if (delta === 0 && /\bnext\b/i.test(input.jotText)) delta = 7;
+  const correctedDate = new Date(localNowDate);
+  correctedDate.setUTCDate(localNowDate.getUTCDate() + delta);
+  return formatLocalDateTime(correctedDate, reminderDate);
 }
 
 function cleanInput(body: unknown): OrganizeRequest {
@@ -196,6 +340,9 @@ function cleanInput(body: unknown): OrganizeRequest {
   return {
     locale: stringValue(raw.locale),
     now: stringValue(raw.now),
+    local_now: stringValue(raw.local_now),
+    time_zone_offset_minutes: numberValue(raw.time_zone_offset_minutes),
+    time_zone_name: stringValue(raw.time_zone_name),
     jots,
     categories,
     notes,
@@ -230,15 +377,28 @@ function buildPromptAliases(
 
   const noteAliases = new Map<string, string>();
   const noteIdsByAlias = new Map<string, string>();
+  const noteIdsByTitle = new Map<string, string>();
+  const ambiguousNoteTitles = new Set<string>();
+  const noteCategoryAliasesByAlias = new Map<string, string>();
   const noteTypesByAlias = new Map<string, string>();
   const notes: Array<[string, string, string, string]> = [];
   input.notes.forEach((note, index) => {
     const categoryAlias = categoryAliases.get(note.category_id);
     if (!categoryAlias) return;
     const alias = `n${index + 1}`;
-    const noteType = note.note_type === "checklist" ? "checklist" : "text";
+    const noteType = normalizeNoteType(note.note_type) ?? "record";
     noteAliases.set(note.id, alias);
     noteIdsByAlias.set(alias, note.id);
+    const normalizedTitle = note.title.trim().toLowerCase();
+    if (normalizedTitle && !ambiguousNoteTitles.has(normalizedTitle)) {
+      if (noteIdsByTitle.has(normalizedTitle)) {
+        noteIdsByTitle.delete(normalizedTitle);
+        ambiguousNoteTitles.add(normalizedTitle);
+      } else {
+        noteIdsByTitle.set(normalizedTitle, note.id);
+      }
+    }
+    noteCategoryAliasesByAlias.set(alias, categoryAlias);
     noteTypesByAlias.set(alias, noteType);
     notes.push([alias, note.title, categoryAlias, noteType]);
   });
@@ -253,27 +413,42 @@ function buildPromptAliases(
     jotIdsByAlias,
     categoryIdsByAlias,
     noteIdsByAlias,
+    noteIdsByTitle,
+    noteCategoryAliasesByAlias,
     noteTypesByAlias,
   };
+}
+
+function resolveNoteId(value: string | undefined, aliases: PromptAliases) {
+  if (!value) return undefined;
+  return aliases.noteIdsByAlias.get(value) ??
+    (aliases.noteAliases.has(value) ? value : undefined) ??
+    aliases.noteIdsByTitle.get(value.trim().toLowerCase());
 }
 
 function buildPrompt(input: {
   locale: string;
   now: string;
+  localNow?: string;
+  timeZoneOffsetMinutes?: number;
+  timeZoneName?: string;
   aliases: PromptAliases;
 }): string {
   return [
-    "Organize short unhandled thoughts for a private notes app. Return JSON only.",
-    "Suggest only when confidence>=0.55; otherwise omit the jot. Never invent aliases.",
-    "Actions: create=create note, add=add to note, reminder=standalone reminder.",
-    "For create use c and nt(text/checklist); if unsure use the first category. For add use n. For alerts use ISO r with timezone; create/add may also include r.",
-    "Use pr=true for sensitive/private notes such as passwords, codes, secrets, IDs, account/security details, or medical/financial info.",
-    "Facts/info like codes -> create text note, usually pr=true. Dated tasks/calls -> reminder; if date has no time use 09:00. Undated ideas/tasks -> create note.",
-    "Use locale+now for relative/ambiguous dates. Match meaning across languages.",
-    "Use u to clean filler while preserving intent, <=100 chars, do not translate proper nouns unnecessarily. Example: I want to see The Matrix -> The Matrix.",
-    "Keep titles short. Notes are ordered by recent/open relevance.",
-    "Output compact JSON: {\"s\":[{\"j\":\"j1\",\"a\":\"create|add|reminder\",\"p\":0.85,\"t\":\"title\",\"c\":\"c1\",\"n\":\"n1\",\"nt\":\"text|checklist\",\"pr\":false,\"r\":\"ISO\",\"u\":\"cleaned text\"}]}",
+    "Organize MindVault jots into useful note actions. Return one minified JSON object only.",
+    "Use only supplied aliases/data; no outside knowledge, invented facts, dates, people, or context. Preserve intent. Omit weak guesses.",
+    "Input: J=[j,text,created_at?], C=[c,name], N=[n,title,c,nt]. Use aliases (j1,c1,n1), never names or real ids.",
+    "Always output all keys {j,a,p,t,c,n,nt,pr,r,u}; use \"\" for unused string keys. a=create|add|reminder. create uses t,c,nt,pr,u; add uses c,n,u; create/add may also set r. reminder uses r,u and creates no note.",
+    "Choose: if useful only when surfaced later, use reminder; if it has lasting reference/list/project value, use create/add; add r only if it also needs an alert. Single dated/deadline tasks are usually reminder, not a note. add if N has exact/near title match or strong semantic match; never by category alone. unsure add/create=>create. create c defaults to first C.",
+    "nt by intent, not keywords: plan only for user action/list intent (need/want to buy/watch/read/play X, shopping, tasks); record for facts/preferences/reference (Beth likes to read sci-fi books).",
+    "For plan notes, t names the reusable list/project; u is the single item. Strip command words when clear: 'I need to buy milk'->'Milk'.",
+    "u: final text to insert/display; same language; <=100 chars. Replace today/tomorrow/yesterday with local date. Never add facts/tags/explanations.",
+    "t: short reusable topic/collection title <=60 chars; same language as thought unless mixed/proper noun; avoid full-thought titles.",
+    "pr=true for passwords, codes, secrets, credentials, tokens, or clearly sensitive/private content; otherwise pr=false.",
+    "r: set when an alert should be scheduled. Resolve from locale+local_now; compute weekdays exactly; if date has no time use 09:00; if date/time unresolved omit. r is local YYYY-MM-DDTHH:mm, no Z/UTC/offset.",
+    "JSON shape: {\"s\":[{\"j\":\"j1\",\"a\":\"create\",\"p\":0.85,\"t\":\"title\",\"c\":\"c1\",\"n\":\"\",\"nt\":\"plan\",\"pr\":false,\"r\":\"\",\"u\":\"text\"}]}",
     `locale=${input.locale};now=${input.now}`,
+    `local_now=${input.localNow ?? input.now};timezone_offset_minutes=${input.timeZoneOffsetMinutes ?? 0};timezone_name=${input.timeZoneName ?? ""}`,
     `J=${JSON.stringify(input.aliases.jots)}`,
     `C=${JSON.stringify(input.aliases.categories)}`,
     `N=${JSON.stringify(input.aliases.notes)}`,
@@ -288,18 +463,18 @@ const responseSchema = {
       items: {
         type: "OBJECT",
         properties: {
-          j: { type: "STRING" },
+          j: { type: "STRING", maxLength: 12 },
           a: { type: "STRING", enum: ["create", "add", "reminder"] },
           p: { type: "NUMBER" },
-          t: { type: "STRING" },
-          c: { type: "STRING" },
-          n: { type: "STRING" },
-          nt: { type: "STRING", enum: ["text", "checklist"] },
+          t: { type: "STRING", maxLength: 60 },
+          c: { type: "STRING", maxLength: 12 },
+          n: { type: "STRING", maxLength: 120 },
+          nt: { type: "STRING", enum: ["record", "plan"] },
           pr: { type: "BOOLEAN" },
-          r: { type: "STRING" },
-          u: { type: "STRING" },
+          r: { type: "STRING", maxLength: 19 },
+          u: { type: "STRING", maxLength: 100 },
         },
-        required: ["j", "a", "p"],
+        required: ["j", "a", "p", "t", "c", "n", "nt", "pr", "r", "u"],
       },
     },
   },
@@ -330,6 +505,45 @@ function extractAiText(value: unknown): string {
     }>;
   };
   return root.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+}
+
+function aiErrorMessage(value: unknown, fallback: string): string {
+  return (value as { error?: { message?: string } }).error?.message ??
+    fallback;
+}
+
+function isRetryableModelError(status: number, message: string): boolean {
+  const normalized = message.toLowerCase();
+  return status === 429 ||
+    normalized.includes("currently experiencing high demand") ||
+    normalized.includes("spikes in demand");
+}
+
+function thinkingBudgetForModel(model: string): number | undefined {
+  if (model.startsWith("gemini-2.0")) return undefined;
+  return 512;
+}
+
+function buildAiRequest(prompt: string, model: string): Record<string, unknown> {
+  const thinkingBudget = thinkingBudgetForModel(model);
+  return {
+    system_instruction: {
+      parts: [{
+        text:
+          "You are a cautious personal knowledge organizer. Return valid JSON only.",
+      }],
+    },
+    contents: [{ role: "user", parts: [{ text: prompt }] }],
+    generationConfig: {
+      maxOutputTokens: 1024,
+      temperature: 0.1,
+      ...(thinkingBudget
+        ? { thinkingConfig: { thinkingBudget } }
+        : {}),
+      responseMimeType: "application/json",
+      responseSchema,
+    },
+  };
 }
 
 function normalizeSuggestions(
@@ -364,7 +578,7 @@ function normalizeSuggestions(
     const categoryName = stringValue(map.category_name);
     const noteId = stringValue(map.note_id);
     const noteType = stringValue(map.note_type);
-    const reminderAt = stringValue(map.reminder_at);
+    const reminderAt = normalizeLocalReminderAt(map.reminder_at);
     const updatedText = stringValue(map.updated_text)?.trim();
 
     if (categoryId && !validCategoryIds.has(categoryId)) continue;
@@ -373,7 +587,8 @@ function normalizeSuggestions(
     if (noteId && !validNoteIds.has(noteId)) continue;
     if (action === "add_to_note" && !noteId) continue;
     if (action === "reminder" && !reminderAt) continue;
-    if (noteType && noteType !== "text" && noteType !== "checklist") continue;
+    const normalizedNoteType = normalizeNoteType(noteType);
+    if (noteType && !normalizedNoteType) continue;
     if (updatedText !== undefined &&
       (updatedText.length === 0 || updatedText.length > 100)) continue;
 
@@ -386,13 +601,14 @@ function normalizeSuggestions(
       ...(categoryId ? { category_id: categoryId } : {}),
       ...(categoryName ? { category_name: categoryName } : {}),
       ...(noteId ? { note_id: noteId } : {}),
-      ...(noteType ? { note_type: noteType } : {}),
-      ...(typeof map.is_private === "boolean"
+      ...(action === "create_note" && normalizedNoteType
+        ? { note_type: normalizedNoteType }
+        : {}),
+      ...(action === "create_note" && typeof map.is_private === "boolean"
         ? { is_private: map.is_private }
         : {}),
       ...(reminderAt ? { reminder_at: reminderAt } : {}),
       ...(updatedText ? { updated_text: updatedText } : {}),
-      ...(stringValue(map.reason) ? { reason: stringValue(map.reason) } : {}),
     });
   }
 
@@ -402,6 +618,7 @@ function normalizeSuggestions(
 function normalizeCompactSuggestions(
   value: unknown,
   aliases: PromptAliases,
+  options: { locale: string; localNow: string },
 ): Array<Record<string, unknown>> {
   if (!value || typeof value !== "object") return [];
   const root = value as Record<string, unknown>;
@@ -418,6 +635,9 @@ function normalizeCompactSuggestions(
   const firstCategoryId = aliases.categories.length > 0
     ? aliases.categoryIdsByAlias.get(aliases.categories[0][0])
     : undefined;
+  const jotTextsByAlias = new Map(
+    aliases.jots.map(([alias, text]) => [alias, text]),
+  );
   const suggestions: Array<Record<string, unknown>> = [];
   const seenJots = new Set<string>();
 
@@ -426,7 +646,7 @@ function normalizeCompactSuggestions(
     const map = item as Record<string, unknown>;
     const jotAlias = stringValue(map.j) ?? stringValue(map.jot_id);
     const compactAction = stringValue(map.a) ?? stringValue(map.action);
-    const action = compactAction ? actionMap.get(compactAction) : undefined;
+    let action = compactAction ? actionMap.get(compactAction) : undefined;
     const rawConfidence = map.p ?? map.confidence;
     const confidence = typeof rawConfidence === "number"
       ? rawConfidence
@@ -439,27 +659,59 @@ function normalizeCompactSuggestions(
     const categoryAlias = stringValue(map.c) ?? stringValue(map.category_id);
     const noteAlias = stringValue(map.n) ?? stringValue(map.note_id);
     const noteType = stringValue(map.nt) ?? stringValue(map.note_type);
-    const reminderAt = stringValue(map.r) ?? stringValue(map.reminder_at);
+    let reminderAt = normalizeLocalReminderAt(map.r ?? map.reminder_at);
     const updatedText =
       (stringValue(map.u) ?? stringValue(map.updated_text))?.trim();
+    const title = stringValue(map.t) ?? stringValue(map.title);
+    const jotText = jotAlias ? jotTextsByAlias.get(jotAlias) : undefined;
     const isPrivate = typeof map.pr === "boolean"
       ? map.pr
       : typeof map.is_private === "boolean"
       ? map.is_private
       : undefined;
-    const categoryId = categoryAlias
-      ? aliases.categoryIdsByAlias.get(categoryAlias)
+    let noteId = resolveNoteId(noteAlias, aliases);
+    if (action === "create_note" && !noteId && title) {
+      const existingNoteId = resolveNoteId(title, aliases);
+      if (existingNoteId) {
+        action = "add_to_note";
+        noteId = existingNoteId;
+      }
+    }
+    const resolvedNoteAlias = noteId
+      ? aliases.noteAliases.get(noteId)
       : undefined;
-    const noteId = noteAlias ? aliases.noteIdsByAlias.get(noteAlias) : undefined;
+    const noteCategoryAlias = resolvedNoteAlias
+      ? aliases.noteCategoryAliasesByAlias.get(resolvedNoteAlias)
+      : undefined;
+    const resolvedCategoryAlias = action === "add_to_note" && noteCategoryAlias
+      ? noteCategoryAlias
+      : categoryAlias;
+    const categoryId = resolvedCategoryAlias
+      ? aliases.categoryIdsByAlias.get(resolvedCategoryAlias)
+      : undefined;
 
-    if (categoryAlias && !categoryId) continue;
+    if (categoryAlias && !aliases.categoryIdsByAlias.has(categoryAlias)) {
+      continue;
+    }
     if (noteAlias && !noteId) continue;
+    if (action === "add_to_note" && noteAlias && categoryAlias &&
+      noteCategoryAlias &&
+      categoryAlias !== noteCategoryAlias) continue;
     if (action === "add_to_note" && !noteId) continue;
     const resolvedCategoryId = categoryId ??
       (action === "create_note" ? firstCategoryId : undefined);
     if (action === "create_note" && !resolvedCategoryId) continue;
     if (action === "reminder" && !reminderAt) continue;
-    if (noteType && noteType !== "text" && noteType !== "checklist") continue;
+    if (reminderAt) {
+      reminderAt = correctWeekdayReminderAt({
+        reminderAt,
+        jotText,
+        localNow: options.localNow,
+        locale: options.locale,
+      });
+    }
+    const normalizedNoteType = normalizeNoteType(noteType);
+    if (noteType && !normalizedNoteType) continue;
     if (updatedText !== undefined &&
       (updatedText.length === 0 || updatedText.length > 100)) continue;
 
@@ -468,13 +720,15 @@ function normalizeCompactSuggestions(
       jot_id: jotId,
       action,
       confidence,
-      ...((stringValue(map.t) ?? stringValue(map.title))
-        ? { title: stringValue(map.t) ?? stringValue(map.title) }
-        : {}),
+      ...(action === "create_note" && title ? { title } : {}),
       ...(resolvedCategoryId ? { category_id: resolvedCategoryId } : {}),
       ...(noteId ? { note_id: noteId } : {}),
-      ...(noteType ? { note_type: noteType } : {}),
-      ...(typeof isPrivate === "boolean" ? { is_private: isPrivate } : {}),
+      ...(action === "create_note" && normalizedNoteType
+        ? { note_type: normalizedNoteType }
+        : {}),
+      ...(action === "create_note" && typeof isPrivate === "boolean"
+        ? { is_private: isPrivate }
+        : {}),
       ...(reminderAt ? { reminder_at: reminderAt } : {}),
       ...(updatedText ? { updated_text: updatedText } : {}),
     });
@@ -537,56 +791,58 @@ Deno.serve(async (req: Request) => {
   const prompt = buildPrompt({
     locale: input.locale ?? "en-US",
     now: input.now ?? new Date().toISOString(),
+    localNow: input.local_now,
+    timeZoneOffsetMinutes: input.time_zone_offset_minutes,
+    timeZoneName: input.time_zone_name,
     aliases,
   });
-  const request = {
-    system_instruction: {
-      parts: [{
-        text:
-          "You are a cautious personal knowledge organizer. Return valid JSON only.",
-      }],
-    },
-    contents: [{ role: "user", parts: [{ text: prompt }] }],
-    generationConfig: {
-      maxOutputTokens: 1536,
-      temperature: 0.1,
-      responseMimeType: "application/json",
-      responseSchema,
-    },
-  };
-  const requestBody = JSON.stringify(request);
-
   let usedModel = "";
   let lastError = "";
   const skippedModels: string[] = [];
+  const temporarilyUnavailableModels: string[] = [];
   let aiText = "";
   let aiResponse: unknown = null;
+  let request: Record<string, unknown> | null = null;
 
   try {
     for (const model of AI_MODELS) {
+      request = buildAiRequest(prompt, model);
       const res = await fetch(
         `${AI_BASE_URL}/${model}:generateContent?key=${aiKey}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: requestBody,
+          body: JSON.stringify(request),
         },
       );
 
+      aiResponse = await res.json().catch(() => ({}));
       if (res.status === 429) {
+        lastError = aiErrorMessage(aiResponse, res.statusText);
         skippedModels.push(model);
         await logError(user.id, `Model quota exceeded: ${model}`, {
           model_skipped: model,
           reason: "quota_exceeded",
+          message: lastError,
           tier,
         });
         continue;
       }
 
-      aiResponse = await res.json().catch(() => ({}));
       if (!res.ok) {
-        lastError = (aiResponse as { error?: { message?: string } }).error
-          ?.message ?? res.statusText;
+        lastError = aiErrorMessage(aiResponse, res.statusText);
+        if (isRetryableModelError(res.status, lastError)) {
+          skippedModels.push(model);
+          temporarilyUnavailableModels.push(model);
+          await logError(user.id, `Retryable model error: ${model}`, {
+            model_skipped: model,
+            reason: "retryable_model_error",
+            http_status: res.status,
+            message: lastError,
+            tier,
+          });
+          continue;
+        }
         await logError(user.id, `AI error: ${lastError}`, {
           model,
           http_status: res.status,
@@ -617,6 +873,16 @@ Deno.serve(async (req: Request) => {
 
   if (!usedModel) {
     if (skippedModels.length === AI_MODELS.length) {
+      if (temporarilyUnavailableModels.length > 0) {
+        await logError(user.id, "All models temporarily unavailable", {
+          models_tried: AI_MODELS,
+          temporarily_unavailable_models: temporarilyUnavailableModels,
+          last_error: lastError,
+          tier,
+        });
+        await refundUsage(user.id, today);
+        return json({ error: "all_models_temporarily_unavailable" }, 503);
+      }
       await logError(user.id, "All models quota exceeded", {
         models_tried: AI_MODELS,
         tier,
@@ -631,10 +897,22 @@ Deno.serve(async (req: Request) => {
   }
 
   const parsed = extractObject(aiText);
-  const suggestions = normalizeCompactSuggestions(parsed, aliases);
+  const suggestions = normalizeCompactSuggestions(parsed, aliases, {
+    locale: input.locale ?? "en-US",
+    localNow: input.local_now ?? input.now ?? new Date().toISOString(),
+  });
 
   return json({
     run_id: crypto.randomUUID(),
     suggestions,
+    ai_debug: {
+      model: usedModel,
+      skipped_models: skippedModels,
+      temporarily_unavailable_models: temporarilyUnavailableModels,
+      request,
+      raw_response: aiResponse,
+      raw_text: aiText,
+      parsed,
+    },
   });
 });

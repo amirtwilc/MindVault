@@ -75,7 +75,7 @@ class _MindVaultAppState extends ConsumerState<MindVaultApp> {
       return true;
     }
     if (uri.scheme == 'mindvault' && uri.host == 'spark-digest') {
-      if (mounted) ref.read(appRouterProvider).go('/home/sparks');
+      if (mounted) ref.read(appRouterProvider).go('/spark-digest');
       return true;
     }
     return false;
