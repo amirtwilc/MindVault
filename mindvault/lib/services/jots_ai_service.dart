@@ -89,7 +89,6 @@ class JotsAiRunResult {
   final bool limitedToThirty;
   final List<JotAiSuggestion> suggestions;
   final List<String> processedJotIds;
-  final Map<String, dynamic>? aiDebug;
 
   const JotsAiRunResult({
     required this.runId,
@@ -97,7 +96,6 @@ class JotsAiRunResult {
     required this.limitedToThirty,
     required this.suggestions,
     required this.processedJotIds,
-    this.aiDebug,
   });
 }
 
@@ -154,9 +152,6 @@ class JotsAiService {
       limitedToThirty: eligible.length > selected.length,
       suggestions: validSuggestions,
       processedJotIds: selected.map((j) => j.id).toList(),
-      aiDebug: response['ai_debug'] is Map
-          ? Map<String, dynamic>.from(response['ai_debug'] as Map)
-          : null,
     );
   }
 

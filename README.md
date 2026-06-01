@@ -1,461 +1,431 @@
 # MindVault
 
-A privacy-first notes system built with Flutter, combining offline-first storage, end-to-end encryption, and AI-powered search—without relying on constant connectivity.
+MindVault is a privacy-first Android app for capturing, organizing, and recalling the pieces of thought that usually get lost between note apps, reminders, and memory.
+
+It started as a notes app, but the product direction evolved into something more personal: an extension of the user's mind. The core object is no longer "a note" as a static document. It is a **Memory**: a thought, plan, fact, list, reminder, or reference that should be easy to store now and easy to retrieve later.
+
+Built with Flutter, Supabase, Drift, Riverpod, Android widgets, AES-256-GCM encryption, and Gemini-powered AI features.
+
+---
+
+## Product Thinking
+
+Most personal knowledge tools expect users to stop, classify, title, and structure an idea before saving it. That is often the exact moment the idea disappears.
+
+MindVault is designed around a different flow:
+
+1. Capture thoughts with as little friction as possible.
+2. Keep them available offline and private by default.
+3. Let users organize when they have time.
+4. Use AI only where it meaningfully reduces cognitive load.
+5. Make recall feel closer to asking your own memory than searching a database.
+
+This shaped both the user-facing language and the architecture:
+
+- **Archive** is the user's long-term memory library.
+- **Memories** are saved thoughts, references, records, and plans.
+- **Clusters** group related memories without making the app feel like a file cabinet.
+- **Recall** combines fast local search with AI-assisted semantic answers.
+- **Sparks** hold quick thoughts that are not ready to become full memories yet.
 
 ---
 
 ## Highlights
 
-- **Local-first architecture**  
-  All data is written to a local Drift database first, enabling instant UI updates and full offline functionality. Remote sync is asynchronous and resilient.
+- **Local-first by design**
+  Every change is written to the local Drift database first. The UI stays instant, the app works offline, and sync catches up later.
 
-- **End-to-end encryption by design**  
-  Notes are encrypted on-device using AES-256-GCM. The backend stores only ciphertext, and encryption keys never leave the user’s device.
+- **End-to-end encrypted storage**
+  Memory content is encrypted on-device with AES-256-GCM. Supabase stores ciphertext, and the key material needed to decrypt content never leaves the device.
 
-- **Cross-device sync with conflict resolution**  
-  An outbox-based sync engine ensures eventual consistency across devices, using last-write-wins reconciliation and realtime updates.
+- **Resilient cross-device sync**
+  Supabase Auth, Postgres, Realtime, and an outbox-based sync engine keep devices eventually consistent while preserving offline edits.
 
-- **AI-powered semantic search (cost-aware)**  
-  A constrained retrieval pipeline selects relevant notes locally and queries an LLM via a Supabase Edge Function, enforcing quotas and grounding responses in user data.
+- **AI Recall with bounded context**
+  AI search does not receive the whole database. MindVault ranks relevant local memories first, sends only a filtered subset through a Supabase Edge Function, enforces quotas, and returns grounded answers with sources.
 
-- **Unified search experience**  
-  Instant keyword search and AI search are combined into a single interface, allowing users to start with fast local results and escalate to semantic queries when needed.
+- **Sparks for low-friction capture**
+  Sparks are quick thoughts saved without forcing the user to choose a cluster, title, or final destination. Later, the user can turn them into a memory, append them to an existing memory, set a reminder, delete them, or ask AI to suggest the best action.
 
-- **Multi-surface interaction (App + Home Widget)**  
-  Notes can be viewed, created, and searched directly from a home-screen widget, powered by a secure metadata projection of the local database.
+- **Records, Plans, and Reminders**
+  Memories can be plain text **Records** or checklist-based **Plans**. Reminders can be attached to memories or sparks and are scheduled locally on Android while remaining synced as user intent.
+
+- **Home-screen widgets**
+  The app exposes fast capture, browse, and search flows from Android widgets using a restricted projection of local data.
+
+---
+
+## Core Experience
+
+### Archive
+
+Archive is the long-term library: the place where durable memories live. A memory can be a recipe, a personal detail, a project idea, a task list, or anything the user does not want to rely on biological memory to keep.
+
+Memories support:
+
+- optional titles
+- clusters
+- pinning and ordering
+- private/locked content
+- text records
+- checklist plans
+- reminders
+
+### Sparks
+
+Sparks are for the moment before organization.
+
+A spark might be:
+
+- "Watch that movie Daniel mentioned"
+- "Jack likes strawberries"
+- "Ask dentist about night guard"
+- "Potential project: encrypted family archive"
+
+The point is not to make the user decide where the thought belongs while they are trying to save it. Sparks can be handled later manually or through the AI organizer.
+
+For each spark, the user can:
+
+- create a new memory
+- add it to an existing memory
+- create a reminder
+- update the text before saving it elsewhere
+- delete it
+
+The AI organizer is intentionally conservative. It receives only unhandled sparks, cluster names, and bounded non-private memory titles. It can suggest actions, memory types, clusters, target memories, rewritten text, and reminder times, but the user stays in control by reviewing or accepting suggestions.
+
+### Recall
+
+Recall is a unified search surface:
+
+- Local keyword search uses SQLite FTS5 for instant deterministic results.
+- AI Recall is triggered on demand when the user needs semantic reasoning.
+
+The AI path is designed to be useful without being reckless. It filters locally, limits context, authenticates through Supabase, checks daily quota, calls Gemini from an Edge Function, and stores a compact searchable history.
+
+### Widgets
+
+MindVault includes Android home-screen widgets for fast interaction outside the full app. Widgets can create and open memories, launch spark capture, and expose useful recent content without holding encryption keys.
 
 ---
 
 ## System Overview
 
-MindVault is built as a **privacy-first, local-first system** where all core operations originate on the device and synchronize outward.
+MindVault is built as a local-first, privacy-first system where the device is the primary source of truth and the backend is a sync partner.
 
-At a high level, the system consists of four cooperating layers:
+```text
+Flutter UI + Android Widgets
+        |
+Riverpod state + go_router
+        |
+Drift SQLite + FTS5 + encryption services
+        |
+Outbox sync + reconciliation
+        |
+Supabase Auth/Postgres/Realtime/Edge Functions
+        |
+Gemini API for bounded AI workflows
+```
 
-UI (App + Widget)  
-↓  
-Local Core (Drift database + Encryption)  
-↓  
-Sync Engine (Outbox + Reconciliation)  
-↓  
-Supabase Backend (Auth + Storage + Realtime + Edge Functions)  
-↓  
-External AI (Gemini via Edge Function)  
+Key principles:
 
-### Key principles
-* Local database is the single source of truth
-* Sync is asynchronous and resilient
-* Backend is a replica, not a dependency
-* AI operates on filtered, user-scoped context
-* Sensitive data remains encrypted outside the device
+- Local data drives the UI.
+- Remote sync is asynchronous.
+- Backend reads are scoped by RLS and user identity.
+- Sensitive content is encrypted before leaving the device.
+- AI is given the smallest useful context, not raw database access.
+- Native Android scheduling handles reminders that must fire while the app is closed.
 
---- 
+---
 
 ## Architecture
 
-### End-to-end encryption
+### End-to-End Encryption
 
-All note content is encrypted on-device before storage or transmission.
+MindVault encrypts memory content on-device before local persistence or remote sync.
 
-* AES-256-GCM is used for note encryption
-* A random data encryption key (DEK) is generated per user
-* The DEK is wrapped using a key derived from the user’s PIN (PBKDF2)
-* Only the wrapped key is stored remotely
+- AES-256-GCM encrypts memory and plan content.
+- A random data encryption key is generated per user.
+- The data key is wrapped using a key derived from the user's PIN with PBKDF2.
+- Supabase stores encrypted content and wrapped keys, not plaintext.
 
-Flow:
+```text
+Plaintext -> encrypt on device -> store locally -> sync ciphertext
+```
 
-Plaintext → Encrypt (AES) → Store locally → Sync ciphertext
+Decryption happens only after the user unlocks the app locally.
 
-* Decryption happens only on-device
-* Backend never sees plaintext or keys
+### Local-First Sync
 
---- 
+The local Drift database is the source of truth. User actions commit locally first, then remote persistence happens in the background.
 
-### Local-first sync
+```text
+User action
+  -> local write
+  -> instant UI update
+  -> remote sync attempt
+      -> success: reconcile
+      -> failure: queue durable pending operation
+```
 
-**Local-first architecture** is enforced, where the local SQLite database (Drift) is the single source of truth.
+When connectivity returns, MindVault replays pending operations, fetches remote changes, and reconciles by `updated_at` using last-write-wins semantics. Supabase Realtime keeps active devices updated without making the app depend on constant connectivity.
 
-Supabase acts as a **replicated remote store**, used for cross-device synchronization rather than direct state management.
+### Sparks AI Organizer
 
-This design ensures:
-- instant UI responsiveness
-- full offline functionality
-- deterministic synchronization when connectivity resumes
+Sparks AI applies the same privacy and quota posture as Recall, but the goal is different: it helps convert unstructured thoughts into useful next actions.
 
-Write flow:
+```text
+Unhandled sparks
+  -> local context selection
+  -> bounded cluster names + non-private memory titles
+  -> Supabase Edge Function
+  -> quota check
+  -> Gemini
+  -> validated suggestions
+  -> user review or accept all
+```
 
-User action  
-  → local write (instant UI)  
-  → attempt remote sync  
-      → success: reconcile  
-      → failure: queue in outbox  
+Design choices that matter:
 
-Reconnect flow:
+- Only the oldest unprocessed sparks are sent, capped per request.
+- Private memory titles and memory bodies are excluded.
+- Long internal IDs are replaced with short request-local aliases to reduce token usage.
+- Invalid, unsupported, or low-confidence AI suggestions are dropped.
+- Spark reminders use separate native scheduling so memory reminder reconciliation cannot cancel them accidentally.
 
-Connectivity restored  
-  → replay queued operations  
-  → fetch latest snapshot  
-  → reconcile local state 
+### Reminders
 
-* Uses outbox pattern
-* Conflict resolution: last-write-wins (updated_at)
-* Ensures no data loss during offline usage
+Reminder records sync across devices as part of the local-first data model, but alarm scheduling is device-local. This keeps user intent consistent while respecting Android's notification and exact-alarm behavior.
 
+MindVault also handles:
 
----
+- notification permission prompts
+- app-closed reminder delivery through native Android receivers
+- boot/package-replaced rescheduling
+- reminder deep links back into the correct memory or spark
+- cleanup of expired reminders so the UI does not show stale active alerts
 
-### AI search
+### Home Widget Security
 
-AI search is implemented as a constrained retrieval pipeline, which means responses are anchored in retrieved context, minimizng hallucinations and ensuring high fidelity to source documents.
+Widgets are treated as a restricted projection layer over the local database, not as an independent source of truth.
 
-Flow:
-
-Query  
-  → local cache check  
-  → local ranking (top K notes)  
-  → Edge Function (auth + quota)  
-  → Gemini API   
-  → response + sources  
-
-Key design choices:
-
-* Only top relevant notes are sent (not full dataset)
-* The LLM never sees raw database access — only a filtered subset
-* LLM is grounded to user notes only
-* Server enforces quota and authentication
-* Responses include cited Sources
-* Caching responses to reduce repeated call
-
-### Unified search
-
-Search is implemented as a two-layer system:
-
-#### 1. Local search (default)
-* Instant results (FTS5)
-* Deterministic scoring
-#### 2. AI search (on demand)
-* Triggered explicitly by user
-* Semantic reasoning over notes
-
-Users interact with a single search interface, the system adapts automatically.
-
-### Home widget
-
-The Home Widget acts as a **lightweight interaction surface over the local-first system**, enabling fast note operations without opening the main application.
-
-It is designed as a **restricted projection layer** of the core database, not an independent data source.
+- Widgets can show selected metadata and launch app flows.
+- They do not hold encryption keys.
+- Main-app lifecycle hooks refresh providers after widget-side writes.
+- Widget writes still flow through local storage and sync reconciliation.
 
 ---
 
-#### Capabilities
+## AI Boundaries
 
-* View recent/pinned notes
-* Create/edit/delete notes
-* Search notes (keyword + AI search)
+AI features are useful only if they respect the user's trust.
 
-#### Security model
+MindVault's AI design follows a few constraints:
 
-
-* Only metadata (id, title, category) is exposed
-* No access to encryption keys
-* No direct decryption
-
----
-
-## Usage Limits & Quotas
-
-AI features are cost-bound and enforced via tier limits.
+- The model never receives direct database access.
+- Requests are authenticated and quota-checked server-side.
+- Recall receives only locally selected relevant memories.
+- Sparks AI receives only what it needs for organization suggestions.
+- Responses are validated before being applied to app state.
+- The user remains the final decision-maker for organization actions.
 
 ---
 
-### Available tiers
+## Usage Limits
+
+AI and storage limits are tier-based and stored in Supabase as the single source of truth.
 
 | Limit | Free | Pro |
 |---|---:|---:|
-| AI searches / day | 5 | 50 |
-| Notes | 100 | 1000 |
-| Categories | 10 | 50 |
-| Characters / note | 5,000 | 20,000 |
+| AI Recall searches / day | 5 | 50 |
+| Sparks AI organizes / day | 1 | 5 |
+| Memories | 100 | 1000 |
+| Clusters | 10 | 50 |
+| Characters / memory | 5,000 | 20,000 |
 
+The client uses these limits to avoid unnecessary calls. Edge Functions enforce them authoritatively.
 
-### Enforcement model
+---
 
-* **Client-side**: prevents unnecessary calls
-* **Server-side**: authoritative (Edge Function)
+## Tech Stack
 
-Both must stay in sync.
+- **Client:** Flutter, Dart, Riverpod, go_router
+- **Local storage:** Drift, SQLite, FTS5
+- **Backend:** Supabase Auth, Postgres, RLS, Realtime, Edge Functions
+- **AI:** Gemini through Supabase Edge Functions
+- **Security:** AES-256-GCM, PBKDF2, Android secure storage
+- **Android:** native widgets, transparent activity flows, alarms, notification receivers
+- **Testing:** Flutter unit/widget tests with fakes for platform and service boundaries
 
-### Upgrading a user
+---
 
-User tier is stored in the `profiles` table.
+## Repository Layout
 
-To upgrade a user:
-
-```sql
-UPDATE profiles
-SET tier = 'pro'
-WHERE id = (
-  SELECT id FROM auth.users WHERE email = 'user@example.com'
-);
+```text
+.
+|-- mindvault/                    Flutter project root
+|   |-- lib/
+|   |   |-- core/                 constants, theme, utilities
+|   |   |-- data/                 Drift schema, models, datasources, repositories
+|   |   |-- domain/               entities, repository contracts, use cases
+|   |   |-- presentation/         providers, router, screens, widgets
+|   |   |-- services/             encryption, sync, reminders, widget data, AI
+|   |   `-- l10n/                 generated localization surface
+|   |-- android/                  Android host, widgets, receivers
+|   |-- test/                     unit and widget tests
+|   `-- pubspec.yaml
+|-- supabase/
+|   |-- schema.sql                database schema, RLS, RPCs, compatibility views
+|   |-- config.toml
+|   `-- functions/
+|       |-- ai-search/            AI Recall Edge Function
+|       `-- organize-jots/        Sparks organizer Edge Function
+|-- specs/                        feature and architecture notes
+|-- schema.md                     annotated schema walkthrough
+`-- README.md
 ```
 
----
-
-## Build & run
-
-MindVault runs on a Flutter client backed by Supabase for authentication, encrypted storage, and server-side AI processing via Edge Functions.
-
-This means a working setup requires both a local Flutter environment and a configured Supabase project.
+Generated files such as `*.g.dart` and `*.freezed.dart` should not be edited by hand.
 
 ---
 
-### Install prerequisites
+## Setup
+
+MindVault requires a Flutter Android environment and a Supabase project.
+
+### Prerequisites
+
 - Flutter 3.32+
-  https://docs.flutter.dev/get-started/install
-- Node.js (for CLI)
-  https://nodejs.org/
-
----
-
-### Install Supabase CLI
+- Node.js
+- Supabase CLI
 
 ```bash
 npm install -g supabase
-```
-```bash
-supabase --version
-```
-```bash
 supabase login
 ```
 
-### Create backend (Supabase)
+### Backend
 
-Create a new Supabase project and run [`supabase/schema.sql`](supabase/schema.sql)
-in the SQL editor. See [`schema.md`](schema.md) for what it does and why.
+Create a Supabase project, then run [`supabase/schema.sql`](supabase/schema.sql) in the SQL editor. The schema creates the core tables, RLS policies, tier limits, sync RPCs, usage tracking, and compatibility views for renamed entities.
 
----
+### Google OAuth
 
-### Configure Google OAuth
+Google Sign-In through Supabase Auth uses two OAuth clients:
 
-For Google Sign-In through Supabase Auth, create two OAuth clients:
+- Web client for Supabase
+- Android client for the Flutter app
 
-- A **Web Client** (used by Supabase backend)
-- An **Android Client** (used by the Flutter app)
-
----
-
-#### Create OAuth credentials in Google Cloud
-
-Go to:
-https://console.cloud.google.com/apis/credentials
-
-Enable:
-- Google Identity Services (if not enabled)
-
----
-
-#### Create OAuth Client 1: Web Application
-
-This is used by Supabase.
-
-- Application type: **Web application**
-- Add redirect URI: https://<your-supabase-project-ref>.supabase.co/auth/v1/callback
-
-Copy:
-- Client ID
-- Client Secret
-
----
-
-#### Add to Supabase
-
-Go to:
-Supabase Dashboard → Authentication → Providers → Google
-
-Paste:
-- Web Client ID
-- Web Client Secret
-
----
-
-#### Create OAuth Client 2: Android
-
-This is used by the Flutter app.
-
-- Application type: **Android**
-- Package name: com.mindvault.app
-- SHA-1 fingerprint:
-
-Generate it using:
+For the Android SHA-1 fingerprint:
 
 ```bash
-cd mindvault/android && ./gradlew signingReport
+cd mindvault/android
+./gradlew signingReport
 ```
-Copy SHA1 from the debug variant.
 
----
+Add the web client credentials in Supabase under Authentication -> Providers -> Google.
 
-### Enable AI Search (Edge Function)
+### AI Functions
 
-MindVault uses a Supabase Edge Function to securely execute AI-powered semantic queries over encrypted note metadata.
-Gemini free tier API was used. Create an API key here https://aistudio.google.com/
+Create a Gemini API key in Google AI Studio, then configure Supabase secrets:
 
-Set your Gemini API key:
 ```bash
 npx supabase secrets set GEMINI_API_KEY=<your_key> \
   --project-ref <your-supabase-project-ref>
 ```
 
-Deploy the function:
+Deploy the Edge Functions:
+
 ```bash
-npx supabase functions deploy ai-search \
-  --project-ref <your-supabase-project-ref>
+npx supabase functions deploy ai-search --project-ref <your-supabase-project-ref>
+npx supabase functions deploy organize-jots --project-ref <your-supabase-project-ref>
 ```
 
----
-
-### Configure client
+### Client Configuration
 
 Update `mindvault/lib/core/constants/supabase_constants.dart` with:
 
 - Supabase URL
-- Anon key (Supabase -> Settings -> API Keys -> )
-- Google Web Client ID
+- Supabase anon key
+- Google web client ID
 
-The anon key is safe to expose in client applications. Security is enforced through Row Level Security (RLS), not by hiding the key.
+The anon key is safe to ship in the client. Authorization is enforced by Supabase Auth and Row Level Security.
+
+Create `mindvault/dart-define.json` from `mindvault/dart-define.json.example` for release builds.
 
 ---
 
-### Development
+## Development
 
 ```bash
 cd mindvault
 flutter pub get
 dart run build_runner build --delete-conflicting-outputs
-flutter run
+flutter test
 ```
 
-### Test
-
-```bash
-cd mindvault && flutter test
-```
-
-Tests are structured to mirror lib/ and use fake implementations instead of mocks for Supabase dependencies to better reflect real runtime behavior.
-
-### Build a release APK
+For local debug development:
 
 ```bash
 cd mindvault
-flutter build apk --release
-cp build/app/outputs/flutter-apk/app-release.apk ../mindvault-latest.apk
-```
----
-
-## Repository layout
-
-```
-.
-├── mindvault/                 Flutter project (run all flutter commands here)
-│   ├── lib/
-│   │   ├── core/              constants, theme, utilities
-│   │   ├── data/              Drift schema, models, datasources, repositories
-│   │   ├── domain/            freezed entities + abstract repos
-│   │   ├── presentation/      providers, router, screens, widgets
-│   │   └── services/          encryption, biometric, sync, widget data, AI
-│   ├── android/               Android host: home widget, transparent activity
-│   ├── test/                  unit + widget tests
-│   └── pubspec.yaml
-├── supabase/
-│   ├── schema.sql             one-shot DB bootstrap (idempotent)
-│   ├── config.toml            Supabase CLI config
-│   └── functions/ai-search/   Deno edge function for Gemini calls
-├── schema.md                  Annotated walk-through of schema.sql + setup
-├── CLAUDE.md                  Working notes for AI assistants
-└── .github/workflows/         CI: tag → build APK → GitHub release
+flutter run
 ```
 
-`*.g.dart` and `*.freezed.dart` files are generated and should not be
-edited by hand — regenerate them with `dart run build_runner build`.
+For physical-device release testing, install the release APK instead of switching between `flutter run` and release installs. Android treats debug and release signing identities differently.
+
+### Build Release APK
+
+From the repository root:
+
+```bash
+cd mindvault
+flutter build apk --release --dart-define-from-file=dart-define.json
+cd ..
+cp mindvault/build/app/outputs/flutter-apk/app-release.apk mindvault-latest.apk
+```
+
+The release keystore is intentionally gitignored. `mindvault/android/key.properties` expects the keystore at `mindvault/android/app/mindvault-release.jks`.
 
 ---
 
-## What's Next
+## Testing
 
-MindVault already provides what I consider the foundations of a modern notes app:  
-privacy-first storage, offline reliability, and intelligent search.
+Run:
 
-But this is only the beginning of the broader vision.
+```bash
+cd mindvault
+flutter test
+```
 
-As the name **MindVault** suggests, the goal is not simply to store notes - it is to become a trusted extension of the user’s memory: 
-a secure personal knowledge space that can preserve information, organize it intelligently, and surface it exactly when needed.
+Tests mirror the structure of `lib/` and use fakes for service boundaries where possible. This keeps tests close to production behavior without requiring live Supabase or Android platform services for every case.
 
-How that vision should evolve is still being explored, but the direction is clear:  
-to move from *note-taking* toward a more capable **personal knowledge companion**.
+---
 
-### Other Planned improvements
+## What This Project Demonstrates
 
-- **First-time onboarding guide**  
-  An interactive introduction to key features such as encryption, sync, AI search, and the home widget.
+MindVault is intentionally more than a CRUD notes app. It demonstrates:
 
-- **Richer note types**  
-  Support for structured content such as:
-  - checklists
-  - reminders and alerts
-  - templates for recurring note formats
+- product reframing from generic note-taking to personal memory assistance
+- local-first architecture with durable offline writes
+- encrypted sync across devices
+- careful AI integration with bounded context and quota control
+- native Android work beyond standard Flutter screens
+- pragmatic conflict resolution and realtime reconciliation
+- testable service boundaries around storage, sync, reminders, and AI
+- migration thinking as the vocabulary changed from notes/categories to memories/clusters/sparks
 
-- **Smarter knowledge retrieval**  
-  Continued improvements to AI search, ranking, and contextual understanding.
+The hard part was not adding AI. The hard part was deciding where AI should not be trusted, where the device should remain authoritative, and how to keep quick capture fast without sacrificing privacy.
 
-- **Expanded platform support**  
-  iOS support and broader cross-device experiences.
+---
 
+## Planned Improvements
 
-## Technical Deep-Dives
-
-### Achieving Local-first architecture
-
-MindVault is built around a local-first sync model, designed to make note operations feel instantaneous while maintaining reliable cross-device consistency.
-
-#### Instant local writes, resilient remote sync
-
-Every note or category mutation (**create, update, or delete**) is committed immediately to the local **Drift (SQLite)** database. Because the UI is driven by **Riverpod stream providers**, changes appear instantly without waiting for network round-trips.
-
-Remote persistence to **Supabase** happens asynchronously in the background. If a request fails (for example, due to connectivity loss), the operation is not discarded—instead, it is written to a PendingOpsTable, which acts as a durable **outbox queue**. This ensures the local database remains authoritative, allowing users to continue working seamlessly even while offline.
-
-#### Automatic reconnection and queued operation replay
-
-MindVault continuously monitors connectivity through a `StreamProvider<bool>` built on `connectivity_plus`. When the device transitions from **offline to online**, `HomeShell` automatically triggers synchronization by replaying all queued category and note operations.
-
-The same flush process also runs when the app returns to the foreground (`didChangeAppLifecycleState(resumed)`), ensuring pending changes are pushed as soon as possible. Operations are replayed **oldest-first**, preserving intent and maintaining deterministic sync behavior.
-
-#### Conflict resolution with last-write-wins guarantees
-
-To prevent stale offline updates from overwriting newer changes made on another device, MindVault applies a **last-write-wins** strategy based on the `updated_at` timestamp.
-
-Before replaying a queued `update_note` operation, the sync engine fetches the current remote version of the note. If the remote copy has a newer timestamp, the local pending update is silently discarded, and the newer remote state is pulled during the next full reconciliation. This guarantees that the most recent successful edit always wins.
-
-#### Realtime multi-device synchronization
-
-For active sessions, `NoteRepositoryImpl.startSync()` opens a **Supabase Realtime Postgres Changes** channel filtered by `user_id`.
-
-Incoming `INSERT` and `UPDATE` events are decrypted and merged directly into the local database, while `DELETE` events remove notes locally. This keeps multiple devices synchronized in near real time, typically within sub-second latency.
-
-On application startup, MindVault also performs a full synchronization (`_syncAllNotes()`) to reconcile any drift between local and remote state before realtime updates begin.
-
-#### Safe deletion reconciliation
-
-Deletion handling includes additional safeguards to support offline workflows.
-
-During full sync, MindVault compares the complete remote note ID set against the local database. Any local note missing remotely is removed, **unless** it has a pending `create_note` operation, which indicates the note was created offline and has not yet been uploaded.
-
-Offline deletions are queued as `delete_note` operations and replayed once connectivity returns. After the remote delete succeeds, the note is deleted locally again to guard against race conditions where delayed realtime events could otherwise restore a stale record.
-
-Together, these mechanisms provide a sync experience that is fast, offline-capable, and eventually consistent, allowing MindVault to behave like a local app while seamlessly keeping data synchronized across devices.
+- Continue improving AI Recall ranking and source grounding.
+- Refine Sparks AI prompts and validation for more precise organization suggestions.
+- Expand platform support beyond Android.
+- Deepen multilingual polish for the mind-extension vocabulary.
 
 ---
 
 ## Author
 
-Developed by Amir Twil-Cohen
+Developed by Amir Twil-Cohen.

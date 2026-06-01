@@ -34,7 +34,7 @@ class ReminderSchedulerService {
       return checkPermissions();
     }
     prefs.setBool(_initialPromptKey, true);
-    return requestPermissions(requestExactAlarm: true);
+    return requestPermissions(requestExactAlarm: false);
   }
 
   Future<ReminderPermissionResult> ensureSchedulingPermissionsForUserAction() {

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -395,11 +393,6 @@ class _JotsScreenState extends ConsumerState<JotsScreen>
             onPressed: () => Navigator.pop(ctx, false),
             child: Text(l.actionClose),
           ),
-          if (result.aiDebug != null)
-            TextButton(
-              onPressed: () => _showAiDebugDialog(result.aiDebug!),
-              child: const Text('AI Debug'),
-            ),
           if (result.suggestions.isNotEmpty)
             FilledButton(
               onPressed: () => Navigator.pop(ctx, true),
@@ -411,42 +404,6 @@ class _JotsScreenState extends ConsumerState<JotsScreen>
     if (accept == true) {
       await _acceptSuggestions(runId: result.runId);
     }
-  }
-
-  Future<void> _showAiDebugDialog(Map<String, dynamic> debug) async {
-    const encoder = JsonEncoder.withIndent('  ');
-    final text = encoder.convert(debug);
-    await showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('AI Request / Result'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: SingleChildScrollView(
-            child: SelectableText(
-              text,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontFamily: 'monospace',
-                  ),
-            ),
-          ),
-        ),
-        actions: [
-          TextButton.icon(
-            icon: const Icon(Icons.copy),
-            label: const Text('Copy'),
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: text));
-              Navigator.pop(ctx);
-            },
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
   }
 
   Future<void> _acceptSuggestions({String? runId}) async {
