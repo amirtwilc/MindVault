@@ -905,14 +905,5 @@ Deno.serve(async (req: Request) => {
   return json({
     run_id: crypto.randomUUID(),
     suggestions,
-    ai_debug: {
-      model: usedModel,
-      skipped_models: skippedModels,
-      temporarily_unavailable_models: temporarilyUnavailableModels,
-      request,
-      raw_response: aiResponse,
-      raw_text: aiText,
-      parsed,
-    },
   });
 });

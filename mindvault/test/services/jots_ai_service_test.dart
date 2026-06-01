@@ -325,27 +325,4 @@ void main() {
     expect(result.suggestions.first.updatedText, equals('Milk'));
     expect(result.suggestions.last.reminderAt, isNotNull);
   });
-
-  test('keeps temporary AI debug payload from edge response', () async {
-    final backend = _FakeJotsAiBackend({
-      'run_id': 'run',
-      'suggestions': [],
-      'ai_debug': {
-        'model': 'gemini-test',
-        'request': {'contents': []},
-        'raw_text': '{"s":[]}',
-      },
-    });
-    final service = await _service(backend);
-
-    final result = await service.organize(
-      jots: [_jot(id: 'jot-1')],
-      categories: [_category()],
-      notes: const [],
-      locale: locale,
-    );
-
-    expect(result!.aiDebug?['model'], equals('gemini-test'));
-    expect(result.aiDebug?['raw_text'], equals('{"s":[]}'));
-  });
 }
